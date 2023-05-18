@@ -26,7 +26,6 @@ export default function Home() {
     }
   }
 
-  console.log(urlId);
   const updateurlIds = () => {
     if (urlId !== '' && isvalidated) {
       let video_id = urlId.split('v=')[1];   
