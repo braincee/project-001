@@ -1,16 +1,19 @@
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head';
 import { Input, Button } from '@nextui-org/react';
-import { useState } from 'react';
+import { ShareIcon } from './components/ShareIcon';
+import { useRouter } from 'next/router';
 
 export default function Home() {
-  const [urlId, setUrlId] = useState('');
+  const [urlId, setUrlId] = useState("");
   const [urlIds, setUrlIds] = useState([]);
   const [isvalidated, setIsvalidated] = useState(true);
+  const router = useRouter();
+  let lists = '';
 
   const isValidHttpUrl = (string) => { 
     try {
       const newUrl = new URL(string);
-      console.log(newUrl);
       return newUrl.protocol === 'https:' && newUrl.host === 'www.youtube.com' ;
     } catch (err) {
       return false;
@@ -18,7 +21,7 @@ export default function Home() {
   }
 
   const handleUrlInput = (e) => {   
-    if (isValidHttpUrl(e.target.value) === true) {
+    if (isValidHttpUrl(e.target.value)) {
       setUrlId(e.target.value);  
       setIsvalidated(true); 
     } else {
@@ -32,6 +35,19 @@ export default function Home() {
       setUrlIds([...urlIds, video_id]);
     }
     setUrlId('');
+  }
+
+  const handleShare = () => {
+    urlIds.forEach((url, index) => {
+      console.log(url, index, urlIds.length);
+      if (index + 1 === urlIds.length) {
+        lists = lists.concat(`${url}`)
+      } else {
+        lists = lists.concat(`${url},`)
+      }
+    });
+    
+    router.push(`/list/?list=${lists}`);
   }
 
   return (
@@ -53,6 +69,7 @@ export default function Home() {
             value={urlId}
           />
           <Button className="w-1/5 bg-sky-500/100 text-white" size="xl" onPress={updateurlIds}>Add URL</Button>
+          <Button color="success" className=" text-dark flex justify-between" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
         </div>
         { isvalidated === false ? (
           <span className="text-danger text-[24px] px-[120px]">Invalid URL</span>
