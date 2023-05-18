@@ -9,7 +9,6 @@ export default function Home() {
   const [urlIds, setUrlIds] = useState([]);
   const [isvalidated, setIsvalidated] = useState(true);
   const router = useRouter();
-  let lists = '';
 
   const isValidHttpUrl = (string) => { 
     try {
@@ -38,8 +37,8 @@ export default function Home() {
   }
 
   const handleShare = () => {
+    let lists = '';
     urlIds.forEach((url, index) => {
-      console.log(url, index, urlIds.length);
       if (index + 1 === urlIds.length) {
         lists = lists.concat(`${url}`)
       } else {
