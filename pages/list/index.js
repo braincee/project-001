@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
@@ -23,9 +24,10 @@ export default function List() {
         <div className="mt-[20px] px-[120px] flex flex-col gap-[20px]">
           { urlIds.length > 0 ? urlIds.map((url) => (
             <div key={url}>
-              <div className="video">
-                  <iframe width="100%" height="100%" src={`https://youtube.com/embed/${url}`} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-              </div>
+                <div className="video">
+                  <Link className="iframe-link" target="_blank" href={`https://youtube.com/embed/${url}`}></Link>
+                  <iframe width="100%" height="100%" src={`https://youtube.com/embed/${url}`} title="YouTube video player" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                </div>
             </div>
           )): ''}
         </div>
