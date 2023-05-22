@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head';
-import { Input, Button } from '@nextui-org/react';
+import { Input, Button, Image } from '@nextui-org/react';
 import { ShareIcon } from './components/ShareIcon';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -10,6 +10,7 @@ export default function Home() {
   const [urlIds, setUrlIds] = useState([]);
   const [isvalidated, setIsvalidated] = useState(true);
   const router = useRouter();
+  const [test, setTest] = useState(null);
 
   const isValidHttpUrl = (string) => { 
     try {
@@ -29,10 +30,10 @@ export default function Home() {
     }
   }
 
-  const updateurlIds = () => {
+  const updateurlIds = async () => {
     if (urlId !== '' && isvalidated) {
-      let video_id = urlId.split('v=')[1];   
-      setUrlIds([...urlIds, video_id]);
+      let videoId = urlId.split('v=')[1];   
+      setUrlIds([...urlIds, videoId]);
     }
     setUrlId('');
   }
@@ -68,18 +69,18 @@ export default function Home() {
             aria-labelledby="none"
             value={urlId}
           />
-          <Button className="w-1/5 bg-sky-500/100 text-white" size="xl" onPress={updateurlIds}>Add URL</Button>
+          <Button color="primary" size="xl" onPress={updateurlIds}>Add URL</Button>
           <Button color="success" className=" text-dark flex justify-between" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
         </div>
         { isvalidated === false ? (
           <span className="text-danger text-[24px] px-[120px]">Invalid URL</span>
         ) : ""}
-        <div className="mt-[20px] px-[120px] flex flex-col gap-[20px]">
+        <div className="mt-[20px] px-[20px] lg:px-[100px] flex flex-col gap-[20px]">
           { urlIds.length > 0 ? urlIds.map((url) => (
-            <div key={url}>
-              <div className="video">
-                <Link className="iframe-link" target="_blank" href={`https://youtube.com/embed/${url}`}></Link>
-                <iframe width="100%" height="100%" src={`https://youtube.com/embed/${url}`} title="YouTube video player" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+            <div key={url} className="video">
+              <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url}`}></Link>
+              <div className='card'>
+                  <Image src={`http://img.youtube.com/vi/${url}/sddefault.jpg`} />
               </div>
             </div>
           )): ''}
