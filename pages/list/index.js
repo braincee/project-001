@@ -24,7 +24,7 @@ export default function List() {
           { urlIds.length > 0 ? urlIds.map((url) => (
             <div key={url}>
               <div className="video">
-                  <iframe width="100%" height="100%" src={`https://youtube.com/embed/${url}`} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                  <a><iframe width="100%" height="100%" src={`https://youtube.com/embed/${url}`} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe></a>
               </div>
             </div>
           )): ''}
