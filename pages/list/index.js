@@ -1,23 +1,33 @@
 import Head from "next/head";
 import Link from "next/link";
 import { Image } from "@nextui-org/react";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-export default function List() {
-  const router = useRouter();
+export const getServerSideProps = (context) => {
+  const { query } = context;
+  return { props: { query }};
+}
+
+export default function List({ query }) {
   const [urlIds, setUrlIds] = useState([]);
+  const [metaTitle, setMetaTitle] = useState('');
+  const [metaDescription, setMetaDescription] = useState('');
+  const { list, title, description } = query;
 
   useEffect(() => {
-    const { list } = router.query;
     if (list.indexOf(",") == -1) {
       let ids = list.split(",");
       setUrlIds([...ids])
     } else {
-      setUrlIds([...list]);
+      setUrlIds([list]);
     }
-    
-  }, [router.query.list]);
+
+  }, [list]);
+
+  useEffect(() => {
+    setMetaTitle(title);
+    setMetaDescription(description);
+  }, [title, description])
 
   return (
     <>
@@ -28,14 +38,22 @@ export default function List() {
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
         <div className="mt-[20px] px-[120px] flex flex-col gap-[20px]">
-          { urlIds.length > 0 ? urlIds.map((url) => (
-            <div key={url} className="video">
-                <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url}`} />
-                  <div className='card'>
-                    <Image src={`http://img.youtube.com/vi/${url}/sddefault.jpg`} />
+          {urlIds.length > 0 && (metaTitle || metaDescription) ? urlIds.map((url, index) => (
+            <div key={index} className="video">
+              <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url}`} />
+              <div className="card flex gap-4">
+                <Image src={`http://img.youtube.com/vi/${url}/sddefault.jpg`} />
+                <div>
+                  <p className="text-lg font-bold">
+                    {metaTitle != "" && metaTitle}
+                  </p>
+                  <p className="mt-2">
+                    {metaDescription != "" && metaDescription}
+                  </p>
                 </div>
-                </div>
-          )): ''}
+              </div>
+            </div>
+          )) : ''}
         </div>
       </main>
     </>

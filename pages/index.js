@@ -1,29 +1,48 @@
 import React, { useEffect, useState } from 'react'
+import axios from 'axios';
 import Head from 'next/head';
 import { Input, Button, Image } from '@nextui-org/react';
 import { ShareIcon } from './components/ShareIcon';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { metadata } from '@/libs/metadata';
+
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [response, setResponse] = useState();
   const [urlIds, setUrlIds] = useState([]);
+  const [url, setURL] = useState("");
   const [isvalidated, setIsvalidated] = useState(true);
   const router = useRouter();
 
   const fetchData = async (url) => {
-    const {
-      data: { response, err },
-    } = await axios.post("/api/metadata", {
-      url: url,
-    });
-
-    setResponse(response);
-    setError(err);
+    try {
+      const {
+        data: { response, err },
+      } = await axios.post("/api/metadata", {
+        url: url,
+      });
+      setResponse(response);
+    } catch (err) {
+      return err;
+    }
   };
 
-  const isValidHttpUrl = (string) => { 
+  useEffect(() => {
+    fetchData(url);
+  }, [url]);
+
+  useEffect(() => {
+    const { metaTagsContent } = metadata(response);
+    setTitle(metaTagsContent["title"] || metaTagsContent["og:title"]);
+    setDescription(metaTagsContent["description"] || metaTagsContent["og:description"])
+  }, [response]);
+
+
+  const isValidHttpUrl = (string) => {
     try {
       const newUrl = new URL(string);
       return newUrl.protocol === 'https:' && (newUrl.host === 'www.youtube.com' || newUrl.host === 'youtube.com');
@@ -38,13 +57,13 @@ export default function Home() {
 
   const updateurlIds = async () => {
     if (isValidHttpUrl(inputValue)) {
-      setIsvalidated(true); 
+      setIsvalidated(true);
     } else {
       setIsvalidated(false);
     }
-
+    setURL(inputValue);
     if (inputValue !== '' && isvalidated) {
-      let videoId = inputValue.split('v=')[1];   
+      let videoId = inputValue.split('v=')[1];
       setUrlIds([...urlIds, videoId]);
     }
     setInputValue('');
@@ -59,9 +78,15 @@ export default function Home() {
         lists = lists.concat(`${url},`)
       }
     });
-    
-    router.push(`/list/?list=${lists}`);
+
+    router.push({
+      pathname: "/list",
+      query: { list: lists, title: title, description: description }
+    }, `/list/?list=${lists}`);
+
   }
+
+  console.log(title);
 
   return (
     <>
@@ -74,10 +99,10 @@ export default function Home() {
       <main className="mt-4 mb-[50px] flex flex-col">
         <h1 className="text-center text-[30px]">YT Playlist Creator and Sharer</h1>
         <div className="flex justify-center items-center mt-[50px] gap-4 min-h-auto">
-          <Input  
+          <Input
             type="text"
             onChange={handleChange}
-            className="w-3/5 !placeholder:text-slate-400 placeholder:text-[20px]" 
+            className="w-3/5 !placeholder:text-slate-400 placeholder:text-[20px]"
             placeholder="Add YouTube Url"
             aria-labelledby="none"
             value={inputValue}
@@ -85,21 +110,28 @@ export default function Home() {
           <Button color="primary" size="xl" onPress={updateurlIds}>Add URL</Button>
           <Button color="success" className=" text-dark flex justify-between" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
         </div>
-         {/* //! Learn how to use this syntax instead of "? :" if you only have one option and else null. */}
+        {/* //! Learn how to use this syntax instead of "? :" if you only have one option and else null. */}
         {/* //! Replace everywhere (= all pages) where it helps. */}
-        { isvalidated === false ? (
+        {isvalidated === false ? (
           <span className="text-danger text-[24px] px-[120px] mt-3">Invalid URL!</span>
-        ) : 
+        ) :
           <div className="mt-[20px] px-[20px] lg:px-[100px] flex flex-col gap-[20px]">
-            { urlIds.length > 0 ? urlIds.map((url) => (
-              <div key={url} className="video">
+            { urlIds.length > 0 && (title || description) ? urlIds.map((url, index) => (
+              <div key={index} className="video">
                 <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url}`}></Link>
-                <div className='card'>
-                  {/* //! As I said, remove the iFrame and replace with metadata. */}
-                    <Image src={`http://img.youtube.com/vi/${url}/sddefault.jpg`} />
+                <div className="card flex gap-4">
+                  <Image src={`http://img.youtube.com/vi/${url}/sddefault.jpg`} />
+                  <div>
+                    <p className="text-lg font-bold">
+                      {title}
+                    </p>
+                    <p className="mt-2">
+                      {description}
+                    </p>
+                  </div>
                 </div>
               </div>
-            )): ''}
+            )) : '' }
           </div>
         }
       </main>
