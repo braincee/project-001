@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 export default function Home() {
-  const [urlId, setUrlId] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [urlIds, setUrlIds] = useState([]);
   const [isvalidated, setIsvalidated] = useState(true);
   const router = useRouter();
@@ -15,29 +15,28 @@ export default function Home() {
   const isValidHttpUrl = (string) => { 
     try {
       const newUrl = new URL(string);
-      //! So if I don't copy a link with www. at the beginning it will not work?
-      //! Learn how to take in account all the possible cases.
-      return newUrl.protocol === 'https:' && newUrl.host === 'www.youtube.com' ;
+      return newUrl.protocol === 'https:' && (newUrl.host === 'www.youtube.com' || newUrl.host === 'youtube.com');
     } catch (err) {
       return false;
     }
   }
 
-  const handleUrlInput = (e) => {   
-    if (isValidHttpUrl(e.target.value)) {
-      setUrlId(e.target.value);  
+  const handleChange = (e) => {
+    setInputValue(e.target.value);
+  }
+
+  const updateurlIds = async () => {
+    if (isValidHttpUrl(inputValue)) {
       setIsvalidated(true); 
     } else {
       setIsvalidated(false);
     }
-  }
 
-  const updateurlIds = async () => {
-    if (urlId !== '' && isvalidated) {
-      let videoId = urlId.split('v=')[1];   
+    if (inputValue !== '' && isvalidated) {
+      let videoId = inputValue.split('v=')[1];   
       setUrlIds([...urlIds, videoId]);
     }
-    setUrlId('');
+    setInputValue('');
   }
 
   const handleShare = () => {
@@ -64,13 +63,13 @@ export default function Home() {
       <main className="mt-4 mb-[50px] flex flex-col">
         <h1 className="text-center text-[30px]">YT Playlist Creator and Sharer</h1>
         <div className="flex justify-center items-center mt-[50px] gap-4 min-h-auto">
-          {/* //! I cannot see what I type. I should be able to see what I type even if it is wrong (= invalid). I typed "a" (the letter "a") and I cannot see it. */}
           <Input  
-            onChange={handleUrlInput}
+            type="text"
+            onChange={handleChange}
             className="w-3/5 !placeholder:text-slate-400 placeholder:text-[20px]" 
             placeholder="Add YouTube Url"
             aria-labelledby="none"
-            value={urlId}
+            value={inputValue}
           />
           <Button color="primary" size="xl" onPress={updateurlIds}>Add URL</Button>
           <Button color="success" className=" text-dark flex justify-between" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
