@@ -7,10 +7,21 @@ import Link from 'next/link';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
+  const [response, setResponse] = useState();
   const [urlIds, setUrlIds] = useState([]);
   const [isvalidated, setIsvalidated] = useState(true);
   const router = useRouter();
-  const [test, setTest] = useState(null);
+
+  const fetchData = async (url) => {
+    const {
+      data: { response, err },
+    } = await axios.post("/api/metadata", {
+      url: url,
+    });
+
+    setResponse(response);
+    setError(err);
+  };
 
   const isValidHttpUrl = (string) => { 
     try {
@@ -77,19 +88,20 @@ export default function Home() {
          {/* //! Learn how to use this syntax instead of "? :" if you only have one option and else null. */}
         {/* //! Replace everywhere (= all pages) where it helps. */}
         { isvalidated === false ? (
-          <span className="text-danger text-[24px] px-[120px]">Invalid URL</span>
-        ) : ""}
-        <div className="mt-[20px] px-[20px] lg:px-[100px] flex flex-col gap-[20px]">
-          { urlIds.length > 0 ? urlIds.map((url) => (
-            <div key={url} className="video">
-              <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url}`}></Link>
-              <div className='card'>
-                {/* //! As I said, remove the iFrame and replace with metadata. */}
-                  <Image src={`http://img.youtube.com/vi/${url}/sddefault.jpg`} />
+          <span className="text-danger text-[24px] px-[120px] mt-3">Invalid URL!</span>
+        ) : 
+          <div className="mt-[20px] px-[20px] lg:px-[100px] flex flex-col gap-[20px]">
+            { urlIds.length > 0 ? urlIds.map((url) => (
+              <div key={url} className="video">
+                <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url}`}></Link>
+                <div className='card'>
+                  {/* //! As I said, remove the iFrame and replace with metadata. */}
+                    <Image src={`http://img.youtube.com/vi/${url}/sddefault.jpg`} />
+                </div>
               </div>
-            </div>
-          )): ''}
-        </div>
+            )): ''}
+          </div>
+        }
       </main>
     </>
   )
