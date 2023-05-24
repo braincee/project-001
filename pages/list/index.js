@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import { Image } from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const getServerSideProps = (context) => {
   const { query } = context;
@@ -18,14 +18,14 @@ export default function List({ query }) {
 
     if (list.indexOf(",") > -1) {
       let ids = list.split(",");
-      let titles = title.split(",");
-      let descriptions = description.split(",");
+      let titles = title && title.split(",");
+      let descriptions = description && description.split(",");
       ids.map((id, index) => {
         setUrlData((prevData) => [
           ...prevData,
           { id: ids[index], 
-            title: titles[index], 
-            description: descriptions[index]
+            title: titles && titles[index], 
+            description: descriptions && descriptions[index]
           }
         ]);
       });
