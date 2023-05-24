@@ -10,33 +10,35 @@ export const getServerSideProps = (context) => {
 
 export default function List({ query }) {
   const [urlData, setUrlData] = useState([]);
-  const [metaTitle, setMetaTitle] = useState([]);
-  const [metaDescription, setMetaDescription] = useState([]);
+  const [check, setCheck] = useState(false);
   const { list, title, description } = query;
 
-  useEffect(() => {
+  if (check == false) {
+    setCheck(!check);
+
     if (list.indexOf(",") > -1) {
-      let ids = list.split(",");    
-      ids.forEach((id) => {
-        setUrlData([...urlData, { id: id }]);
-      });    
+      let ids = list.split(",");
+      let titles = title.split(",");
+      let descriptions = description.split(",");
+      ids.map((id, index) => {
+        setUrlData((prevData) => [
+          ...prevData,
+          { id: ids[index], 
+            title: titles[index], 
+            description: descriptions[index]
+          }
+        ]);
+      });
     } else {
-      setUrlData([...urlData, { id: list }]);
+      setUrlData([
+        ...urlData, 
+        { id: list,
+          title,
+          description
+        }
+      ]);
     }
-  }, [list]);
-
-  console.log(urlData);
-
-
-  useEffect(() => {
-    // if (title.indexOf(",") == -1 && descriptionindexOf(",") == -1) {
-    //   let titles = title.split(",");
-    //   titles.forEach((title) => {
-    //     setUrlData([])
-    //   })
-    // }
-
-  }, [title, description])
+  }
 
   return (
     <>
@@ -47,17 +49,17 @@ export default function List({ query }) {
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
         <div className="mt-[20px] px-[120px] flex flex-col gap-[20px]">
-          {urlData.length > 0 && (metaTitle || metaDescription) ? urlData.map((url, index) => (
+          {urlData.length > 0 ? urlData.map((url, index) => (
             <div key={index} className="video">
               <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url.id}`} />
               <div className="card flex gap-4">
                 <Image src={`http://img.youtube.com/vi/${url.id}/sddefault.jpg`} />
-                <div>
-                  <p className="text-lg font-bold">
-                    {metaTitle != "" && metaTitle}
+                <div className='w-1/2'>
+                  <p className="font-bold text-[32px]">
+                    {url.title}
                   </p>
-                  <p className="mt-2">
-                    {metaDescription != "" && metaDescription}
+                  <p className="mt-2 text-[18px]">
+                    {url.description}
                   </p>
                 </div>
               </div>
