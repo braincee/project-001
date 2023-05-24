@@ -5,28 +5,37 @@ import { useEffect, useState } from "react";
 
 export const getServerSideProps = (context) => {
   const { query } = context;
-  return { props: { query }};
+  return { props: { query } };
 }
 
 export default function List({ query }) {
-  const [urlIds, setUrlIds] = useState([]);
-  const [metaTitle, setMetaTitle] = useState('');
-  const [metaDescription, setMetaDescription] = useState('');
+  const [urlData, setUrlData] = useState([]);
+  const [metaTitle, setMetaTitle] = useState([]);
+  const [metaDescription, setMetaDescription] = useState([]);
   const { list, title, description } = query;
 
   useEffect(() => {
-    if (list.indexOf(",") == -1) {
-      let ids = list.split(",");
-      setUrlIds([...ids])
+    if (list.indexOf(",") > -1) {
+      let ids = list.split(",");    
+      ids.forEach((id) => {
+        setUrlData([...urlData, { id: id }]);
+      });    
     } else {
-      setUrlIds([list]);
+      setUrlData([...urlData, { id: list }]);
     }
-
   }, [list]);
 
+  console.log(urlData);
+
+
   useEffect(() => {
-    setMetaTitle(title);
-    setMetaDescription(description);
+    // if (title.indexOf(",") == -1 && descriptionindexOf(",") == -1) {
+    //   let titles = title.split(",");
+    //   titles.forEach((title) => {
+    //     setUrlData([])
+    //   })
+    // }
+
   }, [title, description])
 
   return (
@@ -38,11 +47,11 @@ export default function List({ query }) {
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
         <div className="mt-[20px] px-[120px] flex flex-col gap-[20px]">
-          {urlIds.length > 0 && (metaTitle || metaDescription) ? urlIds.map((url, index) => (
+          {urlData.length > 0 && (metaTitle || metaDescription) ? urlData.map((url, index) => (
             <div key={index} className="video">
-              <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url}`} />
+              <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url.id}`} />
               <div className="card flex gap-4">
-                <Image src={`http://img.youtube.com/vi/${url}/sddefault.jpg`} />
+                <Image src={`http://img.youtube.com/vi/${url.id}/sddefault.jpg`} />
                 <div>
                   <p className="text-lg font-bold">
                     {metaTitle != "" && metaTitle}

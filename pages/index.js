@@ -13,9 +13,10 @@ export default function Home() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [response, setResponse] = useState();
-  const [urlIds, setUrlIds] = useState([]);
+  const [urlData, setUrlData] = useState([]);
   const [url, setURL] = useState("");
   const [isvalidated, setIsvalidated] = useState(true);
+  const [check, setCheck] = useState(false);
   const router = useRouter();
 
   const fetchData = async (url) => {
@@ -53,40 +54,60 @@ export default function Home() {
 
   const handleChange = (e) => {
     setInputValue(e.target.value);
+    setURL(e.target.value);
   }
 
-  const updateurlIds = async () => {
+  useEffect(() => {
+    if (check == true) {
+      let videoId = "";
+      if (url) {
+        videoId = url.split('v=')[1];
+      }
+
+      const newData = urlData.map((url) => {
+        if (url.id == videoId) {
+          url.title = title;
+          url.description = description;
+        }
+        return url;
+      });
+      setUrlData(newData);
+      setCheck(!check);
+    }
+  }, [check]);
+
+  const updateurlIds = () => {
     if (isValidHttpUrl(inputValue)) {
       setIsvalidated(true);
-    } else {
-      setIsvalidated(false);
     }
-    setURL(inputValue);
-    if (inputValue !== '' && isvalidated) {
+    if (inputValue && isvalidated) {
       let videoId = inputValue.split('v=')[1];
-      setUrlIds([...urlIds, videoId]);
+      setUrlData([...urlData, {
+        id: videoId
+      }]);
     }
+    setCheck(!check);
     setInputValue('');
   }
 
   const handleShare = () => {
     let lists = '';
-    urlIds.forEach((url, index) => {
-      if (index + 1 === urlIds.length) {
-        lists = lists.concat(`${url}`)
+    urlData.forEach((url, index) => {
+      if (index + 1 === urlData.length) {
+        lists = lists.concat(`${url.id}`)
       } else {
-        lists = lists.concat(`${url},`)
+        lists = lists.concat(`${url.id},`)
       }
     });
 
+    const stringTitle = urlData.map((url) => `${url.title}`).join(',');
+    const stringDescription = urlData.map((url) => `${url.description}`).join(',');
+
     router.push({
       pathname: "/list",
-      query: { list: lists, title: title, description: description }
+      query: { list: lists, title: stringTitle, description: stringDescription }
     }, `/list/?list=${lists}`);
-
   }
-
-  console.log(title);
 
   return (
     <>
@@ -112,26 +133,26 @@ export default function Home() {
         </div>
         {/* //! Learn how to use this syntax instead of "? :" if you only have one option and else null. */}
         {/* //! Replace everywhere (= all pages) where it helps. */}
-        {isvalidated === false ? (
+        {!isvalidated ? (
           <span className="text-danger text-[24px] px-[120px] mt-3">Invalid URL!</span>
         ) :
           <div className="mt-[20px] px-[20px] lg:px-[100px] flex flex-col gap-[20px]">
-            { urlIds.length > 0 && (title || description) ? urlIds.map((url, index) => (
+            {urlData.length > 0 ? urlData.map((url, index) => (
               <div key={index} className="video">
-                <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url}`}></Link>
-                <div className="card flex gap-4">
-                  <Image src={`http://img.youtube.com/vi/${url}/sddefault.jpg`} />
-                  <div>
-                    <p className="text-lg font-bold">
-                      {title}
+                <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url.id}`}></Link>
+                <div className="card flex gap-5">
+                  <Image src={`http://img.youtube.com/vi/${url.id}/sddefault.jpg`} />
+                  <div className='w-1/2'>
+                    <p className="font-bold text-[32px]">
+                      {url.title}
                     </p>
-                    <p className="mt-2">
-                      {description}
+                    <p className="mt-2 text-[18px]">
+                      {url.description}
                     </p>
                   </div>
                 </div>
               </div>
-            )) : '' }
+            )) : ''}
           </div>
         }
       </main>
