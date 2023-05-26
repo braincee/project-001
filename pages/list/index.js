@@ -4,41 +4,31 @@ import { Image } from "@nextui-org/react";
 import { useState } from "react";
 
 export const getServerSideProps = (context) => {
-  const { query } = context;
-  return { props: { query } };
+  const { list, title, description } = context.query;
+  const urlData = []; 
+
+  if (list.indexOf(",") > -1) {
+    let ids = list.split(",");
+    let titles = title && title.split(",");
+    let descriptions = description && description.split(",");
+    ids.map((id, index) => {
+      urlData.push({
+        id: ids[index],
+        title: titles && titles[index],
+        description: descriptions && descriptions[index]
+      })
+    });
+  } else {
+    urlData.push({
+      id: list,
+      title,
+      description
+    })
+  }
+  return { props: { urlData } };
 }
 
-export default function List({ query }) {
-  const [urlData, setUrlData] = useState([]);
-  const [check, setCheck] = useState(false);
-  const { list, title, description } = query;
-
-  if (check == false) {
-    setCheck(!check);
-
-    if (list.indexOf(",") > -1) {
-      let ids = list.split(",");
-      let titles = title && title.split(",");
-      let descriptions = description && description.split(",");
-      ids.map((id, index) => {
-        setUrlData((prevData) => [
-          ...prevData,
-          { id: ids[index], 
-            title: titles && titles[index], 
-            description: descriptions && descriptions[index]
-          }
-        ]);
-      });
-    } else {
-      setUrlData([
-        ...urlData, 
-        { id: list,
-          title,
-          description
-        }
-      ]);
-    }
-  }
+export default function List({ urlData }) {
 
   return (
     <>
