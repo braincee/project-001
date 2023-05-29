@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { Image } from "@nextui-org/react";
 import { useState } from "react";
+import VideoCard from "../components/VideoCard";
 
 export const getServerSideProps = (context) => {
   const { list, title, description } = context.query;
@@ -40,20 +41,7 @@ export default function List({ urlData }) {
       <main className="mt-4 mb-[50px] flex flex-col">
         <div className="mt-[20px] px-[120px] flex flex-col gap-[20px]">
           {urlData.length > 0 ? urlData.map((url, index) => (
-            <div key={index} className="video">
-              <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url.id}`} />
-              <div className="card flex gap-4">
-                <Image src={`http://img.youtube.com/vi/${url.id}/sddefault.jpg`} />
-                <div className='w-1/2'>
-                  <p className="font-bold text-[32px]">
-                    {url.title}
-                  </p>
-                  <p className="mt-2 text-[18px]">
-                    {url.description}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <VideoCard key={index} url={url} />
           )) : ''}
         </div>
       </main>

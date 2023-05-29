@@ -6,6 +6,7 @@ import { ShareIcon } from './components/ShareIcon';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { metadata } from '@/libs/metadata';
+import VideoCard from './components/VideoCard';
 
 
 export default function Home() {
@@ -19,12 +20,12 @@ export default function Home() {
   const [check, setCheck] = useState(false);
   const router = useRouter();
 
-  const fetchData = async (url) => {
+  const fetchData = async (myUrl) => {
     try {
       const {
         data: { response, err },
       } = await axios.post("/api/metadata", {
-        url: url,
+        url: myUrl,
       });
       setResponse(response);
     } catch (err) {
@@ -138,20 +139,7 @@ export default function Home() {
         ) :
           <div className="mt-[20px] px-[20px] lg:px-[100px] flex flex-col gap-[20px]">
             {urlData.length > 0 ? urlData.map((url, index) => (
-              <div key={index} className="video">
-                <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url.id}`}></Link>
-                <div className="card flex gap-5">
-                  <Image src={`http://img.youtube.com/vi/${url.id}/sddefault.jpg`} />
-                  <div className='w-1/2'>
-                    <p className="font-bold text-[32px]">
-                      {url.title}
-                    </p>
-                    <p className="mt-2 text-[18px]">
-                      {url.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <VideoCard url={url} key={index} />
             )) : ''}
           </div>
         }
