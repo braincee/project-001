@@ -2,6 +2,13 @@ import { Image } from "@nextui-org/react";
 import Link from "next/link";
 
 export default function VideoCard({ url }) {
+
+  const decodeHTML = (code) => {
+    let text = document.createElement("textarea");
+    text.innerHTML = code;
+    return text.value
+  }
+
   return (
     <div className="video">
       <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url.id}`} />
@@ -9,10 +16,10 @@ export default function VideoCard({ url }) {
         <Image src={`http://img.youtube.com/vi/${url.id}/sddefault.jpg`} />
         <div className='w-1/2'>
           <p className="font-bold text-[32px]">
-            {url.title}
+            {decodeHTML(url.title) }
           </p>
-          <p className="mt-2 text-[18px]">
-            {url.description}
+          <p className="mt-5 text-[20px]">
+          {decodeHTML(url.description) }
           </p>
         </div>
       </div>

@@ -4,7 +4,6 @@ import Head from 'next/head';
 import { Input, Button, Image } from '@nextui-org/react';
 import { ShareIcon } from './components/ShareIcon';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
 import { metadata } from '@/libs/metadata';
 import VideoCard from './components/VideoCard';
 
@@ -16,6 +15,7 @@ export default function Home() {
   const [response, setResponse] = useState();
   const [urlData, setUrlData] = useState([]);
   const [url, setURL] = useState("");
+  const [duplicate, setDuplicate] = useState(false);
   const [isvalidated, setIsvalidated] = useState(true);
   const [check, setCheck] = useState(false);
   const router = useRouter();
@@ -73,6 +73,11 @@ export default function Home() {
         return url;
       });
       setUrlData(newData);
+      setTitle('');
+      setDescription('');
+      setURL('');
+      setResponse('')
+      setDuplicate(false);
       setCheck(!check);
     }
   }, [check]);
@@ -80,14 +85,23 @@ export default function Home() {
   const updateurlIds = () => {
     if (isValidHttpUrl(inputValue)) {
       setIsvalidated(true);
+    } else {
+      setIsvalidated(false);
+      return;
     }
-    if (inputValue && isvalidated) {
-      let videoId = inputValue.split('v=')[1];
-      setUrlData([...urlData, {
-        id: videoId
-      }]);
-    }
-    setCheck(!check);
+    setTimeout(() => {
+      if (inputValue && isvalidated) {
+        let videoId = inputValue.split('v=')[1];
+        if (urlData.find((url) => url.id === videoId)) {
+          setDuplicate(true);
+        } else {
+          setUrlData([...urlData, {
+            id: videoId
+          }]);
+          setCheck(!check);
+        }
+      }
+    }, 1000)
     setInputValue('');
   }
 
@@ -136,13 +150,15 @@ export default function Home() {
         {/* //! Replace everywhere (= all pages) where it helps. */}
         {!isvalidated ? (
           <span className="text-danger text-[24px] px-[120px] mt-3">Invalid URL!</span>
-        ) :
+        ): ""}
+        {duplicate ? (
+          <span className="text-danger text-[24px] px-[120px] mt-3">Video is already added!</span>
+        ): ""}
           <div className="mt-[20px] px-[20px] lg:px-[100px] flex flex-col gap-[20px]">
             {urlData.length > 0 ? urlData.map((url, index) => (
               <VideoCard url={url} key={index} />
             )) : ''}
           </div>
-        }
       </main>
     </>
   )

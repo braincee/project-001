@@ -1,11 +1,10 @@
 import Head from "next/head";
-import Link from "next/link";
-import { Image } from "@nextui-org/react";
-import { useState } from "react";
 import VideoCard from "../components/VideoCard";
 
 export const getServerSideProps = (context) => {
-  const { list, title, description } = context.query;
+  const { list } = context.query;
+  const title = context.query.title ? context.query.title : '';
+  const description = context.query.description ? context.query.description : '';
   const urlData = []; 
 
   if (list.indexOf(",") > -1) {
