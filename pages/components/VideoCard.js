@@ -13,7 +13,7 @@ export default function VideoCard({ url }) {
     <div className="video">
       <Link className="card-link" target="_blank" href={`https://youtube.com/embed/${url.id}`} />
       <div className="card flex gap-5">
-        <Image src={`http://img.youtube.com/vi/${url.id}/sddefault.jpg`} />
+        <Image src={`http://img.youtube.com/vi/${url.id}/sddefault.jpg`} alt="youtube"/>
         <div className='w-1/2'>
           <p className="font-bold text-[32px]">
             {decodeHTML(url.title) }
