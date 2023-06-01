@@ -146,8 +146,6 @@ export default function Home() {
           <Button color="primary" size="xl" onPress={updateurlIds}>Add URL</Button>
           <Button color="success" className=" text-dark flex justify-between" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
         </div>
-        {/* //! Learn how to use this syntax instead of "? :" if you only have one option and else null. */}
-        {/* //! Replace everywhere (= all pages) where it helps. */}
         {!isvalidated ? (
           <span className="text-danger text-[24px] px-[120px] mt-3">Invalid URL!</span>
         ): ""}
