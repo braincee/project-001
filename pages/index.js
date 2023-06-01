@@ -157,7 +157,6 @@ export default function Home() {
               <VideoCard url={url} key={index} />
             )) : ''}
           </div>
-      </main>
     </>
   )
 }
