@@ -10,13 +10,15 @@
   },
   "dependencies": {
     "@next/font": "13.4.2",
-    "@nextui-org/react": "^1.0.0-beta.12",
+    "@nextui-org/react": "0.0.0-dev-v2-20230505232443",
+    "axios": "^1.4.0",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
     "framer-motion": "^10.12.11",
     "next": "13.4.2",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "youtubei": "^1.1.2"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",
