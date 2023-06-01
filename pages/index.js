@@ -6,6 +6,7 @@ import { ShareIcon } from './components/ShareIcon';
 import { useRouter } from 'next/router';
 import { metadata } from '@/libs/metadata';
 import VideoCard from './components/VideoCard';
+import SearchResults from './components/SearchResults';
 
 
 export default function Home() {
@@ -56,6 +57,7 @@ export default function Home() {
   const handleChange = (e) => {
     setInputValue(e.target.value);
     setURL(e.target.value);
+    searchVideos(e.target.value);
   }
 
   useEffect(() => {
@@ -124,6 +126,26 @@ export default function Home() {
     }, `/list/?list=${lists}`);
   }
 
+
+  const searchVideos = async (query) => {
+    try {
+      const response = await axios.get(
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=${process.env.NEXT_APP_YOUTUBE_API_KEY}`
+      );
+      const videos = response.data.items.map((item) => {
+        return {
+          id: item.id.videoId,
+          title: item.snippet.title,
+          description: item.snippet.description,
+        };
+      });
+      setUrlData(videos);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  
+
   return (
     <>
       <Head>
@@ -157,6 +179,7 @@ export default function Home() {
               <VideoCard url={url} key={index} />
             )) : ''}
           </div>
+          {urlData.length > 0 && <SearchResults videos={urlData} />}
       </main>
     </>
   )
