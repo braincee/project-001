@@ -1,5 +1,5 @@
 import Head from "next/head";
-import VideoCard from "../components/VideoCard";
+import VideoCard from "../../components/VideoCard";
 
 export const getServerSideProps = (context) => {
   const { list } = context.query;

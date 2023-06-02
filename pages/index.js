@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Head from 'next/head';
 import { Input, Button, Image } from '@nextui-org/react';
-import { ShareIcon } from './components/ShareIcon';
+import { ShareIcon } from '../components/ShareIcon';
 import { useRouter } from 'next/router';
 import { metadata } from '@/libs/metadata';
-import VideoCard from './components/VideoCard';
-import SearchResults from './components/SearchResults';
+import VideoCard from '../components/VideoCard';
+import SearchResults from '../components/SearchResults';
+
+const ApiKey = 'AIzaSyDVbblloaQizpzCqRfDRHm_xrJzEfokEv8';
 
 
 export default function Home() {
@@ -167,7 +169,7 @@ export default function Home() {
     if (!inputValue) return;
     try {
       const response = await axios.get(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=AIzaSyDVbblloaQizpzCqRfDRHm_xrJzEfokEv8`
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=${ApiKey}`
       );
       const videos = response.data.items.map((item) => {
         return {
