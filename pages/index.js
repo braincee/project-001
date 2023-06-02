@@ -63,6 +63,39 @@ export default function Home() {
     setShowSearchResults(false);
   }
 
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pastedUrl = e.clipboardData.getData('text');
+    setInputValue(pastedUrl);
+    addUrlToList(pastedUrl);
+  };
+
+  const addUrlToList = (url) => {
+    const videoId = extractVideoId(url);
+    if (!videoId) return;
+
+    const duplicate = urlData.some((item) => item.id === videoId);
+    if (duplicate) return;
+
+    setUrlData((prevData) => [
+      ...prevData,
+      {
+        id: videoId,
+        url: url,
+        title: '',
+        description: '',
+      },
+    ]);
+
+    setInputValue('');
+  };
+
+  const extractVideoId = (url) => {
+    const urlObj = new URL(url);
+    const videoId = urlObj.searchParams.get('v');
+    return videoId;
+  };
+
   useEffect(() => {
     if (check == true) {
       let videoId = "";
@@ -165,12 +198,13 @@ export default function Home() {
           <Input
             type="text"
             onChange={handleChange}
+            onPaste={handlePaste}
             className="w-3/5 !placeholder:text-slate-400 placeholder:text-[20px]"
             placeholder="Add YouTube Url"
             aria-labelledby="none"
             value={inputValue}
           />
-          <Button color="primary" size="xl" onPress={updateUrlIds}>Add URL</Button>
+          {/* <Button color="primary" size="xl" onPress={updateUrlIds}>Add URL</Button> */}
           <Button color="success" className=" text-dark flex justify-between" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
         </div>
         {!isvalidated ? (
