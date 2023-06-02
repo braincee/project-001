@@ -19,6 +19,8 @@ export default function Home() {
   const [duplicate, setDuplicate] = useState(false);
   const [isvalidated, setIsvalidated] = useState(true);
   const [check, setCheck] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchData, setSearchData ] = useState([]);
   const router = useRouter();
 
   const fetchData = async (myUrl) => {
@@ -58,6 +60,7 @@ export default function Home() {
     setInputValue(e.target.value);
     setURL(e.target.value);
     searchVideos(e.target.value);
+    setShowSearchResults(false);
   }
 
   useEffect(() => {
@@ -128,6 +131,7 @@ export default function Home() {
 
 
   const searchVideos = async (query) => {
+    if (!inputValue) return;
     try {
       const response = await axios.get(
         `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=AIzaSyDVbblloaQizpzCqRfDRHm_xrJzEfokEv8`
@@ -139,7 +143,8 @@ export default function Home() {
           description: item.snippet.description,
         };
       });
-      setUrlData(videos);
+      setSearchData(videos);
+      setShowSearchResults(true);
     } catch (err) {
       console.error(err);
     }
@@ -179,7 +184,7 @@ export default function Home() {
               <VideoCard url={url} key={index} />
             )) : ''}
           </div>
-          {urlData.length > 0 && <SearchResults videos={urlData} />}
+          {showSearchResults && <SearchResults videos={searchData} />}
       </main>
     </>
   )
