@@ -84,7 +84,7 @@ export default function Home() {
     }
   }, [check]);
 
-  const updateurlIds = () => {
+  const updateUrlIds = () => {
     if (isValidHttpUrl(inputValue)) {
       setIsvalidated(true);
     } else {
@@ -130,7 +130,7 @@ export default function Home() {
   const searchVideos = async (query) => {
     try {
       const response = await axios.get(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=AIzaSyANGkLxEAhttzEejU5U0aCbliZpHEFAR7k`
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=AIzaSyDVbblloaQizpzCqRfDRHm_xrJzEfokEv8`
       );
       const videos = response.data.items.map((item) => {
         return {
@@ -144,8 +144,8 @@ export default function Home() {
       console.error(err);
     }
   };
-  
 
+  
   return (
     <>
       <Head>
@@ -165,7 +165,7 @@ export default function Home() {
             aria-labelledby="none"
             value={inputValue}
           />
-          <Button color="primary" size="xl" onPress={updateurlIds}>Add URL</Button>
+          <Button color="primary" size="xl" onPress={updateUrlIds}>Add URL</Button>
           <Button color="success" className=" text-dark flex justify-between" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
         </div>
         {!isvalidated ? (
