@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Head from 'next/head';
-import { Input, Button, Image } from '@nextui-org/react';
+import { Input, Button } from '@nextui-org/react';
 import { ShareIcon } from '../components/ShareIcon';
 import { useRouter } from 'next/router';
 import { metadata } from '@/libs/metadata';
@@ -64,8 +64,6 @@ export default function Home() {
   useEffect(() => {
     if (query) {
       searchVideos();
-    } else {
-      
     }
     setQuery('');
   }, [query]);
@@ -77,8 +75,6 @@ export default function Home() {
       }, 1000);
     }
   }, [inputValue]);
-
-  console.log(showSearchResults, inputValue);
 
   const isValidHttpUrl = (string) => {
     try {
@@ -186,27 +182,25 @@ export default function Home() {
             aria-labelledby="none"
             value={inputValue}
           />
-          {/* <Button color="primary" size="xl" onPress={updateUrlIds}>Add URL</Button> */}
           <Button color="success" className=" text-dark" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
         </div>
         {!isvalidated ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
         ): ""}
         {duplicate ? (
-          <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video is already added!</span>
+          <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video has been added already!</span>
         ): ""}
-          <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-8">
-            {showSearchResults ? <SearchResults videos={searchData} />
-              :
-              <>
-              {urlData.length > 0 ? urlData.map((url, index) => (
-                <VideoCard url={url} key={index} />
-              )) : ''}
-              {isLoading && <LoadingSpinner />}
-              </>
-            }
-          
-          </div>
+        <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-8">
+          { showSearchResults ? <SearchResults videos={searchData} />
+            :
+            <>
+            {urlData.length > 0 ? urlData.map((url, index) => (
+              <VideoCard url={url} key={index} />
+            )) : ''}
+            {isLoading && <LoadingSpinner />}
+            </>
+          }       
+        </div>
       </main>
     </>
   )
