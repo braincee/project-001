@@ -7,8 +7,9 @@ import { useRouter } from 'next/router';
 import { metadata } from '@/libs/metadata';
 import VideoCard from '../components/VideoCard';
 import SearchResults from '../components/SearchResults';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
-const ApiKey = 'AIzaSyDVbblloaQizpzCqRfDRHm_xrJzEfokEv8';
+const ApiKey = 'AIzaSyAs9VKCJDL0ac9uHjK5eY6c82ySrFqYAMA';
 
 
 export default function Home() {
@@ -18,9 +19,11 @@ export default function Home() {
   const [response, setResponse] = useState();
   const [urlData, setUrlData] = useState([]);
   const [url, setURL] = useState("");
+  const [query, setQuery] = useState("");
   const [duplicate, setDuplicate] = useState(false);
   const [isvalidated, setIsvalidated] = useState(true);
   const [check, setCheck] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchData, setSearchData ] = useState([]);
   const router = useRouter();
@@ -60,43 +63,72 @@ export default function Home() {
 
   const handleChange = (e) => {
     setInputValue(e.target.value);
-    setURL(e.target.value);
-    searchVideos(e.target.value);
-    setShowSearchResults(false);
+    try {
+      new URL(e.target.value);
+      setURL(e.target.value);
+    } catch {
+      setQuery(e.target.value);
+    }
+    // searchVideos(e.target.value);
+    // setShowSearchResults(false);
   }
 
-  const handlePaste = (e) => {
-    e.preventDefault();
-    const pastedUrl = e.clipboardData.getData('text');
-    setInputValue(pastedUrl);
-    addUrlToList(pastedUrl);
-  };
+  // const handlePaste = (e) => {
+  //   e.preventDefault();
+  //   const pastedUrl = e.clipboardData.getData('text');
+  //   setInputValue(pastedUrl);
+  //   addUrlToList(pastedUrl);
+  // };
 
-  const addUrlToList = (url) => {
-    const videoId = extractVideoId(url);
-    if (!videoId) return;
+  // const addUrlToList = (url) => {
+  //   const videoId = extractVideoId(url);
+  //   if (!videoId) return;
 
-    const duplicate = urlData.some((item) => item.id === videoId);
-    if (duplicate) return;
+  //   const duplicate = urlData.some((item) => item.id === videoId);
+  //   if (duplicate) return;
 
-    setUrlData((prevData) => [
-      ...prevData,
-      {
-        id: videoId,
-        url: url,
-        title: '',
-        description: '',
-      },
-    ]);
+  //   setUrlData((prevData) => [
+  //     ...prevData,
+  //     {
+  //       id: videoId,
+  //       url: url,
+  //       title: '',
+  //       description: '',
+  //     },
+  //   ]);
 
-    setInputValue('');
-  };
+  //   setInputValue('');
+  // };
 
-  const extractVideoId = (url) => {
-    const urlObj = new URL(url);
-    const videoId = urlObj.searchParams.get('v');
-    return videoId;
-  };
+  // const extractVideoId = (url) => {
+  //   const urlObj = new URL(url);
+  //   const videoId = urlObj.searchParams.get('v');
+  //   return videoId;
+  // };
+
+  useEffect(() => {
+    if (url) {
+      setIsLoading(true);
+      updateUrlIds();
+      setTimeout(() => setIsLoading(false), 2500);
+    }
+  }, [url]);
+
+  // useEffect(() => {
+  //   if (query == '' && !inputValue) {
+  //     setShowSearchResults(false)
+  //   }
+  // }, [inputValue]);
+
+  useEffect(() => {
+    if (query) {
+      searchVideos();
+    } else {
+      setSearchData([]);
+      setShowSearchResults(false);
+    }
+    setQuery('');
+  }, [query]);
 
   useEffect(() => {
     if (check == true) {
@@ -141,8 +173,11 @@ export default function Home() {
           setCheck(!check);
         }
       }
-    }, 1000)
-    setInputValue('');
+    }, 2500)
+    setTimeout(() => {
+      setInputValue('')
+    }, 2000)
+    
   }
 
   const handleShare = () => {
@@ -165,7 +200,7 @@ export default function Home() {
   }
 
 
-  const searchVideos = async (query) => {
+  const searchVideos = async () => {
     if (!inputValue) return;
     try {
       const response = await axios.get(
@@ -200,7 +235,6 @@ export default function Home() {
           <Input
             type="text"
             onChange={handleChange}
-            onPaste={handlePaste}
             className="w-3/5 !placeholder:text-slate-400 placeholder:text-[20px]"
             placeholder="Add YouTube Url"
             aria-labelledby="none"
@@ -219,6 +253,7 @@ export default function Home() {
             {urlData.length > 0 ? urlData.map((url, index) => (
               <VideoCard url={url} key={index} />
             )) : ''}
+            {isLoading && <LoadingSpinner />}
           </div>
           {showSearchResults && <SearchResults videos={searchData} />}
       </main>
