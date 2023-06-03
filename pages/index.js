@@ -9,7 +9,7 @@ import VideoCard from '../components/VideoCard';
 import SearchResults from '../components/SearchResults';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-const ApiKey = 'AIzaSyAs9VKCJDL0ac9uHjK5eY6c82ySrFqYAMA';
+const ApiKey = 'AIzaSyBr1MKfxVVGyhrwEkCUpQa0hWZIZLGsSmg';
 
 
 export default function Home() {
@@ -22,10 +22,10 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [duplicate, setDuplicate] = useState(false);
   const [isvalidated, setIsvalidated] = useState(true);
-  const [check, setCheck] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchData, setSearchData ] = useState([]);
+
   const router = useRouter();
 
   const fetchData = async (myUrl) => {
@@ -42,7 +42,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchData(url);
+    if (url) {
+      fetchData(url);
+      setIsLoading(true);
+    }
   }, [url]);
 
   useEffect(() => {
@@ -51,6 +54,29 @@ export default function Home() {
     setDescription(metaTagsContent["description"] || metaTagsContent["og:description"])
   }, [response]);
 
+  useEffect(() => {
+    if (title && description) {
+      updateUrlIds();
+      setIsLoading(false);
+    }
+  }, [title, description]);
+
+  useEffect(() => {
+    if (query) {
+      searchVideos();
+    } else {
+      
+    }
+    setQuery('');
+  }, [query]);
+
+  useEffect(() => {
+    if (!inputValue) {      
+      setShowSearchResults(false)
+    }
+  }, [inputValue])
+
+  console.log(showSearchResults, inputValue);
 
   const isValidHttpUrl = (string) => {
     try {
@@ -69,115 +95,33 @@ export default function Home() {
     } catch {
       setQuery(e.target.value);
     }
-    // searchVideos(e.target.value);
-    // setShowSearchResults(false);
   }
 
-  // const handlePaste = (e) => {
-  //   e.preventDefault();
-  //   const pastedUrl = e.clipboardData.getData('text');
-  //   setInputValue(pastedUrl);
-  //   addUrlToList(pastedUrl);
-  // };
-
-  // const addUrlToList = (url) => {
-  //   const videoId = extractVideoId(url);
-  //   if (!videoId) return;
-
-  //   const duplicate = urlData.some((item) => item.id === videoId);
-  //   if (duplicate) return;
-
-  //   setUrlData((prevData) => [
-  //     ...prevData,
-  //     {
-  //       id: videoId,
-  //       url: url,
-  //       title: '',
-  //       description: '',
-  //     },
-  //   ]);
-
-  //   setInputValue('');
-  // };
-
-  // const extractVideoId = (url) => {
-  //   const urlObj = new URL(url);
-  //   const videoId = urlObj.searchParams.get('v');
-  //   return videoId;
-  // };
-
-  useEffect(() => {
-    if (url) {
-      setIsLoading(true);
-      updateUrlIds();
-      setTimeout(() => setIsLoading(false), 2500);
-    }
-  }, [url]);
-
-  // useEffect(() => {
-  //   if (query == '' && !inputValue) {
-  //     setShowSearchResults(false)
-  //   }
-  // }, [inputValue]);
-
-  useEffect(() => {
-    if (query) {
-      searchVideos();
-    } else {
-      setSearchData([]);
-      setShowSearchResults(false);
-    }
-    setQuery('');
-  }, [query]);
-
-  useEffect(() => {
-    if (check == true) {
-      let videoId = "";
-      if (url) {
-        videoId = url.split('v=')[1];
-      }
-
-      const newData = urlData.map((url) => {
-        if (url.id == videoId) {
-          url.title = title;
-          url.description = description;
-        }
-        return url;
-      });
-      setUrlData(newData);
-      setTitle('');
-      setDescription('');
-      setURL('');
-      setResponse('')
-      setDuplicate(false);
-      setCheck(!check);
-    }
-  }, [check]);
-
   const updateUrlIds = () => {
+    setDuplicate(false); 
     if (isValidHttpUrl(inputValue)) {
       setIsvalidated(true);
     } else {
       setIsvalidated(false);
       return;
     }
-    setTimeout(() => {
-      if (inputValue && isvalidated) {
-        let videoId = inputValue.split('v=')[1];
-        if (urlData.find((url) => url.id === videoId)) {
-          setDuplicate(true);
-        } else {
-          setUrlData([...urlData, {
-            id: videoId
-          }]);
-          setCheck(!check);
-        }
+    if (inputValue && isvalidated) {
+      let videoId = inputValue.split('v=')[1];
+      if (urlData.find((url) => url.id === videoId)) {
+        setDuplicate(true);
+      } else {
+        setUrlData([...urlData, {
+          id: videoId,
+          title,
+          description
+        }]);
       }
-    }, 2500)
-    setTimeout(() => {
-      setInputValue('')
-    }, 2000)
-    
+    }
+    setInputValue('')
+    setTitle('');
+    setDescription('');
+    setURL('');
+    setResponse('') 
   }
 
   const handleShare = () => {
@@ -201,7 +145,7 @@ export default function Home() {
 
 
   const searchVideos = async () => {
-    if (!inputValue) return;
+    if (!query) return;
     try {
       const response = await axios.get(
         `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=${ApiKey}`
@@ -230,26 +174,26 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
-        <h1 className="text-center text-[30px]">YT Playlist Creator and Sharer</h1>
-        <div className="flex justify-center items-center mt-[50px] gap-4 min-h-auto">
+        <h1 className="text-center text-3xl md:text-5xl">YT Playlist Creator and Sharer</h1>
+        <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
           <Input
             type="text"
             onChange={handleChange}
-            className="w-3/5 !placeholder:text-slate-400 placeholder:text-[20px]"
+            className="w-full md:w-3/5 text-xl placeholder-slate-400"
             placeholder="Add YouTube Url"
             aria-labelledby="none"
             value={inputValue}
           />
           {/* <Button color="primary" size="xl" onPress={updateUrlIds}>Add URL</Button> */}
-          <Button color="success" className=" text-dark flex justify-between" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
+          <Button color="success" className=" text-dark" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
         </div>
         {!isvalidated ? (
-          <span className="text-danger text-[24px] px-[120px] mt-3">Invalid URL!</span>
+          <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
         ): ""}
         {duplicate ? (
-          <span className="text-danger text-[24px] px-[120px] mt-3">Video is already added!</span>
+          <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video is already added!</span>
         ): ""}
-          <div className="mt-[20px] px-[20px] lg:px-[100px] flex flex-col gap-[20px]">
+          <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-8">
             {urlData.length > 0 ? urlData.map((url, index) => (
               <VideoCard url={url} key={index} />
             )) : ''}
