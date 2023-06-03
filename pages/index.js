@@ -21,6 +21,7 @@ export default function Home() {
   const [check, setCheck] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchData, setSearchData ] = useState([]);
+
   const router = useRouter();
 
   const fetchData = async (myUrl) => {
@@ -167,7 +168,7 @@ export default function Home() {
     if (!inputValue) return;
     try {
       const response = await axios.get(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=AIzaSyDVbblloaQizpzCqRfDRHm_xrJzEfokEv8`
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=AIzaSyCaYwX5bosC_JoxFfIZQVUVqZjG3ZRpGSU`
       );
       const videos = response.data.items.map((item) => {
         return {
@@ -193,27 +194,27 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
-        <h1 className="text-center text-[30px]">YT Playlist Creator and Sharer</h1>
-        <div className="flex justify-center items-center mt-[50px] gap-4 min-h-auto">
+        <h1 className="text-center text-3xl md:text-5xl">YT Playlist Creator and Sharer</h1>
+        <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
           <Input
             type="text"
             onChange={handleChange}
             onPaste={handlePaste}
-            className="w-3/5 !placeholder:text-slate-400 placeholder:text-[20px]"
+            className="w-full md:w-3/5 text-xl placeholder-slate-400"
             placeholder="Add YouTube Url"
             aria-labelledby="none"
             value={inputValue}
           />
           {/* <Button color="primary" size="xl" onPress={updateUrlIds}>Add URL</Button> */}
-          <Button color="success" className=" text-dark flex justify-between" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
+          <Button color="success" className=" text-dark" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
         </div>
         {!isvalidated ? (
-          <span className="text-danger text-[24px] px-[120px] mt-3">Invalid URL!</span>
+          <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
         ): ""}
         {duplicate ? (
-          <span className="text-danger text-[24px] px-[120px] mt-3">Video is already added!</span>
+          <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video is already added!</span>
         ): ""}
-          <div className="mt-[20px] px-[20px] lg:px-[100px] flex flex-col gap-[20px]">
+          <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-8">
             {urlData.length > 0 ? urlData.map((url, index) => (
               <VideoCard url={url} key={index} />
             )) : ''}
