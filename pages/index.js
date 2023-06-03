@@ -9,7 +9,7 @@ import VideoCard from '../components/VideoCard';
 import SearchResults from '../components/SearchResults';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
-const ApiKey = 'AIzaSyBr1MKfxVVGyhrwEkCUpQa0hWZIZLGsSmg';
+const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
 
 
 export default function Home() {
@@ -72,9 +72,11 @@ export default function Home() {
 
   useEffect(() => {
     if (!inputValue) {      
-      setShowSearchResults(false)
+      setTimeout(() => {
+        setShowSearchResults(false);
+      }, 1000);
     }
-  }, [inputValue])
+  }, [inputValue]);
 
   console.log(showSearchResults, inputValue);
 
@@ -194,12 +196,17 @@ export default function Home() {
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video is already added!</span>
         ): ""}
           <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-8">
-            {urlData.length > 0 ? urlData.map((url, index) => (
-              <VideoCard url={url} key={index} />
-            )) : ''}
-            {isLoading && <LoadingSpinner />}
+            {showSearchResults ? <SearchResults videos={searchData} />
+              :
+              <>
+              {urlData.length > 0 ? urlData.map((url, index) => (
+                <VideoCard url={url} key={index} />
+              )) : ''}
+              {isLoading && <LoadingSpinner />}
+              </>
+            }
+          
           </div>
-          {showSearchResults && <SearchResults videos={searchData} />}
       </main>
     </>
   )
