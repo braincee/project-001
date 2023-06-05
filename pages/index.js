@@ -200,6 +200,7 @@ export default function Home() {
             {urlData.length > 0 ? urlData.map((url, index) => (
               <VideoCard url={url} key={index} />
             )) : ''}
+
             {isLoading && <LoadingSpinner />}
             </>
           }       
