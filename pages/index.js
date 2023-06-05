@@ -195,7 +195,7 @@ export default function Home() {
         ): ""}
        
           { showSearchResults &&
-             <div className="flex flex-wrap mt-8 justify-center p-5 ">
+             <div className="flex flex-wrap mt-8 justify-center px-5 gap-4">
               { searchData.length > 0 && searchData.map((video, index) => (
                 <>
                 <SearchCard video={video} key={index} addToList={addToList} />
@@ -205,15 +205,15 @@ export default function Home() {
               }
             </div>
           }
-          <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-8">
+          <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-12">
             { urlData.length > 0 && urlData.map((url, index) => (
               <VideoCard url={url} key={index} />
             ))}
             {isLoading && <LoadingSpinner />}
           </div>
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-16">
             { urlData.length > 0 &&
-              <Button color="success" className="mt-4 text-dark" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
+              <Button color="success" className="text-dark" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
             }
           </div>
       </main>

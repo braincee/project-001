@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-.video {
+/* .video {
   position: relative;
   padding-bottom: 56.25%;
 }
@@ -21,7 +21,7 @@
 
 .card-link{
   z-index: 2;
-}
+} */
 
 @keyframes spinner {
   0% {
