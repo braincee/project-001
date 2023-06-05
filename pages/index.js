@@ -32,12 +32,12 @@ export default function Home() {
     try {
       const {
         data: { response, err },
-      } = await axios.post("/api/metadata", {
+      } = await axios.post('/api/metadata', {
         url: myUrl,
       });
       setResponse(response);
     } catch (err) {
-      return err;
+      console.error(err);
     }
   };
 
@@ -62,10 +62,13 @@ export default function Home() {
   }, [title, description]);
 
   useEffect(() => {
-    if (query) {
-      searchVideos();
-    }
-    setQuery('');
+    const timer = setTimeout(() => {
+      if (query) {
+        searchVideos();
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, [query]);
 
   useEffect(() => {
