@@ -4,7 +4,6 @@ import Head from 'next/head';
 import { Input, Button, Spacer } from '@nextui-org/react';
 import { ShareIcon } from '../components/ShareIcon';
 import { useRouter } from 'next/router';
-import { metadata } from '@/libs/metadata';
 import VideoCard from '../components/VideoCard';
 import SearchCard from '../components/SearchCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -14,11 +13,7 @@ const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [response, setResponse] = useState();
   const [urlData, setUrlData] = useState([]);
-  const [url, setURL] = useState("");
   const [query, setQuery] = useState("");
   const [duplicate, setDuplicate] = useState(false);
   const [isvalidated, setIsvalidated] = useState(true);
@@ -26,44 +21,24 @@ export default function Home() {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchData, setSearchData ] = useState([]);
   const [addStatus, setAddStatus] = useState(""); 
-  const [addDisabled, setAddDisabled] = useState(true); 
+  const [isDisabled, setIsDisabled] = useState(true); 
 
   const router = useRouter();
 
-  const fetchData = async (myUrl) => {
-    try {
-      const {
-        data: { response, err },
-      } = await axios.post('/api/metadata', {
-        url: myUrl,
-      });
-      setResponse(response);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   useEffect(() => {
-    if (url && addStatus == "pressed") {
-      fetchData(url);
+    if (addStatus == "pressed") {
       setIsLoading(true);
     }
-  }, [url, addStatus]);
+  }, [addStatus]);
 
   useEffect(() => {
-    const { metaTagsContent } = metadata(response);
-    setTitle(metaTagsContent["title"] || metaTagsContent["og:title"]);
-    setDescription(metaTagsContent["description"] || metaTagsContent["og:description"])
-  }, [response]);
-
-  useEffect(() => {
-    if (addStatus == "pressed" && (title && description)) {
+    if (addStatus == "pressed") {
       updateUrlIds();
       setIsLoading(false);
       setAddStatus("");
-      setAddDisabled(true);
+      setIsDisabled(true);
     }
-  }, [title, description, addStatus]);
+  }, [addStatus]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -96,8 +71,7 @@ export default function Home() {
     setInputValue(e.target.value);
     try {
       new URL(e.target.value);
-      setURL(e.target.value);
-      setAddDisabled(false);
+      setIsDisabled(false);
     } catch {
       setQuery(e.target.value);
     }
@@ -107,11 +81,22 @@ export default function Home() {
   }
 
   const handlePress = () => {
-    console.log("yes");
     setAddStatus("pressed");
   }
 
-  const updateUrlIds = () => {
+  const addToList = (videoId, title, description) => {
+    if (urlData.find((url) => url.id === videoId)) {
+      setDuplicate(true);
+    } else {
+      setUrlData([...urlData, {
+        id: videoId,
+        title,
+        description
+      }]);
+    }
+  }
+
+  const updateUrlIds = async () => {
     setDuplicate(false); 
     if (isValidHttpUrl(inputValue)) {
       setIsvalidated(true);
@@ -121,21 +106,17 @@ export default function Home() {
     }
     if (inputValue && isvalidated) {
       let videoId = inputValue.split('v=')[1];
-      if (urlData.find((url) => url.id === videoId)) {
-        setDuplicate(true);
-      } else {
+      const response = await axios.get(
+        `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${ApiKey}`
+      );
+      const { title, description } = response.data.items[0].snippet;
         setUrlData([...urlData, {
           id: videoId,
           title,
           description
         }]);
-      }
     }
     setInputValue('')
-    setTitle('');
-    setDescription('');
-    setURL('');
-    setResponse('') 
   }
 
   const handleShare = () => {
@@ -167,7 +148,8 @@ export default function Home() {
       const videos = response.data.items.map((item) => {
         return {
           id: item.id.videoId,
-          title: item.snippet.title
+          title: item.snippet.title,
+          description: item.snippet.description
         };
       });
       setSearchData(videos);
@@ -201,7 +183,7 @@ export default function Home() {
             className="text-white"
             size="xl"
             onPress={handlePress}
-            isDisabled={addDisabled}
+            isDisabled={isDisabled}
             >Add
           </Button>
         </div>
@@ -216,8 +198,8 @@ export default function Home() {
              <div className="flex flex-wrap mt-8 justify-center p-5 ">
               { searchData.length > 0 && searchData.map((video, index) => (
                 <>
-                <SearchCard video={video} key={index}/>
-                <Spacer x={6} y={4} />
+                <SearchCard video={video} key={index} addToList={addToList} />
+                <Spacer x={6} />
                 </>
               ))
               }
