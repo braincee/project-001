@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Head from 'next/head';
-import { Input, Button } from '@nextui-org/react';
+import { Input, Button, Spacer } from '@nextui-org/react';
 import { ShareIcon } from '../components/ShareIcon';
 import { useRouter } from 'next/router';
 import { metadata } from '@/libs/metadata';
@@ -25,6 +25,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchData, setSearchData ] = useState([]);
+  const [addStatus, setAddStatus] = useState(""); 
+  const [addDisabled, setAddDisabled] = useState(true); 
 
   const router = useRouter();
 
@@ -42,11 +44,11 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (url) {
+    if (url && addStatus == "pressed") {
       fetchData(url);
       setIsLoading(true);
     }
-  }, [url]);
+  }, [url, addStatus]);
 
   useEffect(() => {
     const { metaTagsContent } = metadata(response);
@@ -55,11 +57,13 @@ export default function Home() {
   }, [response]);
 
   useEffect(() => {
-    if (title && description) {
+    if (addStatus == "pressed" && (title && description)) {
       updateUrlIds();
       setIsLoading(false);
+      setAddStatus("");
+      setAddDisabled(true);
     }
-  }, [title, description]);
+  }, [title, description, addStatus]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -93,9 +97,18 @@ export default function Home() {
     try {
       new URL(e.target.value);
       setURL(e.target.value);
+      setAddDisabled(false);
     } catch {
       setQuery(e.target.value);
     }
+    if (duplicate) {
+      setDuplicate(false);
+    }
+  }
+
+  const handlePress = () => {
+    console.log("yes");
+    setAddStatus("pressed");
   }
 
   const updateUrlIds = () => {
@@ -154,8 +167,7 @@ export default function Home() {
       const videos = response.data.items.map((item) => {
         return {
           id: item.id.videoId,
-          title: item.snippet.title,
-          description: item.snippet.description,
+          title: item.snippet.title
         };
       });
       setSearchData(videos);
@@ -164,7 +176,6 @@ export default function Home() {
       console.error(err);
     }
   };
-
   
   return (
     <>
@@ -185,7 +196,14 @@ export default function Home() {
             aria-labelledby="none"
             value={inputValue}
           />
-          <Button color="success" className=" text-dark" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
+          <Button 
+            color="primary"
+            className="text-white"
+            size="xl"
+            onPress={handlePress}
+            isDisabled={addDisabled}
+            >Add
+          </Button>
         </div>
         {!isvalidated ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
@@ -193,23 +211,29 @@ export default function Home() {
         {duplicate ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video has been added already!</span>
         ): ""}
-        <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-8">
-          { showSearchResults ? 
-            <>
+       
+          { showSearchResults &&
+             <div className="flex flex-wrap mt-8 justify-center p-5 ">
               { searchData.length > 0 && searchData.map((video, index) => (
+                <>
                 <SearchCard video={video} key={index}/>
+                <Spacer x={6} y={4} />
+                </>
               ))
               }
-            </>
-            :
-            <>
-              { urlData.length > 0 && urlData.map((url, index) => (
-                <VideoCard url={url} key={index} />
-              ))}
-              {isLoading && <LoadingSpinner />}
-            </>
-          }       
-        </div>
+            </div>
+          }
+          <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-8">
+            { urlData.length > 0 && urlData.map((url, index) => (
+              <VideoCard url={url} key={index} />
+            ))}
+            {isLoading && <LoadingSpinner />}
+          </div>
+          <div className="flex justify-center">
+            { urlData.length > 0 &&
+              <Button color="success" className="mt-4 text-dark" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
+            }
+          </div>
       </main>
     </>
   )
