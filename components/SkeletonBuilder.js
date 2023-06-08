@@ -1,7 +1,7 @@
 import { Card, Spacer } from '@nextui-org/react';
 import React from 'react';
 
-const SkeletonCard = ({ cards }) => {
+const SkeletonBuilder = ({ cards }) => {
   return (
     <div className="flex flex-wrap mt-8 justify-center gap-4">
       { Array(cards).fill(0).map((item, i) => (
@@ -23,4 +23,4 @@ const SkeletonCard = ({ cards }) => {
   );
 };
 
-export default SkeletonCard;
+export default SkeletonBuilder;

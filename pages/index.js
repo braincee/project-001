@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Head from 'next/head';
 import { Input, Button, Spacer } from '@nextui-org/react';
+import { FaShareAlt } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import VideoCard from '@/components/VideoCard';
 import SearchCard from '@/components/SearchCard';
-import { ShareIcon } from '@/components/ShareIcon';
-import SkeletonCard from '@/components/SkeletonCard';
+import SkeletonBuilder from '@/components/SkeletonBuilder';
 
 
 const ApiKey = 'AIzaSyCTv53RpplKzuvzTH6XY7VsGGAtnYA0oY4';
@@ -72,10 +72,15 @@ export default function Home() {
     setInputValue(e.target.value);
     try {
       new URL(e.target.value);
-      setIsDisabled(false);
+      if (isValidHttpUrl(e.target.value)) {
+        setIsDisabled(false);
+      } else {
+        setIsDisabled(true);
+      }
     } catch {
       setQuery(e.target.value);
     }
+    console.log(isDisabled);
     if (duplicate) {
       setDuplicate(false);
     }
@@ -208,7 +213,7 @@ export default function Home() {
               }
             </div>
           }
-          {isLoading && <SkeletonCard cards={5}/>}
+          {isLoading && <SkeletonBuilder cards={5}/>}
           <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-12">
             {!isLoading && urlData.length > 0 && urlData.map((url, index) => (
             <VideoCard url={url} key={index} />
@@ -216,7 +221,7 @@ export default function Home() {
           </div>
           <div className="flex justify-center mt-16">
             { urlData.length > 0 &&
-              <Button color="success" className=" text-dark" size="lg" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
+              <Button color="success" className=" text-dark" size="lg" onPress={handleShare} endIcon={<FaShareAlt />} >Share</Button>
             }
           </div>
       </main>
