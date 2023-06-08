@@ -10,7 +10,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import SkeletonCard from '@/components/SkeletonCard';
 
 
-const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
+const ApiKey = 'AIzaSyCTv53RpplKzuvzTH6XY7VsGGAtnYA0oY4';
 
 
 export default function Home() {
