@@ -10,7 +10,7 @@ const SkeletonCard = ({ cards }) => {
           <Card className="hover:scale-95" disabled>
             <div className="flex flex-col gap-4 bg-black rounded-lg shadow-md">
               <div className="w-[300px] h-[220px] bg-gray-300 animate-pulse"></div>         
-              <div className="w-full px-3 py-1">
+              <div className="w-full p-3">
                 <div className="w-full h-6 bg-gray-300 animate-pulse"></div> 
               </div>
             </div>

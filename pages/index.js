@@ -198,7 +198,7 @@ export default function Home() {
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video has been added already!</span>
         ): ""}
          { !isLoading && showSearchResults &&
-             <div className="flex flex-wrap mt-8 justify-center gap-4">
+             <div className="flex flex-wrap mt-8 justify-center px-5 gap-4">
               {searchData.length > 0 && searchData.map((video, index) => (
                 <>
                <SearchCard video={video} key={index} addToList={addToList} />

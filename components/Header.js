@@ -1,16 +1,20 @@
 import React from 'react';
-import { Navbar, Link } from '@nextui-org/react';
+import { Navbar } from '@nextui-org/react';
+import Link from "next/link";
 import { useRouter } from 'next/router';
 import useDarkMode from './useDarkMode';
 
 const Header = () => {
     const router = useRouter();
     const [colorTheme, setTheme] = useDarkMode();
+    console.log(router.pathname)
 
     return (
       <Navbar active={router.pathname} brand="YT Playlist Creator & Sharer">
-        <Link href="/">Home</Link>
-        <Link href="/list">My Playlist</Link>
+        <div className="flex gap-5">
+          <Link href="/" className={`text-primary ${router.pathname == '/' && "border-b-2 pb-2 border-primary"}`}>Home</Link>
+          <Link href="/list"  className={`text-primary ${router.pathname == '/list' && "border-b-2 pb-2 border-primary"}`}>My Playlist</Link>
+        </div>
         {colorTheme === "light" ? (
         <svg
           onClick={() => setTheme("light")}
