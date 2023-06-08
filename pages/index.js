@@ -5,7 +5,10 @@ import { Input, Button, Spacer } from '@nextui-org/react';
 import { useRouter } from 'next/router';
 import VideoCard from '@/components/VideoCard';
 import SearchCard from '@/components/SearchCard';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { ShareIcon } from '@/components/ShareIcon';
+import 'react-loading-skeleton/dist/skeleton.css';
+import SkeletonCard from '@/components/SkeletonCard';
+
 
 const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
 
@@ -44,7 +47,7 @@ export default function Home() {
       if (query) {
         searchVideos();
       }
-    }, 1000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [query]);
@@ -141,6 +144,7 @@ export default function Home() {
   const searchVideos = async () => {
     if (!query) return;
     try {
+      setIsLoading(true);
       const response = await axios.get(
         `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=${ApiKey}`
       );
@@ -155,6 +159,8 @@ export default function Home() {
       setShowSearchResults(true);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -192,12 +198,11 @@ export default function Home() {
         {duplicate ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video has been added already!</span>
         ): ""}
-       
-          { showSearchResults &&
+         { !isLoading && showSearchResults &&
              <div className="flex flex-wrap mt-8 justify-center px-5 gap-4">
-              { searchData.length > 0 && searchData.map((video, index) => (
+              {searchData.length > 0 && searchData.map((video, index) => (
                 <>
-                <SearchCard video={video} key={index} addToList={addToList} />
+               <SearchCard video={video} key={index} addToList={addToList} />
                 <Spacer x={6} />
                 </>
               ))
@@ -205,16 +210,16 @@ export default function Home() {
             </div>
           }
           <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-12">
-            { urlData.length > 0 && urlData.map((url, index) => (
-              <VideoCard url={url} key={index} />
+            {!isLoading && urlData.length > 0 && urlData.map((url, index) => (
+            <VideoCard url={url} key={index} />
             ))}
-            {isLoading && <LoadingSpinner />}
           </div>
           <div className="flex justify-center mt-16">
             { urlData.length > 0 &&
-              <Button color="success" onPress={handleShare}>Share</Button>
+              <Button color="success" className=" text-dark" size="lg" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
             }
           </div>
+          {isLoading && <SkeletonCard cards={5}/>}
       </main>
     </>
   )
