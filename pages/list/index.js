@@ -1,35 +1,28 @@
 import Head from "next/head";
-import VideoCard from "../../components/VideoCard";
+import VideoCard from "@/components/VideoCard";
 
-export const getServerSideProps = (context) => {
-  const { list } = context.query;
-  const title = context.query.title ? context.query.title : '';
-  const description = context.query.description ? context.query.description : '';
-  const urlData = []; 
+export const getServerSideProps = async (context) => {
+  const { list, title, description } = context.query;
+  let urlData = [];
 
-  if (list.indexOf(",") > -1) {
-    let ids = list.split(",");
-    let titles = title && title.split(",");
-    let descriptions = description && description.split(",");
-    ids.map((id, index) => {
-      urlData.push({
-        id: ids[index],
-        title: titles && titles[index],
-        description: descriptions && descriptions[index]
-      })
-    });
-  } else {
+  if (list && typeof list === "string") {
     urlData.push({
       id: list,
-      title,
-      description
-    })
+      title: title || "",
+      description: description || "",
+    });
+  } else if (list && Array.isArray(list)) {
+    urlData = list.map((id, index) => ({
+      id,
+      title: Array.isArray(title) ? title[index] || "" : "",
+      description: Array.isArray(description) ? description[index] || "" : "",
+    }));
   }
+
   return { props: { urlData } };
-}
+};
 
 export default function List({ urlData }) {
-
   return (
     <>
       <Head>
@@ -38,10 +31,13 @@ export default function List({ urlData }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
+        <h1 className="text-center text-[30px]">My Playlist</h1>
         <div className="mt-[20px] px-[120px] flex flex-col gap-[20px]">
-          {urlData.length > 0 ? urlData.map((url, index) => (
-            <VideoCard key={index} url={url} />
-          )) : ''}
+          {urlData.length > 0 ? (
+            urlData.map((url, index) => <VideoCard key={index} url={url} />)
+          ) : (
+            <p className="text-center text-gray-500 text-lg">No available playlist</p>
+          )}
         </div>
       </main>
     </>
