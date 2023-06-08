@@ -47,7 +47,7 @@ export default function Home() {
       if (query) {
         searchVideos();
       }
-    }, 5000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [query]);
