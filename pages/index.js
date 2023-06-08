@@ -1,65 +1,45 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Head from 'next/head';
-import { Input, Button } from '@nextui-org/react';
-import { ShareIcon } from '../components/ShareIcon';
+import { Input, Button, Spacer } from '@nextui-org/react';
 import { useRouter } from 'next/router';
-import { metadata } from '@/libs/metadata';
-import VideoCard from '../components/VideoCard';
-import SearchResults from '../components/SearchResults';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import VideoCard from '@/components/VideoCard';
+import SearchCard from '@/components/SearchCard';
+import { ShareIcon } from '@/components/ShareIcon';
+import SkeletonCard from '@/components/SkeletonCard';
 
-const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
+
+const ApiKey = 'AIzaSyCTv53RpplKzuvzTH6XY7VsGGAtnYA0oY4';
 
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [response, setResponse] = useState();
   const [urlData, setUrlData] = useState([]);
-  const [url, setURL] = useState("");
   const [query, setQuery] = useState("");
   const [duplicate, setDuplicate] = useState(false);
   const [isvalidated, setIsvalidated] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchData, setSearchData ] = useState([]);
+  const [addStatus, setAddStatus] = useState(""); 
+  const [isDisabled, setIsDisabled] = useState(true); 
 
   const router = useRouter();
 
-  const fetchData = async (myUrl) => {
-    try {
-      const {
-        data: { response, err },
-      } = await axios.post('/api/metadata', {
-        url: myUrl,
-      });
-      setResponse(response);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   useEffect(() => {
-    if (url) {
-      fetchData(url);
+    if (addStatus == "pressed") {
       setIsLoading(true);
     }
-  }, [url]);
+  }, [addStatus]);
 
   useEffect(() => {
-    const { metaTagsContent } = metadata(response);
-    setTitle(metaTagsContent["title"] || metaTagsContent["og:title"]);
-    setDescription(metaTagsContent["description"] || metaTagsContent["og:description"])
-  }, [response]);
-
-  useEffect(() => {
-    if (title && description) {
+    if (addStatus == "pressed") {
       updateUrlIds();
       setIsLoading(false);
+      setAddStatus("");
+      setIsDisabled(true);
     }
-  }, [title, description]);
+  }, [addStatus]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -92,13 +72,32 @@ export default function Home() {
     setInputValue(e.target.value);
     try {
       new URL(e.target.value);
-      setURL(e.target.value);
+      setIsDisabled(false);
     } catch {
       setQuery(e.target.value);
     }
+    if (duplicate) {
+      setDuplicate(false);
+    }
   }
 
-  const updateUrlIds = () => {
+  const handlePress = () => {
+    setAddStatus("pressed");
+  }
+
+  const addToList = (videoId, title, description) => {
+    if (urlData.find((url) => url.id === videoId)) {
+      setDuplicate(true);
+    } else {
+      setUrlData([...urlData, {
+        id: videoId,
+        title,
+        description
+      }]);
+    }
+  }
+
+  const updateUrlIds = async () => {
     setDuplicate(false); 
     if (isValidHttpUrl(inputValue)) {
       setIsvalidated(true);
@@ -108,21 +107,17 @@ export default function Home() {
     }
     if (inputValue && isvalidated) {
       let videoId = inputValue.split('v=')[1];
-      if (urlData.find((url) => url.id === videoId)) {
-        setDuplicate(true);
-      } else {
+      const response = await axios.get(
+        `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${ApiKey}`
+      );
+      const { title, description } = response.data.items[0].snippet;
         setUrlData([...urlData, {
           id: videoId,
           title,
           description
         }]);
-      }
     }
     setInputValue('')
-    setTitle('');
-    setDescription('');
-    setURL('');
-    setResponse('') 
   }
 
   const handleShare = () => {
@@ -148,6 +143,7 @@ export default function Home() {
   const searchVideos = async () => {
     if (!query) return;
     try {
+      setIsLoading(true);
       const response = await axios.get(
         `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=${ApiKey}`
       );
@@ -155,16 +151,17 @@ export default function Home() {
         return {
           id: item.id.videoId,
           title: item.snippet.title,
-          description: item.snippet.description,
+          description: item.snippet.description
         };
       });
       setSearchData(videos);
       setShowSearchResults(true);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsLoading(false);
     }
   };
-
   
   return (
     <>
@@ -185,7 +182,14 @@ export default function Home() {
             aria-labelledby="none"
             value={inputValue}
           />
-          <Button color="success" className=" text-dark" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
+          <Button 
+            color="primary"
+            className="text-white"
+            size="xl"
+            onPress={handlePress}
+            isDisabled={isDisabled}
+            >Add
+          </Button>
         </div>
         {!isvalidated ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
@@ -193,18 +197,28 @@ export default function Home() {
         {duplicate ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video has been added already!</span>
         ): ""}
-        <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-8">
-          { showSearchResults ? <SearchResults videos={searchData} />
-            :
-            <>
-            {urlData.length > 0 ? urlData.map((url, index) => (
-              <VideoCard url={url} key={index} />
-            )) : ''}
-
-            {isLoading && <LoadingSpinner />}
-            </>
-          }       
-        </div>
+         { !isLoading && showSearchResults &&
+             <div className="flex flex-wrap mt-8 justify-center px-5 gap-4">
+              {searchData.length > 0 && searchData.map((video, index) => (
+                <>
+               <SearchCard video={video} key={index} addToList={addToList} />
+                <Spacer x={6} />
+                </>
+              ))
+              }
+            </div>
+          }
+          {isLoading && <SkeletonCard cards={5}/>}
+          <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-12">
+            {!isLoading && urlData.length > 0 && urlData.map((url, index) => (
+            <VideoCard url={url} key={index} />
+            ))}
+          </div>
+          <div className="flex justify-center mt-16">
+            { urlData.length > 0 &&
+              <Button color="success" className=" text-dark" size="lg" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
+            }
+          </div>
       </main>
     </>
   )
