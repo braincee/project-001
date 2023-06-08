@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Head from 'next/head';
 import { Input, Button, Spacer } from '@nextui-org/react';
-import { ShareIcon } from '../components/ShareIcon';
 import { useRouter } from 'next/router';
-import VideoCard from '../components/VideoCard';
-import SearchCard from '../components/SearchCard';
+import VideoCard from '@/components/VideoCard';
+import SearchCard from '@/components/SearchCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
@@ -213,7 +212,7 @@ export default function Home() {
           </div>
           <div className="flex justify-center mt-16">
             { urlData.length > 0 &&
-              <Button color="success" className="text-dark" size="xl" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
+              <Button color="success" onPress={handleShare}>Share</Button>
             }
           </div>
       </main>
