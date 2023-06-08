@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import VideoCard from '@/components/VideoCard';
 import SearchCard from '@/components/SearchCard';
 import { ShareIcon } from '@/components/ShareIcon';
-import 'react-loading-skeleton/dist/skeleton.css';
 import SkeletonCard from '@/components/SkeletonCard';
 
 
@@ -199,7 +198,7 @@ export default function Home() {
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video has been added already!</span>
         ): ""}
          { !isLoading && showSearchResults &&
-             <div className="flex flex-wrap mt-8 justify-center px-5 gap-4">
+             <div className="flex flex-wrap mt-8 justify-center gap-4">
               {searchData.length > 0 && searchData.map((video, index) => (
                 <>
                <SearchCard video={video} key={index} addToList={addToList} />
@@ -209,6 +208,7 @@ export default function Home() {
               }
             </div>
           }
+          {isLoading && <SkeletonCard cards={5}/>}
           <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-12">
             {!isLoading && urlData.length > 0 && urlData.map((url, index) => (
             <VideoCard url={url} key={index} />
@@ -219,7 +219,6 @@ export default function Home() {
               <Button color="success" className=" text-dark" size="lg" onPress={handleShare} endIcon={<ShareIcon />} >Share</Button>
             }
           </div>
-          {isLoading && <SkeletonCard cards={5}/>}
       </main>
     </>
   )

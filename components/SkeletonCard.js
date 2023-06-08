@@ -1,22 +1,26 @@
-import { Card } from '@nextui-org/react';
+import { Card, Spacer } from '@nextui-org/react';
 import React from 'react';
-import Skeleton from 'react-loading-skeleton';
 
 const SkeletonCard = ({ cards }) => {
   return (
-    Array(cards).fill(0).map((item, i) => 
-    <div className="search-video max-w-[300px]" key={i}>
-    <Card className="video-link hover:scale-95" disabled>
-      <div className="search-card flex flex-col gap-4 py-4 bg-black rounded-lg shadow-md">
-        <div className="w-full h-[169px] bg-gray-300 animate-pulse"></div>
-        <Skeleton />
-        <div className="w-full px-3">
-          <div className="w-full h-4 bg-gray-300 animate-pulse"></div> 
+    <div className="flex flex-wrap mt-8 justify-center gap-4">
+      { Array(cards).fill(0).map((item, i) => (
+        <>
+        <div className="max-w-[300px]" key={i}>
+          <Card className="hover:scale-95" disabled>
+            <div className="flex flex-col gap-4 bg-black rounded-lg shadow-md">
+              <div className="w-[300px] h-[220px] bg-gray-300 animate-pulse"></div>         
+              <div className="w-full px-3 py-1">
+                <div className="w-full h-6 bg-gray-300 animate-pulse"></div> 
+              </div>
+            </div>
+          </Card>
         </div>
-      </div>
-    </Card>
-  </div>
-    ));
+        <Spacer x={6} />
+        </>
+      )) };
+    </div>
+  );
 };
 
 export default SkeletonCard;
