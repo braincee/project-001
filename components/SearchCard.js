@@ -11,7 +11,7 @@ const SearchCard = ({ video, addToList }) => {
 
   return (
     <div className="max-w-[300px]">
-      <Card className="hover:scale-95" isPressable onPress={() => addToList(video.id, video.title, video.description)} >
+      <Card className="hover:scale-95" isPressable onPress={() => addToList(video.id, video.title, video.description, video.channelTitle, video.publishedAt)} >
         <div className="flex flex-col gap-4 bg-black rounded-lg shadow-md">
           <Image className="rounded-b-none bg-blue-400 w-[300px]" src={`http://img.youtube.com/vi/${video.id}/sddefault.jpg`} alt="Youtube Video"/>
           <div className="w-full p-3">

@@ -7,7 +7,6 @@ import useDarkMode from './useDarkMode';
 const Header = () => {
     const router = useRouter();
     const [colorTheme, setTheme] = useDarkMode();
-    console.log(router.pathname)
 
     return (
       <Navbar active={router.pathname} brand="YT Playlist Creator & Sharer">
