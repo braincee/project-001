@@ -4,23 +4,10 @@ import Head from 'next/head';
 import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image } from '@nextui-org/react';
 import { FaShareAlt, FaTrashAlt } from 'react-icons/fa';
 import { useRouter } from 'next/router';
-import VideoCard from '@/components/VideoCard';
 import SearchCard from '@/components/SearchCard';
 import SkeletonBuilder from '@/components/SkeletonBuilder';
 
-
 const ApiKey = 'AIzaSyCTv53RpplKzuvzTH6XY7VsGGAtnYA0oY4';
-const data = [
-  { key: 1,
-    title: "First",
-    description: "this is the first description"
-  },
-  { key: 2,
-    title: "Second",
-    description: "this is the second description"
-  }
-];
-
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
@@ -91,7 +78,6 @@ export default function Home() {
     } catch {
       setQuery(e.target.value);
     }
-    console.log(isDisabled);
     if (duplicate) {
       setDuplicate(false);
     }
