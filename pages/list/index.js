@@ -14,7 +14,7 @@ export const getServerSideProps = async (context) => {
       title: title || "",
       description: description || "",
       channelTitle: channelTitle || "",
-      publishedAt: publishedAt || "",
+      publishedAt: new Date(publishedAt).toUTCString() || "",
     });
   } else {
     list && list.split(",").map((id, index) => {
@@ -24,7 +24,7 @@ export const getServerSideProps = async (context) => {
         title: title && title.split(",")[index] || "",
         description: description && description.split(",")[index] || "",
         channelTitle: channelTitle && channelTitle.split(",")[index] || "",
-        publishedAt: publishedAt && publishedAt.split(",")[index] || "",
+        publishedAt: publishedAt && new Date(publishedAt.split(",")[index]).toUTCString() || "",
       })   
     });
   }

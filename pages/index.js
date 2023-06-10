@@ -7,7 +7,9 @@ import { useRouter } from 'next/router';
 import SearchCard from '@/components/SearchCard';
 import SkeletonBuilder from '@/components/SkeletonBuilder';
 
-const ApiKey = 'AIzaSyCTv53RpplKzuvzTH6XY7VsGGAtnYA0oY4';
+// const ApiKey = 'AIzaSyCTv53RpplKzuvzTH6XY7VsGGAtnYA0oY4';
+const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
+
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
@@ -74,6 +76,7 @@ export default function Home() {
         setIsDisabled(false);
       } else {
         setIsDisabled(true);
+        setQuery(e.target.value);
       }
     } catch {
       setQuery(e.target.value);
@@ -151,7 +154,7 @@ export default function Home() {
     const stringTitle = urlData.map((url) => `${url.title}`).join(',');
     const stringDescription = urlData.map((url) => `${url.description}`).join(',');
     const stringChannelTitle = urlData.map((url) => `${url.channelTitle}`).join(',');
-    const stringPublishedAt = urlData.map((url) => `${url.publishedAt}`).join(',');
+    const stringPublishedAt = urlData.map((url) => `${new Date(url.publishedAt).toDateString()}`).join(',');
 
     router.push({
       pathname: "/list",
@@ -164,8 +167,6 @@ export default function Home() {
       }
     }, `/list/?list=${lists}`);
   }
-
-
   const searchVideos = async () => {
     if (!query) return;
     try {
@@ -243,11 +244,6 @@ export default function Home() {
             </div>
           }
           {isLoading && <SkeletonBuilder cards={5}/>}
-          {/* <div className="mt-8 px-6 md:px-12 lg:px-20 xl:px-32 2xl:px-40 flex flex-col gap-12">
-            {!isLoading && urlData.length > 0 && urlData.map((url, index) => (
-            <VideoCard url={url} key={index} />
-            ))}
-          </div> */}
           {!isLoading && urlData.length > 0 &&
           <Table
               aria-label="Example table with dynamic content"
