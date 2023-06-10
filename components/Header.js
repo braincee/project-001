@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar } from '@nextui-org/react';
+import { Navbar, NavbarContent, NavbarItem } from '@nextui-org/react';
 import Link from "next/link";
 import { useRouter } from 'next/router';
 import useDarkMode from './useDarkMode';
@@ -10,10 +10,15 @@ const Header = () => {
 
     return (
       <Navbar active={router.pathname} brand="YT Playlist Creator & Sharer">
-        <div className="flex gap-5">
-          <Link href="/" className={`text-primary ${router.pathname == '/' && "border-b-2 pb-2 border-primary"}`}>Home</Link>
-          <Link href="/list"  className={`text-primary ${router.pathname == '/list' && "border-b-2 pb-2 border-primary"}`}>My Playlist</Link>
-        </div>
+          <NavbarContent variant="highlight">
+            <NavbarItem className="h-full" isActive={router.pathname == '/' && true}>
+              <Link href="/" className={`h-full flex items-center text-primary ${router.pathname == '/' && "border-b-3 border-primary"}`}>Home</Link>
+            </NavbarItem>
+            <NavbarItem className="h-full" isActive={router.pathname == '/list' && true} href="/list">
+              <Link href="/list"  className={`h-full flex items-center text-primary ${router.pathname == '/list' && "border-b-3 border-primary"}`}>My Playlist</Link>
+            </NavbarItem>
+          </NavbarContent>
+        
         {colorTheme === "light" ? (
         <svg
           onClick={() => setTheme("light")}

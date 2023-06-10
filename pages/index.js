@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Head from 'next/head';
-import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image } from '@nextui-org/react';
-import { FaShareAlt, FaTrashAlt, FaRegCircle } from 'react-icons/fa';
+import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image, CircularProgress } from '@nextui-org/react';
+import { FaShareAlt, FaTrashAlt } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import SearchCard from '@/components/SearchCard';
 import SkeletonBuilder from '@/components/SkeletonBuilder';
@@ -218,7 +218,7 @@ export default function Home() {
             value={inputValue}
             endContent={
               isLoading &&
-              <FaRegCircle className="animate-spin text-2xl" />
+              <CircularProgress aria-label="Loading..." />
             }
           />
           <Button 
