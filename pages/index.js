@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Head from 'next/head';
 import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image } from '@nextui-org/react';
-import { FaShareAlt, FaTrashAlt } from 'react-icons/fa';
+import { FaShareAlt, FaTrashAlt, FaRegCircle } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import SearchCard from '@/components/SearchCard';
 import SkeletonBuilder from '@/components/SkeletonBuilder';
@@ -212,10 +212,14 @@ export default function Home() {
           <Input
             type="text"
             onChange={handleChange}
-            className="w-full md:w-3/5 text-xl placeholder-slate-400"
+            className="w-full md:w-3/5 text-2xl placeholder-slate-400"
             placeholder="Add YouTube Url"
             aria-labelledby="none"
             value={inputValue}
+            endContent={
+              isLoading &&
+              <FaRegCircle className="animate-spin text-2xl" />
+            }
           />
           <Button 
             color="primary"
