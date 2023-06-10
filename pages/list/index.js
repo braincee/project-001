@@ -44,7 +44,6 @@ export default function List({ urlData }) {
 
   const deleteFromList = (videoId) => {
     setVideoData((items) =>  items.filter((item) => item.id !== videoId));
-    
   }
 
   return (

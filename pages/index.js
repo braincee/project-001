@@ -108,6 +108,10 @@ export default function Home() {
     setNumber(number - 1);
   }
 
+  const truncate = (string, length) => {
+    return string.length > length ? `${string.substr(0, length)}...` : string;
+  }
+
   const updateUrlIds = async () => {
     setDuplicate(false); 
     if (isValidHttpUrl(inputValue)) {
@@ -228,10 +232,10 @@ export default function Home() {
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video has been added already!</span>
         ): ""}
          { !isLoading && showSearchResults &&
-             <div className="flex flex-wrap mt-8 justify-center px-5 gap-4">
+             <div className="flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4">
               {searchData.length > 0 && searchData.map((video, index) => (
                 <>
-                <SearchCard video={video} key={index} addToList={addToList} />
+                <SearchCard video={video} key={index} addToList={addToList} truncate={truncate} />
                 <Spacer x={6} />
                 </>
               ))
