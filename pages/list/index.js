@@ -1,28 +1,51 @@
+import { Button, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image } from '@nextui-org/react';
 import Head from "next/head";
-import VideoCard from "@/components/VideoCard";
+import { useState } from 'react';
+import { FaTrashAlt } from 'react-icons/fa';
 
 export const getServerSideProps = async (context) => {
-  const { list, title, description } = context.query;
+  const { list, title, description, channelTitle, publishedAt } = context.query;
   let urlData = [];
 
-  if (list && typeof list === "string") {
+  if (list && list.indexOf(",") == -1) {
     urlData.push({
+      number: 1,
       id: list,
       title: title || "",
       description: description || "",
+      channelTitle: channelTitle || "",
+      publishedAt: new Date(publishedAt).toUTCString() || "",
     });
-  } else if (list && Array.isArray(list)) {
-    urlData = list.map((id, index) => ({
-      id,
-      title: Array.isArray(title) ? title[index] || "" : "",
-      description: Array.isArray(description) ? description[index] || "" : "",
-    }));
+  } else {
+    list && list.split(",").map((id, index) => {
+      urlData.push({
+        number: index + 1,
+        id,
+        title: title && title.split(",")[index] || "",
+        description: description && description.split(",")[index] || "",
+        channelTitle: channelTitle && channelTitle.split(",")[index] || "",
+        publishedAt: publishedAt && new Date(publishedAt.split(",")[index]).toUTCString() || "",
+      })   
+    });
   }
 
   return { props: { urlData } };
 };
 
 export default function List({ urlData }) {
+  const [videoData, setVideoData] = useState(urlData);
+  const decodeHTML = (code) => {
+    if (typeof window !== "undefined") {
+      let text = document.createElement("textarea");
+      text.innerHTML = code;
+      return text.value
+    }
+  }
+
+  const deleteFromList = (videoId) => {
+    setVideoData((items) =>  items.filter((item) => item.id !== videoId));
+  }
+
   return (
     <>
       <Head>
@@ -32,13 +55,39 @@ export default function List({ urlData }) {
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
         <h1 className="text-center text-[30px]">My Playlist</h1>
-        <div className="mt-[20px] px-[120px] flex flex-col gap-[20px]">
-          {urlData.length > 0 ? (
-            urlData.map((url, index) => <VideoCard key={index} url={url} />)
-          ) : (
-            <p className="text-center text-gray-500 text-lg">No available playlist</p>
-          )}
-        </div>
+        {urlData.length > 0 ? (
+        <Table
+              aria-label="Example table with dynamic content"
+              className="md:p-6 p-2 mx-3 md:mx-8 my-8 w-100"
+          >
+            <TableHeader>
+              <TableColumn>No.</TableColumn>
+              <TableColumn>Video</TableColumn>
+              <TableColumn>Title</TableColumn>
+              <TableColumn>Uploaded By</TableColumn>
+              <TableColumn>Date Uploaded</TableColumn>
+              <TableColumn>Action</TableColumn>
+            </TableHeader>
+            <TableBody items={videoData}>
+              { (item) => (
+                <TableRow key={item.id}>
+                  <TableCell>{item.number}</TableCell>
+                  <TableCell><Image width={300} radius="full" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
+                  <TableCell>{decodeHTML(item.title)}</TableCell>
+                  <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
+                  <TableCell>{item.publishedAt}</TableCell>
+                  <TableCell>
+                    <Button onPress={() => deleteFromList(item.id)} isIconOnly color="danger" aria-label="Remove">
+                      <FaTrashAlt />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        ) : 
+        (<p className="text-center text-gray-500 text-lg">No available playlist</p>)
+        }
       </main>
     </>
   );
