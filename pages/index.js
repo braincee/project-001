@@ -7,9 +7,6 @@ import { useRouter } from 'next/router';
 import SearchCard from '@/components/SearchCard';
 import SkeletonBuilder from '@/components/SkeletonBuilder';
 
-// const ApiKey = 'AIzaSyCTv53RpplKzuvzTH6XY7VsGGAtnYA0oY4';
-const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
-
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
@@ -125,10 +122,11 @@ export default function Home() {
     }
     if (inputValue && isvalidated) {
       let videoId = inputValue.split('v=')[1];
-      const response = await axios.get(
-        `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${ApiKey}`
+      const { data: { response } } = await axios.post('/api/video', {
+        videoId
+      }
       );
-      const { title, description, channelTitle, publishedAt } = response.data.items[0].snippet;
+      const { title, description, channelTitle, publishedAt } = response.items[0].snippet;
         setUrlData([...urlData, {
           id: videoId,
           title,
@@ -171,10 +169,10 @@ export default function Home() {
     if (!query) return;
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=${ApiKey}`
-      );
-      const videos = response.data.items.map((item) => {
+      const { data: { response } } = await axios.post('/api/search', {
+        query
+      })
+      const videos = response.items.map((item) => {
         return {
           id: item.id.videoId,
           title: item.snippet.title,
