@@ -32,7 +32,7 @@ export default function Home() {
 
   useEffect(() => {
     if (addStatus == "pressed") {
-      updateUrlIds();
+      addToListFromInput();
       setIsLoading(false);
       setAddStatus("");
       setIsDisabled(true);
@@ -85,7 +85,7 @@ export default function Home() {
     setAddStatus("pressed");
   }
 
-  const addToList = (videoId, title, description, channelTitle, publishedAt) => {
+  const addToListFromSearch = (videoId, title, description, channelTitle, publishedAt) => {
     setUrlData((prevUrlData) => {
       const newItem = {
         number: prevUrlData.length + 1,
@@ -117,7 +117,7 @@ export default function Home() {
     return string.length > length ? `${string.substr(0, length)}...` : string;
   }
 
-  const updateUrlIds = async () => {
+  const addToListFromInput = async () => {
     if (isValidHttpUrl(inputValue)) {
       setIsvalidated(true);
     } else {
@@ -234,7 +234,7 @@ export default function Home() {
              <div className="flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4">
               {searchData.length > 0 && searchData.map((video, index) => (
                 <>
-                <SearchCard video={video} key={index} addToList={addToList} truncate={truncate} />
+                <SearchCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
                 <Spacer x={6} />
                 </>
               ))
