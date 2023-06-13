@@ -88,20 +88,20 @@ export default function Home() {
   }
 
   const addToList = (videoId, title, description, channelTitle, publishedAt) => {
-    if (urlData.find((url) => url.id === videoId)) {
-      setDuplicate(true);
-    } else {
-      setUrlData([...urlData, {
-        number: urlData.length + 1,
+    setUrlData((prevUrlData) => {
+      const newItem = {
+        number: prevUrlData.length + 1,
         id: videoId,
         title,
         description,
         channelTitle,
         publishedAt,
-      }]);
-      setNumber(number + 1);
-    }
-  }
+      };
+      return [...prevUrlData, newItem];
+    });
+    setNumber((prevNumber) => prevNumber + 1);
+  };
+  
 
   const deleteFromList = (videoId) => {
     setUrlData((items) =>  items.filter((item) => item.id !== videoId));
