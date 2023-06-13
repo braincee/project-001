@@ -203,12 +203,12 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
-        <h1 className="text-center text-3xl md:text-5xl">YT Playlist Creator and Sharer</h1>
+        <h1 className="text-center text-xl md:text-2xl">YT Playlist Creator and Sharer</h1>
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
           <Input
             type="text"
             onChange={handleChange}
-            className="w-full md:w-3/5 text-2xl placeholder-slate-400"
+            className="w-80 md:w-3/5 text-2xl placeholder-slate-400"
             placeholder="Add YouTube Url"
             aria-labelledby="none"
             value={inputValue}
