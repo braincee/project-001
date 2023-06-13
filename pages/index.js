@@ -13,7 +13,7 @@ export default function Home() {
   const [inputValue, setInputValue] = useState("");
   const [urlData, setUrlData] = useState([]);
   const [query, setQuery] = useState("");
-  const [isvalidated, setIsvalidated] = useState(true);
+  const [isvalid, setIsvalid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchData, setSearchData ] = useState([]);
@@ -87,7 +87,7 @@ export default function Home() {
   const addToListFromSearch = (videoId, title, description, channelTitle, publishedAt) => {
     setUrlData((prevUrlData) => {
       const newItem = {
-        number: prevUrlData.length + 1,
+        number: number + 1,
         id: videoId,
         title,
         description,
@@ -109,7 +109,17 @@ export default function Home() {
       }
       return items;
     });
-    setNumber((prevNumber) => prevNumber - 1);
+    setUrlData((items) => {
+      const newItems = items.map((item, index) => {
+        return {
+          ...item,
+          number: index + 1
+        }
+      });
+      return newItems;
+    })
+    console.log(urlData);
+    setNumber(urlData.length);
   };
   
   const truncate = (string, length) => {
@@ -118,16 +128,17 @@ export default function Home() {
 
   const addToListFromInput = async () => {
     if (isValidHttpUrl(inputValue)) {
-      setIsvalidated(true);
+      setIsvalid(true);
     } else {
-      setIsvalidated(false);
+      setIsvalid(false);
       return;
     }
-    if (inputValue && isvalidated) {
+    if (inputValue && isvalid) {
       let videoId = inputValue.split('v=')[1];
       const { data: { response } } = await getVideo(videoId);
       const { title, description, channelTitle, publishedAt } = response.items[0].snippet;
         setUrlData([...urlData, {
+          number: number + 1,
           id: videoId,
           title,
           description,
@@ -203,12 +214,12 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
-        <h1 className="text-center text-3xl md:text-5xl">YT Playlist Creator and Sharer</h1>
+        <h1 className="text-center px-3 md:px-0 text-3xl md:text-5xl">YT Playlist Creator and Sharer</h1>
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
           <Input
             type="text"
             onChange={handleChange}
-            className="w-full md:w-3/5 text-2xl placeholder-slate-400"
+            className="w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400"
             placeholder="Add YouTube Url"
             aria-labelledby="none"
             value={inputValue}
@@ -226,7 +237,7 @@ export default function Home() {
             >Add
           </Button>
         </div>
-        {!isvalidated ? (
+        {!isvalid ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
         ): ""}
          { !isLoading && showSearchResults &&
@@ -256,9 +267,9 @@ export default function Home() {
             </TableHeader>
             <TableBody items={urlData}>
               { (item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{number}</TableCell>
-                  <TableCell><Avatar className="w-40 h-40" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
+                <TableRow key={item.number}>
+                  <TableCell>{item.number}</TableCell>
+                  <TableCell><Avatar className="md:w-40 md:h-40 w-20 h-20" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
                   <TableCell>{decodeHTML(item.title)}</TableCell>
                   <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
                   <TableCell>{item.publishedAt}</TableCell>

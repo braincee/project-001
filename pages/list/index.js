@@ -80,7 +80,7 @@ export default function List({ urlData }) {
               { (item) => (
                <TableRow key={item.id}>
                   <TableCell>{item.number}</TableCell>
-                  <TableCell><Avatar className="w-40 h-40" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
+                  <TableCell><Avatar className="md:w-40 md:h-40 w-20 h-20" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
                   <TableCell>{decodeHTML(item.title)}</TableCell>
                   <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
                   <TableCell>{item.publishedAt}</TableCell>
