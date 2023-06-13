@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Head from 'next/head';
-import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image, CircularProgress } from '@nextui-org/react';
+import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image, CircularProgress, Avatar } from '@nextui-org/react';
 import { FaShareAlt, FaTrashAlt } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import SearchCard from '@/components/SearchCard';
@@ -263,7 +263,7 @@ export default function Home() {
               { (item) => (
                 <TableRow key={item.id}>
                   <TableCell>{number}</TableCell>
-                  <TableCell><Image width={300} radius="full" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
+                  <TableCell><Avatar className="w-40 h-40" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
                   <TableCell>{decodeHTML(item.title)}</TableCell>
                   <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
                   <TableCell>{item.publishedAt}</TableCell>
