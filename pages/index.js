@@ -20,7 +20,6 @@ export default function Home() {
   const [addStatus, setAddStatus] = useState(""); 
   const [isDisabled, setIsDisabled] = useState(true);
   const [number, setNumber] = useState(0);
-  const [numbers, setNumbers] = useState([1, 2, 3, 4, 5]);
 
   const router = useRouter();
 

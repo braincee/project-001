@@ -1,4 +1,4 @@
-import { Button, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image } from '@nextui-org/react';
+import { Button, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Avatar, Image } from '@nextui-org/react';
 import Head from "next/head";
 import { useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
@@ -43,8 +43,16 @@ export default function List({ urlData }) {
   }
 
   const deleteFromList = (videoId) => {
-    setVideoData((items) =>  items.filter((item) => item.id !== videoId));
-  }
+    setVideoData((items) => {
+      const index = items.findIndex((item) => item.id === videoId);
+      if (index !== -1) {
+        const updatedItems = [...items];
+        updatedItems.splice(index, 1);
+        return updatedItems;
+      }
+      return items;
+    });
+  }; 
 
   return (
     <>
@@ -70,9 +78,9 @@ export default function List({ urlData }) {
             </TableHeader>
             <TableBody items={videoData}>
               { (item) => (
-                <TableRow key={item.id}>
+               <TableRow key={item.id}>
                   <TableCell>{item.number}</TableCell>
-                  <TableCell><Image width={300} radius="full" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
+                  <TableCell><Avatar className="w-40 h-40" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
                   <TableCell>{decodeHTML(item.title)}</TableCell>
                   <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
                   <TableCell>{item.publishedAt}</TableCell>
