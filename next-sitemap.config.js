@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-    siteUrl: 'https://example.com',
+    siteUrl: 'http://localhost:3000/',
     generateRobotsTxt: true, // (optional)
     // ...other options
   }
