@@ -99,15 +99,11 @@ export default function Home() {
     setNumber((prevNumber) => prevNumber + 1);
   };
 
-  const deleteFromList = (videoId) => {
+  const deleteFromList = (index) => {
     setUrlData((items) => {
-      const index = items.findIndex((item) => item.id === videoId);
-      if (index !== -1) {
-        const updatedItems = [...items];
-        updatedItems.splice(index, 1);
-        return updatedItems;
-      }
-      return items;
+     const newItems = items.filter((item) => item.number != index);
+     setNumber(newItems.length);
+     return newItems;
     });
     setUrlData((items) => {
       const newItems = items.map((item, index) => {
@@ -117,9 +113,7 @@ export default function Home() {
         }
       });
       return newItems;
-    })
-    console.log(urlData);
-    setNumber(urlData.length);
+    });
   };
   
   const truncate = (string, length) => {
@@ -274,7 +268,7 @@ export default function Home() {
                   <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
                   <TableCell>{item.publishedAt}</TableCell>
                   <TableCell>
-                    <Button onPress={() => deleteFromList(item.id)} isIconOnly color="danger" aria-label="Remove">
+                    <Button onPress={() => deleteFromList(item.number)} isIconOnly color="danger" aria-label="Remove">
                       <FaTrashAlt />
                     </Button>
                   </TableCell>

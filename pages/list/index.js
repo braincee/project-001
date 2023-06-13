@@ -32,8 +32,10 @@ export const getServerSideProps = async (context) => {
   return { props: { urlData } };
 };
 
+
 export default function List({ urlData }) {
   const [videoData, setVideoData] = useState(urlData);
+  
   const decodeHTML = (code) => {
     if (typeof window !== "undefined") {
       let text = document.createElement("textarea");
@@ -42,16 +44,21 @@ export default function List({ urlData }) {
     }
   }
 
-  const deleteFromList = (videoId) => {
+  const deleteFromList = (index) => {
     setVideoData((items) => {
-      const index = items.findIndex((item) => item.id === videoId);
-      if (index !== -1) {
-        const updatedItems = [...items];
-        updatedItems.splice(index, 1);
-        return updatedItems;
-      }
-      return items;
-    });
+      const newItems = items.filter((item) => item.number != index);
+      // setNumber(newItems.length);
+      return newItems;
+     });
+     setVideoData((items) => {
+       const newItems = items.map((item, index) => {
+         return {
+           ...item,
+           number: index + 1
+         }
+       });
+       return newItems;
+     });
   }; 
 
   return (
@@ -63,7 +70,7 @@ export default function List({ urlData }) {
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
         <h1 className="text-center text-[30px]">My Playlist</h1>
-        {urlData.length > 0 ? (
+        {videoData.length > 0 ? (
         <Table
               aria-label="Example table with dynamic content"
               className="md:p-6 p-2 mx-3 md:mx-8 my-8 w-100"
@@ -78,14 +85,14 @@ export default function List({ urlData }) {
             </TableHeader>
             <TableBody items={videoData}>
               { (item) => (
-               <TableRow key={item.id}>
+               <TableRow key={item.number}>
                   <TableCell>{item.number}</TableCell>
                   <TableCell><Avatar className="md:w-40 md:h-40 w-20 h-20" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
                   <TableCell>{decodeHTML(item.title)}</TableCell>
                   <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
                   <TableCell>{item.publishedAt}</TableCell>
                   <TableCell>
-                    <Button onPress={() => deleteFromList(item.id)} isIconOnly color="danger" aria-label="Remove">
+                    <Button onPress={() => deleteFromList(item.number)} isIconOnly color="danger" aria-label="Remove">
                       <FaTrashAlt />
                     </Button>
                   </TableCell>
