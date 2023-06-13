@@ -20,6 +20,7 @@ export default function Home() {
   const [addStatus, setAddStatus] = useState(""); 
   const [isDisabled, setIsDisabled] = useState(true);
   const [number, setNumber] = useState(0);
+  const [numbers, setNumbers] = useState([1, 2, 3, 4, 5]);
 
   const router = useRouter();
 
@@ -103,11 +104,24 @@ export default function Home() {
   };
   
 
-  const deleteFromList = (videoId) => {
-    setUrlData((items) =>  items.filter((item) => item.id !== videoId));
-    setNumber(number - 1);
-  }
+  // const deleteFromList = (videoId) => {
+  //   setUrlData((items) =>  items.filter((item) => item.id !== videoId));
+  //   setNumber(number - 1);
+  // }
 
+  const deleteFromList = (videoId) => {
+    setUrlData((items) => {
+      const index = items.findIndex((item) => item.id === videoId);
+      if (index !== -1) {
+        const updatedItems = [...items];
+        updatedItems.splice(index, 1);
+        return updatedItems;
+      }
+      return items;
+    });
+    setNumber((prevNumber) => prevNumber - 1);
+  };
+  
   const truncate = (string, length) => {
     return string.length > length ? `${string.substr(0, length)}...` : string;
   }
