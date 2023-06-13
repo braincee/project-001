@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios';
 import Head from 'next/head';
 import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image, CircularProgress, Avatar } from '@nextui-org/react';
 import { FaShareAlt, FaTrashAlt } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import SearchCard from '@/components/SearchCard';
 import SkeletonBuilder from '@/components/SkeletonBuilder';
+import getSearchVideos from '@/libs/search';
+import getVideo from '@/libs/video';
 
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
   const [urlData, setUrlData] = useState([]);
   const [query, setQuery] = useState("");
-  const [duplicate, setDuplicate] = useState(false);
   const [isvalidated, setIsvalidated] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
@@ -79,9 +79,6 @@ export default function Home() {
     } catch {
       setQuery(e.target.value);
     }
-    if (duplicate) {
-      setDuplicate(false);
-    }
   }
 
   const handlePress = () => {
@@ -102,12 +99,6 @@ export default function Home() {
     });
     setNumber((prevNumber) => prevNumber + 1);
   };
-  
-
-  // const deleteFromList = (videoId) => {
-  //   setUrlData((items) =>  items.filter((item) => item.id !== videoId));
-  //   setNumber(number - 1);
-  // }
 
   const deleteFromList = (videoId) => {
     setUrlData((items) => {
@@ -127,7 +118,6 @@ export default function Home() {
   }
 
   const updateUrlIds = async () => {
-    setDuplicate(false); 
     if (isValidHttpUrl(inputValue)) {
       setIsvalidated(true);
     } else {
@@ -136,10 +126,7 @@ export default function Home() {
     }
     if (inputValue && isvalidated) {
       let videoId = inputValue.split('v=')[1];
-      const { data: { response } } = await axios.post('/api/video', {
-        videoId
-      }
-      );
+      const { data: { response } } = await getVideo(videoId);
       const { title, description, channelTitle, publishedAt } = response.items[0].snippet;
         setUrlData([...urlData, {
           id: videoId,
@@ -183,9 +170,7 @@ export default function Home() {
     if (!query) return;
     try {
       setIsLoading(true);
-      const { data: { response } } = await axios.post('/api/search', {
-        query
-      })
+      const { data: { response } } = await getSearchVideos(query);
       const videos = response.items.map((item) => {
         return {
           id: item.id.videoId,
@@ -244,9 +229,6 @@ export default function Home() {
         </div>
         {!isvalidated ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
-        ): ""}
-        {duplicate ? (
-          <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video has been added already!</span>
         ): ""}
          { !isLoading && showSearchResults &&
              <div className="flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4">
