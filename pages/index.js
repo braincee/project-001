@@ -208,7 +208,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
-        <h1 className="text-center px-3 md:px-0 text-3xl md:text-5xl">YT Playlist Creator and Sharer</h1>
+        <h1 className="text-center px-3 md:px-0 text-3xl">YT Playlist Creator and Sharer</h1>
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
           <Input
             type="text"

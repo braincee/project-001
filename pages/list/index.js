@@ -69,7 +69,7 @@ export default function List({ urlData }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
-        <h1 className="text-center text-[30px]">My Playlist</h1>
+        <h1 className="text-center px-3 md:px-0 text-3xl">My Playlist</h1>
         {videoData.length > 0 ? (
         <Table
               aria-label="Example table with dynamic content"
