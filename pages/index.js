@@ -8,6 +8,7 @@ import SkeletonBuilder from '../components/SkeletonBuilder';
 import getSearchVideos from '@/libs/search';
 import getVideo from '@/libs/video';
 import VideoCard from '@/components/VideoCard';
+import TableBuilder from '@/components/TableBuilder';
 
 
 export default function Home() {
@@ -249,35 +250,7 @@ export default function Home() {
           {isLoading && <SkeletonBuilder cards={5}/>}
           {!isLoading && urlData.length > 0 &&
           <>
-          <Table
-              aria-label="Example table with dynamic content"
-              className="p-6 mx-8 my-8 w-100 hidden md:flex"
-          >
-            <TableHeader>
-              <TableColumn>No.</TableColumn>
-              <TableColumn>Video</TableColumn>
-              <TableColumn>Title</TableColumn>
-              <TableColumn>Uploaded By</TableColumn>
-              <TableColumn>Date Uploaded</TableColumn>
-              <TableColumn>Action</TableColumn>
-            </TableHeader>
-            <TableBody items={urlData}>
-              { (item) => (
-                <TableRow key={item.number}>
-                  <TableCell>{item.number}</TableCell>
-                  <TableCell><Avatar src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
-                  <TableCell>{decodeHTML(item.title)}</TableCell>
-                  <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
-                  <TableCell>{item.publishedAt}</TableCell>
-                  <TableCell>
-                    <Button onPress={() => deleteFromList(item.number)} isIconOnly color="danger" aria-label="Remove">
-                      <FaTrashAlt />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+            <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
           <div className="flex flex-col gap-3 p-2 my-8 md:hidden">
             { urlData.map((item) => (
               <VideoCard key={item.number} item={item} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />

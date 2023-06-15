@@ -1,4 +1,3 @@
-import React from "react";
 import { Avatar, Button, Card } from "@nextui-org/react";
 import { FaTrashAlt } from "react-icons/fa";
 
