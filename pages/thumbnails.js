@@ -4,7 +4,7 @@ import { Button, Input } from '@nextui-org/react';
 import Head from 'next/head';
 import { FaUpload } from 'react-icons/fa';
 
-const views = Math.floor(Math.random() * 1000000);
+const views = Math.floor(Math.random() * 10);
 
 export default function ThumbnailsPage() {
   const [inputValue, setInputValue] = useState('');
