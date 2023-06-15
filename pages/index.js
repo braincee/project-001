@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head';
-import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image, CircularProgress, Avatar } from '@nextui-org/react';
+import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, CircularProgress, Avatar } from '@nextui-org/react';
 import { FaShareAlt, FaTrashAlt } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import SearchCard from '../components/SearchCard';
 import SkeletonBuilder from '../components/SkeletonBuilder';
 import getSearchVideos from '@/libs/search';
 import getVideo from '@/libs/video';
+import VideoCard from '@/components/VideoCard';
 
 
 export default function Home() {
@@ -247,9 +248,10 @@ export default function Home() {
           }
           {isLoading && <SkeletonBuilder cards={5}/>}
           {!isLoading && urlData.length > 0 &&
+          <>
           <Table
               aria-label="Example table with dynamic content"
-              className="md:p-6 p-2 mx-3 md:mx-8 my-8 w-100"
+              className="p-6 mx-8 my-8 w-100 hidden md:flex"
           >
             <TableHeader>
               <TableColumn>No.</TableColumn>
@@ -276,6 +278,12 @@ export default function Home() {
               )}
             </TableBody>
           </Table>
+          <div className="flex flex-col gap-3 p-2 my-8 md:hidden">
+            { urlData.map((item) => (
+              <VideoCard key={item.number} item={item} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
+            ))}
+          </div>
+          </>
           }
           <div className="flex justify-center mt-16">
             { urlData.length > 0 &&
