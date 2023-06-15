@@ -1,14 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import ThumbnailsCard from '../components/ThumbnailsCard';
-import { Button, Input } from '@nextui-org/react';
+import { Input } from '@nextui-org/react';
 import Head from 'next/head';
 import { FaUpload } from 'react-icons/fa';
 
-const views = Math.floor(Math.random() * 10);
-
 export default function ThumbnailsPage() {
   const [inputValue, setInputValue] = useState('');
-  const [title, setTitle] = useState('');
   const [fileList, setFileList] = useState([]);
   const [isDisabled, setIsDisabled] = useState(true);
   const fileRef = useRef();
@@ -64,13 +61,6 @@ export default function ThumbnailsPage() {
     }
   }, [fileList])
 
-  const handleAddTitle = () => {
-    if (inputValue.trim() !== '') {
-      setTitle(inputValue);
-      setInputValue('');
-    }
-  };
-
   return (
     <>
       <Head>
@@ -91,15 +81,6 @@ export default function ThumbnailsPage() {
               aria-labelledby="none"
               value={inputValue}
             />
-            <Button
-              color="primary"
-              className="text-white"
-              size="xl"
-              onPress={handleAddTitle}
-              isDisabled={isDisabled}
-            >
-              Add
-            </Button>
           </div>
         </section>
         <section className="mt-8 px-8">
@@ -125,8 +106,7 @@ export default function ThumbnailsPage() {
               {fileList.length > 0 && fileList.map((file, index) => (
                 <ThumbnailsCard
                   key={index}
-                  title={title}
-                  views={views}
+                  title={inputValue}
                   thumbnailSrc={URL.createObjectURL(file)}
                 />
               ))}

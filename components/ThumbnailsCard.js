@@ -3,6 +3,7 @@ import { Card, Image } from '@nextui-org/react';
 
 export default function ThumbnailsCard({ title, thumbnailSrc }) {
   const [imageSrc, setImageSrc] = useState(thumbnailSrc);
+  const [views, setViews] = useState(0);
 
   const handleThumbnailClick = () => {
     // Trigger the file input click event
@@ -17,6 +18,7 @@ export default function ThumbnailsCard({ title, thumbnailSrc }) {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setImageSrc(URL.createObjectURL(selectedFile));
+      setViews(Math.floor(Math.random() * 10));
     }
   };
 
@@ -27,7 +29,7 @@ export default function ThumbnailsCard({ title, thumbnailSrc }) {
       </div>
       <div className="p-4">
         <h3 className="text-lg font-bold">{title}</h3>
-        <p className="text-gray-500">{Math.floor(Math.random() * 10)} views</p>
+        <p className="text-gray-500">{views} views</p>
       </div>
     </Card>
   );
