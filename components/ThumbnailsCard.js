@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, Image } from '@nextui-org/react';
 
 export default function ThumbnailsCard({ title, thumbnailSrc }) {
-  const [file, setFile] = useState(null);
+  const [imageSrc, setImageSrc] = useState(thumbnailSrc);
 
   const handleThumbnailClick = () => {
     // Trigger the file input click event
@@ -16,18 +16,14 @@ export default function ThumbnailsCard({ title, thumbnailSrc }) {
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      setFile(selectedFile);
+      setImageSrc(URL.createObjectURL(selectedFile));
     }
   };
 
   return (
     <Card className="w-full md:w-[400px]">
       <div className="flex justify-center items-center">
-        {file ? (
-          <Image src={URL.createObjectURL(file)} alt="Thumbnail" className="h-[200px]" onClick={handleThumbnailClick} />
-        ) : (
-          <Image src={thumbnailSrc} alt="Thumbnail" className="h-[200px]" onClick={handleThumbnailClick} />
-        )}
+        <Image src={imageSrc} alt="Thumbnail" className="h-[200px]" onClick={handleThumbnailClick} />
       </div>
       <div className="p-4">
         <h3 className="text-lg font-bold">{title}</h3>
