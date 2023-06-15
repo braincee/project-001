@@ -1,13 +1,17 @@
-import { useState } from 'react';
-import ThumbnailsCard from './components/ThumbnailsCard';
+import { useEffect, useRef, useState } from 'react';
+import ThumbnailsCard from '../components/ThumbnailsCard';
 import { Button, Input } from '@nextui-org/react';
 import Head from 'next/head';
 import { FaUpload } from 'react-icons/fa';
 
+const views = Math.floor(Math.random() * 1000000);
 
 export default function ThumbnailsPage() {
   const [inputValue, setInputValue] = useState('');
+  const [title, setTitle] = useState('');
   const [fileList, setFileList] = useState([]);
+  const [isDisabled, setIsDisabled] = useState(true);
+  const fileRef = useRef();
 
   const handleTitleChange = (e) => {
     setInputValue(e.target.value);
@@ -41,7 +45,9 @@ export default function ThumbnailsPage() {
 
   const handleFileSelect = (e) => {
     let files = [...e.target.files];
-    if (files && files.length > 0) {
+    if (fileList.length >= 2) {
+      return;
+    } else if (files && files.length > 0) {
       const fileType = files[0]['type'];
       const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
       if (validImageTypes.includes(fileType)) {
@@ -52,9 +58,15 @@ export default function ThumbnailsPage() {
     }
   }
 
+  useEffect(() => {
+    if (fileList.length > 0) {
+      setIsDisabled(false);
+    }
+  }, [fileList])
+
   const handleAddTitle = () => {
     if (inputValue.trim() !== '') {
-      setFileList([...fileList, { title: inputValue.trim(), thumbnailSrc: '' }]);
+      setTitle(inputValue);
       setInputValue('');
     }
   };
@@ -84,6 +96,7 @@ export default function ThumbnailsPage() {
               className="text-white"
               size="xl"
               onPress={handleAddTitle}
+              isDisabled={isDisabled}
             >
               Add
             </Button>
@@ -91,7 +104,7 @@ export default function ThumbnailsPage() {
         </section>
         <section className="mt-8 px-8">
           <h2 className="text-center text-2xl">Compare Thumbnails</h2>
-          <div className="p-4">
+          <div className="p-4 flex flex-col lg:flex-row lg:flex-wrap gap-10 items-center">
             <div
               className="flex justify-center items-center flex-col border-dashed border-2 border-[#c3c3c3] w-[300px] h-[200px]"
               onDrop={handleDrop}
@@ -105,14 +118,15 @@ export default function ThumbnailsPage() {
                 type="file"
                 aria-labelledby="none"
                 onChange={handleFileSelect}
+                ref={fileRef}
               />
             </div>
-            <div className="flex">
+            <div className="flex gap-10 flex-col md:flex-row items-center">
               {fileList.length > 0 && fileList.map((file, index) => (
                 <ThumbnailsCard
                   key={index}
-                  title={inputValue}
-                  views={Math.floor(Math.random() * 1000000)}
+                  title={title}
+                  views={views}
                   thumbnailSrc={URL.createObjectURL(file)}
                 />
               ))}

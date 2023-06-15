@@ -3,9 +3,9 @@ import { FaCloudUploadAlt } from 'react-icons/fa';
 
 const ThumbnailsCard = ({ title, views, thumbnailSrc }) => {
   return (
-    <Card>
+    <Card className="md:w-[400px] w-full">
       {thumbnailSrc ? (
-        <Image src={thumbnailSrc} alt="Thumbnail" />
+        <Image className="h-[200px]" src={thumbnailSrc} alt="Thumbnail" />
       ) : (
         <div className="flex justify-center items-center w-full h-full bg-gray-200">
           <FaCloudUploadAlt size={40} color="gray" />
@@ -13,7 +13,7 @@ const ThumbnailsCard = ({ title, views, thumbnailSrc }) => {
       )}
       <div className="p-4">
         <h3 className="text-lg font-bold">{title}</h3>
-        <p className="text-gray-500">{views} views</p>
+        <p className="text-gray-500">{ Math.floor(Math.random() * 10 ) + views} views</p>
       </div>
     </Card>
   );
