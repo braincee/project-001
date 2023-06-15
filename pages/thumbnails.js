@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import ThumbnailsCard from '../components/ThumbnailsCard';
-import { Input } from '@nextui-org/react';
+import { Input, Switch } from '@nextui-org/react';
 import Head from 'next/head';
 import { FaUpload } from 'react-icons/fa';
 
@@ -8,6 +8,7 @@ export default function ThumbnailsPage() {
   const [inputValue, setInputValue] = useState('');
   const [fileList, setFileList] = useState([]);
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isViewedEnabled, setIsViewedEnabled] = useState(false);
   const fileRef = useRef();
 
   const handleTitleChange = (e) => {
@@ -16,15 +17,15 @@ export default function ThumbnailsPage() {
 
   const handleDragEnter = (e) => {
     e.preventDefault();
-  }
+  };
 
   const handleDragLeave = (e) => {
     e.preventDefault();
-  }
+  };
 
   const handleDragOver = (e) => {
     e.preventDefault();
-  }
+  };
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -38,7 +39,7 @@ export default function ThumbnailsPage() {
         return;
       }
     }
-  }
+  };
 
   const handleFileSelect = (e) => {
     let files = [...e.target.files];
@@ -53,13 +54,17 @@ export default function ThumbnailsPage() {
         return;
       }
     }
-  }
+  };
+
+  const handleViewedToggle = () => {
+    setIsViewedEnabled(!isViewedEnabled);
+  };
 
   useEffect(() => {
     if (fileList.length > 0) {
       setIsDisabled(false);
     }
-  }, [fileList])
+  }, [fileList]);
 
   return (
     <>
@@ -81,6 +86,9 @@ export default function ThumbnailsPage() {
               aria-labelledby="none"
               value={inputValue}
             />
+            <Switch checked={isViewedEnabled} onChange={handleViewedToggle} color="primary">
+              Viewed
+            </Switch>
           </div>
         </section>
         <section className="mt-8 px-8">
@@ -95,21 +103,18 @@ export default function ThumbnailsPage() {
             >
               <FaUpload size={30} color="blue" />
               <p className="p-4 text-center">Drop your files here or Select to upload</p>
-              <Input
-                type="file"
-                aria-labelledby="none"
-                onChange={handleFileSelect}
-                ref={fileRef}
-              />
+              <Input type="file" aria-labelledby="none" onChange={handleFileSelect} ref={fileRef} />
             </div>
             <div className="flex gap-10 flex-col md:flex-row items-center">
-              {fileList.length > 0 && fileList.map((file, index) => (
-                <ThumbnailsCard
-                  key={index}
-                  title={inputValue}
-                  thumbnailSrc={URL.createObjectURL(file)}
-                />
-              ))}
+              {fileList.length > 0 &&
+                fileList.map((file, index) => (
+                  <ThumbnailsCard
+                    key={index}
+                    title={inputValue}
+                    thumbnailSrc={URL.createObjectURL(file)}
+                    isViewedEnabled={isViewedEnabled}
+                  />
+                ))}
             </div>
           </div>
         </section>
