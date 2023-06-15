@@ -3,8 +3,8 @@ import Head from 'next/head';
 import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image, CircularProgress, Avatar } from '@nextui-org/react';
 import { FaShareAlt, FaTrashAlt } from 'react-icons/fa';
 import { useRouter } from 'next/router';
-import SearchCard from './components/SearchCard';
-import SkeletonBuilder from './components/SkeletonBuilder';
+import SearchCard from '@/components/SearchCard';
+import SkeletonBuilder from '@/components/SkeletonBuilder';
 import getSearchVideos from '@/libs/search';
 import getVideo from '@/libs/video';
 
