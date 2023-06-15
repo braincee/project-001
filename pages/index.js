@@ -3,8 +3,8 @@ import Head from 'next/head';
 import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image, CircularProgress, Avatar } from '@nextui-org/react';
 import { FaShareAlt, FaTrashAlt } from 'react-icons/fa';
 import { useRouter } from 'next/router';
-import SearchCard from '@/components/SearchCard';
-import SkeletonBuilder from '@/components/SkeletonBuilder';
+import SearchCard from './components/SearchCard';
+import SkeletonBuilder from './components/SkeletonBuilder';
 import getSearchVideos from '@/libs/search';
 import getVideo from '@/libs/video';
 
@@ -208,7 +208,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
-        <h1 className="text-center px-3 md:px-0 text-xl md:text-3xl">YT Playlist Creator and Sharer</h1>
+      <h1 className="text-center px-3 md:px-0 text-3xl">YT Playlist Creator and Sharer</h1>
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
           <Input
             type="text"
@@ -249,7 +249,7 @@ export default function Home() {
           {!isLoading && urlData.length > 0 &&
           <Table
               aria-label="Example table with dynamic content"
-              className="md:p-6 p-2 mx-3 md:mx-8 my-8 w-80"
+              className="md:p-6 p-2 mx-3 md:mx-8 my-8 w-100"
           >
             <TableHeader>
               <TableColumn>No.</TableColumn>
