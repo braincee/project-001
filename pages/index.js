@@ -208,7 +208,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
-        <h1 className="text-center px-3 md:px-0 text-3xl md:text-5xl">YT Playlist Creator and Sharer</h1>
+        <h1 className="text-center px-3 md:px-0 text-xl md:text-3xl">YT Playlist Creator and Sharer</h1>
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
           <Input
             type="text"
@@ -249,7 +249,7 @@ export default function Home() {
           {!isLoading && urlData.length > 0 &&
           <Table
               aria-label="Example table with dynamic content"
-              className="md:p-6 p-2 mx-3 md:mx-8 my-8 w-100"
+              className="md:p-6 p-2 mx-3 md:mx-8 my-8 w-80"
           >
             <TableHeader>
               <TableColumn>No.</TableColumn>
@@ -263,7 +263,7 @@ export default function Home() {
               { (item) => (
                 <TableRow key={item.number}>
                   <TableCell>{item.number}</TableCell>
-                  <TableCell><Avatar className="md:w-40 md:h-40 w-20 h-20" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
+                  <TableCell><Avatar src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
                   <TableCell>{decodeHTML(item.title)}</TableCell>
                   <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
                   <TableCell>{item.publishedAt}</TableCell>
