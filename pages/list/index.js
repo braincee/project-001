@@ -1,3 +1,5 @@
+import TableBuilder from '@/components/TableBuilder';
+import VideoCard from '@/components/VideoCard';
 import { Button, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Avatar, Image } from '@nextui-org/react';
 import Head from "next/head";
 import { useState } from 'react';
@@ -71,35 +73,14 @@ export default function List({ urlData }) {
       <main className="mt-4 mb-[50px] flex flex-col">
         <h1 className="text-center px-3 md:px-0 text-3xl">My Playlist</h1>
         {videoData.length > 0 ? (
-        <Table
-              aria-label="Example table with dynamic content"
-              className="md:p-6 p-2 mx-3 md:mx-8 my-8 w-100"
-          >
-            <TableHeader>
-              <TableColumn>No.</TableColumn>
-              <TableColumn>Video</TableColumn>
-              <TableColumn>Title</TableColumn>
-              <TableColumn>Uploaded By</TableColumn>
-              <TableColumn>Date Uploaded</TableColumn>
-              <TableColumn>Action</TableColumn>
-            </TableHeader>
-            <TableBody items={videoData}>
-              { (item) => (
-               <TableRow key={item.number}>
-                  <TableCell>{item.number}</TableCell>
-                  <TableCell><Avatar className="md:w-40 md:h-40 w-20 h-20" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
-                  <TableCell>{decodeHTML(item.title)}</TableCell>
-                  <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
-                  <TableCell>{item.publishedAt}</TableCell>
-                  <TableCell>
-                    <Button onPress={() => deleteFromList(item.number)} isIconOnly color="danger" aria-label="Remove">
-                      <FaTrashAlt />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+        <>
+          <TableBuilder urlData={videoData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
+        <div className="flex flex-col gap-3 p-2 my-8 md:hidden">
+          { videoData.map((item) => (
+            <VideoCard key={item.number} item={item} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
+          ))}
+        </div>
+        </>
         ) : 
         (<p className="text-center text-gray-500 text-lg">No available playlist</p>)
         }
