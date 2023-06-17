@@ -10,16 +10,12 @@ const RelatedCard = ({ video, addToList, truncate }) => {
 
   return (
     <div className="flex flex-col md:max-w-[400px] md:min-h-[110px] min-h-[160px]">
-      <Card className="hover:scale-95 flex-grow rounded-lg shadow-md" isPressable onPress={() => addToList(video.id, video.title, video.description, video.channelTitle, video.publishedAt)}>
-        <div className="flex flex-row bg-black rounded-lg">
-          <div className="flex-shrink-0">
-            <Image className="w-[100px] h-full rounded-l-lg" src={`http://img.youtube.com/vi/${video.id}/sddefault.jpg`} alt="Youtube Video"/>
-          </div>
-          <div className="flex flex-col justify-between w-full p-4">
-            <div>
-              <p className="text-xl text-gray-200">{decodeHTML(truncate(video.title, 40))}</p>
-              <p className="text-sm text-gray-500 mt-2">{video.channelTitle}</p>
-            </div>
+      <Card className="hover:scale-95 h-full rounded-lg shadow-md w-full h-full" isPressable onPress={() => addToList(video.id, video.title, video.description, video.channelTitle, video.publishedAt)}>
+        <div className="flex flex-row bg-black rounded-lg h-full w-full">
+          <Image className="w-[200px] min-h-full rounded-l-lg" src={`http://img.youtube.com/vi/${video.id}/sddefault.jpg`} alt="Youtube Video"/>
+          <div className="flex flex-col items-start w-full p-4">
+            <p className="text-xl text-gray-200 text-start">{decodeHTML(truncate(video.title, 40))}</p>
+            <p className="text-sm text-gray-500 mt-2 text-start">{video.channelTitle}</p>
           </div>
         </div>
       </Card>
