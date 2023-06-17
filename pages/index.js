@@ -233,38 +233,35 @@ export default function Home() {
             >Add
           </Button>
         </div>
-        <Spacer y={50} />
         {!isvalid ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
         ): ""}
          { !isLoading && showSearchResults &&
-             <div className="flex md:flex-wrap items-center flex-col mt-8 justify-center px-10 md:px-5 gap-10">
-               <div className='md:flex flex-col'><h1>HOME PAGE</h1></div>
-              {searchData.length > 0 && searchData.map((video, index) => (
-                <>
-                <SearchCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
-                <Spacer x={6} />
-                </>
-              ))
-              }
-            </div>
-          }
-           <Spacer y={40} />
-           
-           <div>
-           { !isLoading && showSearchResults &&
-             <div className="flex md:flex-wrap flex-col mt-8 justify-center items-center px-10 md:px-5 gap-10">
-              <div className='md:flex flex-col'><h1>RELATED</h1></div>
+            <>
+              <h1 className='text-center my-8 font-bold'>HOME PAGE</h1>
+              <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
+                {searchData.length > 0 && searchData.map((video, index) => (
+                  <>
+                  <SearchCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
+                  <Spacer x={3} />
+                  </>
+                ))
+                }
+              </div>
+              <Spacer y={10} />
+              <h1 className='text-center my-8 font-bold'>RELATED</h1>
+              <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
               {searchData.length > 0 && searchData.map((video, index) => (
                 <>
                 <RelatedCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
-                <Spacer x={6} />
+                <Spacer x={3} />
                 </>
               ))
               }
             </div>
+            </>
           }
-           </div>
+           
           {isLoading && <SkeletonBuilder cards={2}/>}
           {!isLoading && urlData.length > 0 &&
           <>

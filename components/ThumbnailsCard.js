@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Avatar, Progress } from '@nextui-org/react';
 import { FaCloudUploadAlt, FaCheckCircle } from 'react-icons/fa';
 
+const progessNumber = Math.floor(Math.random() * 100);
+
 export default function ThumbnailsCard({ title, isViewedEnabled }) {
   const [imageSrc, setImageSrc] = useState(null);
   const [views, setViews] = useState(0);
@@ -24,7 +26,7 @@ export default function ThumbnailsCard({ title, isViewedEnabled }) {
   };
 
   const getRandomProgress = () => {
-    return Math.floor(Math.random() * 100);
+    return progessNumber;
   };
 
   useEffect(() => {
