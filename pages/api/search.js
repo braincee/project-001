@@ -7,7 +7,7 @@ const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
 const fetchSearchVideos = async (query) => {
   try {
     const response = await axios.get(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=${ApiKey}`
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=2&q=${query}&key=${ApiKey}`
     );
     return response;
   } catch (err) {
