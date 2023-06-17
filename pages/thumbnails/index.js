@@ -1,44 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
-import ThumbnailsCard from '../components/ThumbnailsCard';
+import { useState } from 'react';
+import ThumbnailsCard from '../../components/ThumbnailsCard';
 import { Input, Switch } from '@nextui-org/react';
 import Head from 'next/head';
 import { FaUpload } from 'react-icons/fa';
 
 export default function ThumbnailsPage() {
   const [inputValue, setInputValue] = useState('');
-  const [fileList, setFileList] = useState([]);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [fileList, setFileList] = useState();
   const [isViewedEnabled, setIsViewedEnabled] = useState(false);
-  const fileRef = useRef();
 
   const handleTitleChange = (e) => {
     setInputValue(e.target.value);
-  };
-
-  const handleDragEnter = (e) => {
-    e.preventDefault();
-  };
-
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    const { files } = e.dataTransfer;
-    if (files && files.length > 0) {
-      const fileType = files[0]['type'];
-      const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
-      if (validImageTypes.includes(fileType)) {
-        setFileList([...fileList, files[0]]);
-      } else {
-        return;
-      }
-    }
   };
 
   const handleFileSelect = (e) => {
@@ -59,12 +31,6 @@ export default function ThumbnailsPage() {
   const handleViewedToggle = () => {
     setIsViewedEnabled(!isViewedEnabled);
   };
-
-  useEffect(() => {
-    if (fileList.length > 0) {
-      setIsDisabled(false);
-    }
-  }, [fileList]);
 
   return (
     <>
@@ -93,29 +59,14 @@ export default function ThumbnailsPage() {
         </section>
         <section className="mt-8 px-8">
           <h2 className="text-center text-2xl">Compare Thumbnails</h2>
-          <div className="p-4 flex flex-col lg:flex-row lg:flex-wrap gap-10 items-center">
-            <div
-              className="flex justify-center items-center flex-col border-dashed border-2 border-[#c3c3c3] w-[300px] h-[200px]"
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragEnter={handleDragEnter}
-              onDragLeave={handleDragLeave}
-            >
-              <FaUpload size={30} color="blue" />
-              <p className="p-4 text-center">Drop your files here or Select to upload</p>
-              <Input type="file" aria-labelledby="none" onChange={handleFileSelect} ref={fileRef} />
-            </div>
-            <div className="flex gap-10 flex-col md:flex-row items-center">
-              {fileList.length > 0 &&
-                fileList.map((file, index) => (
+          <div className="p-4 my-4 flex flex-col lg:flex-row lg:flex-wrap gap-6 justify-center">
+              { Array.apply(null, Array(2)).map((x, index) => (
                   <ThumbnailsCard
                     key={index}
                     title={inputValue}
-                    thumbnailSrc={URL.createObjectURL(file)}
                     isViewedEnabled={isViewedEnabled}
                   />
                 ))}
-            </div>
           </div>
         </section>
       </main>
