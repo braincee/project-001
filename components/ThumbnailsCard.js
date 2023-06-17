@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Avatar } from '@nextui-org/react';
+import { Avatar, Progress } from '@nextui-org/react';
 import { FaCloudUploadAlt, FaCheckCircle } from 'react-icons/fa';
 
 export default function ThumbnailsCard({ title, isViewedEnabled }) {
@@ -44,8 +44,13 @@ export default function ThumbnailsCard({ title, isViewedEnabled }) {
           <div className="flex justify-center items-center w-full">
             <img src={imageSrc} alt="Thumbnail" className="h-[200px] w-full border rounded-xl" onClick={handleThumbnailClick} />
           </div>
-          <div className="py-2 flex">
-            <Avatar className="me-[12px] min-w-[36px] h-[36px]" />
+          <div className="py-2 flex relative">
+          {isViewedEnabled && (
+              <Progress value={progress} color="danger" size="xs" className="absolute top-0 left-0" />
+            )}
+            <div className="flex flex-col items-center">
+              <Avatar className="me-[12px] min-w-[36px] h-[36px]" />
+            </div>
             <div className='pe-[24px]'>
               <h3 className="text-lg font-bold">{title}</h3>
               <h3 className="text-lg text-gray-500 flex items-center">
@@ -55,12 +60,7 @@ export default function ThumbnailsCard({ title, isViewedEnabled }) {
               <p className="text-gray-500">{views} views</p>
               {isViewedEnabled && (
                 <div className="mt-2">
-                  <div className="relative h-1 bg-red-500 rounded-full">
-                    <div
-                      className="absolute top-0 left-0 h-full bg-red-500 rounded-full transition-all"
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
+                  
                   <p className="text-xs text-red-500 mt-1">{progress}% viewed</p>
                 </div>
               )}

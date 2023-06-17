@@ -2,12 +2,12 @@ import { useState } from 'react';
 import ThumbnailsCard from '../../components/ThumbnailsCard';
 import { Input, Switch } from '@nextui-org/react';
 import Head from 'next/head';
-import { FaUpload } from 'react-icons/fa';
 
 export default function ThumbnailsPage() {
   const [inputValue, setInputValue] = useState('');
   const [fileList, setFileList] = useState();
   const [isViewedEnabled, setIsViewedEnabled] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const handleTitleChange = (e) => {
     setInputValue(e.target.value);
@@ -30,6 +30,11 @@ export default function ThumbnailsPage() {
 
   const handleViewedToggle = () => {
     setIsViewedEnabled(!isViewedEnabled);
+
+    if (!isViewedEnabled) {
+      const randomProgress = Math.floor(Math.random() * 100);
+      setProgress(randomProgress);
+    }
   };
 
   return (
@@ -60,11 +65,12 @@ export default function ThumbnailsPage() {
         <section className="mt-8 px-8">
           <h2 className="text-center text-2xl">Compare Thumbnails</h2>
           <div className="p-4 my-4 flex flex-col lg:flex-row lg:flex-wrap gap-6 justify-center">
-              { Array.apply(null, Array(2)).map((x, index) => (
+              { Array.apply(null, Array(2)).map((_, index) => (
                   <ThumbnailsCard
                     key={index}
                     title={inputValue}
                     isViewedEnabled={isViewedEnabled}
+                    progress={progress}
                   />
                 ))}
           </div>
