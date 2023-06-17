@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head';
-import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, CircularProgress, Avatar } from '@nextui-org/react';
-import { FaShareAlt, FaTrashAlt } from 'react-icons/fa';
+import { Input, Button, Spacer, CircularProgress } from '@nextui-org/react';
+import { FaShareAlt } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import SearchCard from '../components/SearchCard';
 import SkeletonBuilder from '../components/SkeletonBuilder';
@@ -9,7 +9,7 @@ import getSearchVideos from '@/libs/search';
 import getVideo from '@/libs/video';
 import VideoCard from '@/components/VideoCard';
 import TableBuilder from '@/components/TableBuilder';
-
+import RelatedCard from '@/components/RelatedCard';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
@@ -233,11 +233,13 @@ export default function Home() {
             >Add
           </Button>
         </div>
+        <Spacer y={50} />
         {!isvalid ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
         ): ""}
          { !isLoading && showSearchResults &&
-             <div className="flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4">
+             <div className="flex md:flex-wrap items-center flex-col mt-8 justify-center px-10 md:px-5 gap-10">
+               <div className='md:flex flex-col'><h1>HOME PAGE</h1></div>
               {searchData.length > 0 && searchData.map((video, index) => (
                 <>
                 <SearchCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
@@ -247,7 +249,23 @@ export default function Home() {
               }
             </div>
           }
-          {isLoading && <SkeletonBuilder cards={5}/>}
+           <Spacer y={40} />
+           
+           <div>
+           { !isLoading && showSearchResults &&
+             <div className="flex md:flex-wrap flex-col mt-8 justify-center items-center px-10 md:px-5 gap-10">
+              <div className='md:flex flex-col'><h1>RELATED</h1></div>
+              {searchData.length > 0 && searchData.map((video, index) => (
+                <>
+                <RelatedCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
+                <Spacer x={6} />
+                </>
+              ))
+              }
+            </div>
+          }
+           </div>
+          {isLoading && <SkeletonBuilder cards={2}/>}
           {!isLoading && urlData.length > 0 &&
           <>
             <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
