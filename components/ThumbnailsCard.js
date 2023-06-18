@@ -7,7 +7,6 @@ const progessNumber = Math.floor(Math.random() * 100);
 export default function ThumbnailsCard({ index, title, isViewedEnabled, imageList, setImageList, progress, setProgress, views, setViews }) {
 
   const handleThumbnailClick = () => {
-    // Trigger the file input click event
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = 'image/jpeg,image/png,image/jpg';
