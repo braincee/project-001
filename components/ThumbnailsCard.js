@@ -10,7 +10,6 @@ export default function ThumbnailsCard({ title, isViewedEnabled }) {
   const [progress, setProgress] = useState(0);
 
   const handleThumbnailClick = () => {
-    // Trigger the file input click event
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = 'image/jpeg,image/png,image/jpg';
