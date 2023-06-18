@@ -3,13 +3,13 @@ import { Avatar, Card, Progress } from "@nextui-org/react";
 import { FaCheckCircle } from 'react-icons/fa';
 
 const HomepageCard = ({ title, isViewedEnabled, imageSrc, progress, views }) => {
-  
+
   const truncate = (string, length) => {
     return string.length > length ? `${string.substr(0, length)}...` : string;
   }
   
   return (
-    <div className="flex flex-col md:max-w-[340px] md:min-h-[280px] min-h-[320px]">
+    <div className="flex flex-col w-full md:w-[350px] md:min-h-[280px] min-h-[320px]">
       <Card className="hover:scale-95 h-full w-full">
         <div className="flex flex-col bg-black rounded-lg shadow-md h-full w-full p-2">
           <img src={imageSrc} alt="Thumbnail" className="h-[200px] w-full border rounded-xl" />

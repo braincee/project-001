@@ -18,9 +18,23 @@ export default function ThumbnailsCard({ index, title, isViewedEnabled, imageLis
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      console.log(imageList)
-      setImageList([...imageList, URL.createObjectURL(selectedFile)]);
+      if (imageList.length >= 2) {
+        setImageList((prevImageList) => {      
+          const items = prevImageList.map((item, i) => {
+            if (index === i) {
+              return URL.createObjectURL(selectedFile);
+            } else {
+              return item;
+            }
+          });
+          return items;
+        }
+        );
+      } else {
+        setImageList([...imageList, URL.createObjectURL(selectedFile)]);
+      }
     }
+    console.log(imageList.length)
   };
 
   const getRandomProgress = () => {
