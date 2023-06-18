@@ -5,7 +5,7 @@ const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
   return (
     <Table
       aria-label="Example table with dynamic content"
-      className="p-5 mx-8 my-8 w-100 hidden md:flex bg-black text-white"
+      className="p-6 mx-8 my-8 w-100 hidden md:flex bg-black text-white"
     >
       <TableHeader>
         <TableColumn>No.</TableColumn>
