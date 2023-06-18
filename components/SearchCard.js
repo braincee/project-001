@@ -10,7 +10,7 @@ const SearchCard = ({ video, addToList, truncate }) => {
   }
 
   return (
-    <div className="flex flex-col md:max-w-[340px] md:min-h-[280px] min-h-[320px]">
+    <div className="flex flex-col md:max-w-[341px] md:min-h-[280px] min-h-[321px]">
       <Card className="hover:scale-95 h-full w-full" isPressable onPress={() => addToList(video.id, video.title, video.description, video.channelTitle, video.publishedAt)} >
         <div className="flex flex-col gap-4 bg-black rounded-lg shadow-md h-full w-full">
           <Image className="rounded-b-none bg-blue-400 w-full md:w-[300px] min-h-[360px] md:min-h-full" src={`http://img.youtube.com/vi/${video.id}/sddefault.jpg`} alt="Youtube Video"/>
