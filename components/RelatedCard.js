@@ -10,7 +10,7 @@ const RelatedCard = ({ video, addToList, truncate }) => {
 
   return (
     <div className="flex flex-col md:max-w-[400px] md:min-h-[110px] min-h-[160px]">
-      <Card className="hover:scale-95 h-full rounded-lg shadow-md w-full h-full" isPressable onPress={() => addToList(video.id, video.title, video.description, video.channelTitle, video.publishedAt)}>
+      <Card className="hover:scale-95 rounded-lg shadow-md w-full h-full" isPressable onPress={() => addToList(video.id, video.title, video.description, video.channelTitle, video.publishedAt)}>
         <div className="flex flex-row bg-black rounded-lg h-full w-full">
           <Image className="w-[200px] min-h-full rounded-l-lg" src={`http://img.youtube.com/vi/${video.id}/sddefault.jpg`} alt="Youtube Video"/>
           <div className="flex flex-col items-start w-full p-4">
