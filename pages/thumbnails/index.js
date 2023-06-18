@@ -66,27 +66,31 @@ export default function ThumbnailsPage() {
           </div>
         </section>
         <section className="mt-8 px-8">
-          <h2 className="text-center text-2xl">Compare Thumbnails</h2>
-          <div className="p-4 my-4 flex flex-col lg:flex-row lg:flex-wrap gap-6 justify-center">
-          <>
-              <h1 className='text-center my-8 font-bold'>HOME PAGE</h1>
-              <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
-                { imageList.length > 0 && imageList.map((imageSrc, index) => (
-                  <>
-                  <HomepageCard
-                    key={index}
-                    title={inputValue}
-                    isViewedEnabled={isViewedEnabled}
-                    imageSrc={imageSrc}
-                  />
-                  <Spacer x={3} />
-                  </>
-                ))
-                }
-              </div>
-              <Spacer y={10} />
-              <h1 className='text-center my-8 font-bold'>RELATED</h1>
-              <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
+          <div className="">
+            <h1 className='text-center my-3 font-bold'>HOMEPAGE</h1>
+            { imageList.length <= 0 && 
+              <span className="flex justify-center">Thumbnails not added yet</span>
+            }
+            <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
+              { imageList.length > 0 && imageList.map((imageSrc, index) => (
+                <>
+                <HomepageCard
+                  key={index}
+                  title={inputValue}
+                  isViewedEnabled={isViewedEnabled}
+                  imageSrc={imageSrc}
+                />
+                <Spacer x={3} />
+                </>
+              ))
+              }
+            </div>
+            <Spacer y={10} />
+            <h1 className='text-center my-3 font-bold'>RELATED</h1>
+            { imageList.length <= 0 && 
+              <span className="flex justify-center">Thumbnails not added yet</span>
+            }
+            <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
               { imageList.length > 0 && imageList.map((imageSrc, index) => (
                 <>
                 <RelatedCard
@@ -99,22 +103,27 @@ export default function ThumbnailsPage() {
                 </>
               ))
               }
-            </div>
-            </>
-              { Array.apply(null, Array(2)).map((_, index) => (
-                  <ThumbnailsCard
-                    key={index}
-                    index={index}
-                    title={inputValue}
-                    isViewedEnabled={isViewedEnabled}
-                    imageList={imageList}
-                    setImageList={setImageList}
-                    progress={progress}
-                    setProgress={setProgress}
-                    views={views}
-                    setViews={setViews}
-                  />
-                ))}
+          </div>
+          </div>
+        </section>
+        <Spacer y={10} />
+        <section className="mt-8 px-8">
+          <h2 className="text-center text-2xl">Compare Thumbnails</h2>
+          <div className="my-4 flex flex-col md:flex-row md:flex-wrap gap-6 justify-center">
+            { Array.apply(null, Array(2)).map((_, index) => (
+                <ThumbnailsCard
+                  key={index}
+                  index={index}
+                  title={inputValue}
+                  isViewedEnabled={isViewedEnabled}
+                  imageList={imageList}
+                  setImageList={setImageList}
+                  progress={progress}
+                  setProgress={setProgress}
+                  views={views}
+                  setViews={setViews}
+                />
+              ))}
           </div>
         </section>
       </main>
