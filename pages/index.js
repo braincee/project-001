@@ -236,32 +236,18 @@ export default function Home() {
         {!isvalid ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
         ): ""}
-         { !isLoading && showSearchResults &&
-            <>
-              <h1 className='text-center my-8 font-bold'>HOME PAGE</h1>
-              <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
-                {searchData.length > 0 && searchData.map((video, index) => (
-                  <>
-                  <SearchCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
-                  <Spacer x={3} />
-                  </>
-                ))
-                }
-              </div>
-              <Spacer y={10} />
-              <h1 className='text-center my-8 font-bold'>RELATED</h1>
-              <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
-              {searchData.length > 0 && searchData.map((video, index) => (
-                <>
-                <RelatedCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
-                <Spacer x={3} />
-                </>
-              ))
-              }
-            </div>
-            </>
-          }
-           
+        { !isLoading && showSearchResults &&
+          <div className="flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4">
+            {searchData.length > 0 && searchData.map((video, index) => (
+              <>
+              <SearchCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
+              <Spacer x={6} />
+              </>
+            ))
+            }
+          </div>
+        }
+          
           {isLoading && <SkeletonBuilder cards={2}/>}
           {!isLoading && urlData.length > 0 &&
           <>
