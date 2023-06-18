@@ -9,6 +9,7 @@ export default function ThumbnailsCard({ index, title, isViewedEnabled, imageLis
   const handleThumbnailClick = () => {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
+    fileInput.ariaLabel = 'none';
     fileInput.accept = 'image/jpeg,image/png,image/jpg';
     fileInput.onchange = handleFileChange;
     fileInput.click();
@@ -17,6 +18,7 @@ export default function ThumbnailsCard({ index, title, isViewedEnabled, imageLis
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
+      console.log(imageList)
       setImageList([...imageList, URL.createObjectURL(selectedFile)]);
     }
   };

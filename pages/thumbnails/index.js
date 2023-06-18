@@ -16,21 +16,6 @@ export default function ThumbnailsPage() {
     setInputValue(e.target.value);
   };
 
-  // const handleFileSelect = (e) => {
-  //   let files = [...e.target.files];
-  //   if (fileList.length >= 2) {
-  //     return;
-  //   } else if (files && files.length > 0) {
-  //     const fileType = files[0]['type'];
-  //     const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-  //     if (validImageTypes.includes(fileType)) {
-  //       setFileList([...fileList, files[0]]);
-  //     } else {
-  //       return;
-  //     }
-  //   }
-  // };
-
   const handleViewedToggle = () => {
     setIsViewedEnabled(!isViewedEnabled);
 
@@ -65,13 +50,13 @@ export default function ThumbnailsPage() {
             </Switch>
           </div>
         </section>
-        <section className="mt-8 px-8">
+        <section className="mt-8 md:px-8 px-4">
           <div className="">
             <h1 className='text-center my-3 font-bold'>HOMEPAGE</h1>
             { imageList.length <= 0 && 
               <span className="flex justify-center">Thumbnails not added yet</span>
             }
-            <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
+            <div className="flex md:flex-wrap md:flex-row flex-col justify-center md:px-3 gap-2">
               { imageList.length > 0 && imageList.map((imageSrc, index) => (
                 <>
                 <HomepageCard
@@ -90,7 +75,7 @@ export default function ThumbnailsPage() {
             { imageList.length <= 0 && 
               <span className="flex justify-center">Thumbnails not added yet</span>
             }
-            <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
+            <div className="flex md:flex-wrap md:flex-row flex-col justify-center md:px-3 gap-2">
               { imageList.length > 0 && imageList.map((imageSrc, index) => (
                 <>
                 <RelatedCard
@@ -107,7 +92,7 @@ export default function ThumbnailsPage() {
           </div>
         </section>
         <Spacer y={10} />
-        <section className="mt-8 px-8">
+        <section className="mt-8 md:px-8 px-4">
           <h2 className="text-center text-2xl">Compare Thumbnails</h2>
           <div className="my-4 flex flex-col md:flex-row md:flex-wrap gap-6 justify-center">
             { Array.apply(null, Array(2)).map((_, index) => (
