@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ThumbnailsCard from '../../components/ThumbnailsCard';
 import { Input, Spacer, Switch } from '@nextui-org/react';
 import Head from 'next/head';
 import HomepageCard from '@/components/HompageCard';
 import RelatedCard from '@/components/RelatedCard';
+import numbro from 'numbro';
+
 
 export default function ThumbnailsPage() {
   const [inputValue, setInputValue] = useState('');
@@ -23,7 +25,16 @@ export default function ThumbnailsPage() {
       const randomProgress = Math.floor(Math.random() * 100);
       setProgress(randomProgress);
     }
+
   };
+
+  useEffect(() => {
+    if (isViewedEnabled) {
+      setViews(Math.floor(Math.random() * 10000));
+    } else {
+      setViews(0);
+    }
+  }, [isViewedEnabled]);
 
   return (
     <>
@@ -42,7 +53,7 @@ export default function ThumbnailsPage() {
               onChange={handleTitleChange}
               className="w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400"
               placeholder="Add title"
-              aria-labelledby="none"
+              aria-labelledby="Title"
               value={inputValue}
             />
             <Switch checked={isViewedEnabled} onChange={handleViewedToggle} color="primary">
@@ -64,6 +75,11 @@ export default function ThumbnailsPage() {
                   title={inputValue}
                   isViewedEnabled={isViewedEnabled}
                   imageSrc={imageSrc}
+                  views={numbro(views * (index + 1)).format({
+                    spaceSeparated: false,
+                    average: true,
+                  })}
+                  progress={progress}
                 />
                 <Spacer x={3} />
                 </>
@@ -83,6 +99,11 @@ export default function ThumbnailsPage() {
                   title={inputValue}
                   isViewedEnabled={isViewedEnabled}
                   imageSrc={imageSrc}
+                  views={numbro(views * (index + 1)).format({
+                    spaceSeparated: false,
+                    average: true,
+                  })}
+                  progress={progress}
                 />
                 <Spacer x={3} />
                 </>
@@ -104,9 +125,10 @@ export default function ThumbnailsPage() {
                   imageList={imageList}
                   setImageList={setImageList}
                   progress={progress}
-                  setProgress={setProgress}
-                  views={views}
-                  setViews={setViews}
+                  views={numbro(views * (index + 1)).format({
+                    spaceSeparated: false,
+                    average: true,
+                  })}
                 />
               ))}
           </div>

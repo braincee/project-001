@@ -1,20 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Avatar, Progress } from '@nextui-org/react';
 import { FaCloudUploadAlt, FaCheckCircle } from 'react-icons/fa';
+import numbro from 'numbro';
 
-const progessNumber = Math.floor(Math.random() * 100);
-
-export default function ThumbnailsCard({ index, title, isViewedEnabled, imageList, setImageList, progress, setProgress, views, setViews }) {
+export default function ThumbnailsCard({ index, title, isViewedEnabled, imageList, setImageList, progress, views }) {
 
   const handleThumbnailClick = () => {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
-    fileInput.ariaLabel = 'none';
+    fileInput.ariaLabel = 'Upload image';
     fileInput.accept = 'image/jpeg,image/png,image/jpg';
     fileInput.onchange = handleFileChange;
     fileInput.click();
   };
-
+  console.log(index)
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
@@ -37,19 +36,7 @@ export default function ThumbnailsCard({ index, title, isViewedEnabled, imageLis
     console.log(imageList.length)
   };
 
-  const getRandomProgress = () => {
-    return progessNumber;
-  };
-
-  useEffect(() => {
-    if (isViewedEnabled) {
-      setViews(Math.floor(Math.random() * 100));
-      setProgress(getRandomProgress());
-    } else {
-      setViews(0);
-      setProgress(0);
-    }
-  }, [isViewedEnabled]);
+  console.log()
 
   return (
     <div className="w-full md:w-[400px] relative">
@@ -90,9 +77,6 @@ export default function ThumbnailsCard({ index, title, isViewedEnabled, imageLis
           <p className="p-3 text-center text-[gray]">Tap to select an image</p>
         </div>
         }
-      
-        
-      
     </div>
   );
 }

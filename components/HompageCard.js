@@ -12,11 +12,13 @@ const HomepageCard = ({ title, isViewedEnabled, imageSrc, progress, views }) => 
     <div className="flex flex-col w-full md:w-[350px] md:min-h-[280px] min-h-[320px]">
       <Card className="hover:scale-95 h-full w-full">
         <div className="flex flex-col bg-black rounded-lg shadow-md h-full w-full p-2">
-          <img src={imageSrc} alt="Thumbnail" className="h-[200px] w-full border rounded-xl" />
-          <div className="w-full py-2">
+          <div>
+            <img src={imageSrc} alt="Thumbnail" className="h-[200px] w-full border rounded-xl" />
             {isViewedEnabled && (
-              <Progress value={progress} color="danger" size="xs" className="absolute top-0 left-0" />
+              <Progress value={progress} color="danger" size="xs" />
             )}
+          </div>
+          <div className="w-full py-2">
             <div className="flex">
               <div className="flex flex-col items-center">
                 <Avatar className="me-[12px] min-w-[36px] h-[36px]" />
