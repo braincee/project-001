@@ -4,10 +4,7 @@ import { FaCloudUploadAlt, FaCheckCircle } from 'react-icons/fa';
 
 const progessNumber = Math.floor(Math.random() * 100);
 
-export default function ThumbnailsCard({ title, isViewedEnabled }) {
-  const [imageSrc, setImageSrc] = useState(null);
-  const [views, setViews] = useState(0);
-  const [progress, setProgress] = useState(0);
+export default function ThumbnailsCard({ index, title, isViewedEnabled, imageList, setImageList, progress, setProgress, views, setViews }) {
 
   const handleThumbnailClick = () => {
     // Trigger the file input click event
@@ -21,7 +18,7 @@ export default function ThumbnailsCard({ title, isViewedEnabled }) {
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      setImageSrc(URL.createObjectURL(selectedFile));
+      setImageList([...imageList, URL.createObjectURL(selectedFile)]);
     }
   };
 
@@ -41,10 +38,10 @@ export default function ThumbnailsCard({ title, isViewedEnabled }) {
 
   return (
     <div className="w-full md:w-[400px] relative">
-        { imageSrc ?
+        { imageList[index] ?
           <>
           <div className="flex justify-center items-center w-full">
-            <img src={imageSrc} alt="Thumbnail" className="h-[200px] w-full border rounded-xl" onClick={handleThumbnailClick} />
+            <img src={imageList[index]} alt="Thumbnail" className="h-[200px] w-full border rounded-xl" onClick={handleThumbnailClick} />
           </div>
           <div className="py-2 flex relative">
           {isViewedEnabled && (

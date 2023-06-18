@@ -9,7 +9,6 @@ import getSearchVideos from '@/libs/search';
 import getVideo from '@/libs/video';
 import VideoCard from '@/components/VideoCard';
 import TableBuilder from '@/components/TableBuilder';
-import RelatedCard from '@/components/RelatedCard';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");

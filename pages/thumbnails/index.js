@@ -1,32 +1,35 @@
 import { useState } from 'react';
 import ThumbnailsCard from '../../components/ThumbnailsCard';
-import { Input, Switch } from '@nextui-org/react';
+import { Input, Spacer, Switch } from '@nextui-org/react';
 import Head from 'next/head';
+import HomepageCard from '@/components/HompageCard';
+import RelatedCard from '@/components/RelatedCard';
 
 export default function ThumbnailsPage() {
   const [inputValue, setInputValue] = useState('');
-  const [fileList, setFileList] = useState();
+  const [imageList, setImageList] = useState([]);
   const [isViewedEnabled, setIsViewedEnabled] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [views, setViews] = useState(0);
 
   const handleTitleChange = (e) => {
     setInputValue(e.target.value);
   };
 
-  const handleFileSelect = (e) => {
-    let files = [...e.target.files];
-    if (fileList.length >= 2) {
-      return;
-    } else if (files && files.length > 0) {
-      const fileType = files[0]['type'];
-      const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-      if (validImageTypes.includes(fileType)) {
-        setFileList([...fileList, files[0]]);
-      } else {
-        return;
-      }
-    }
-  };
+  // const handleFileSelect = (e) => {
+  //   let files = [...e.target.files];
+  //   if (fileList.length >= 2) {
+  //     return;
+  //   } else if (files && files.length > 0) {
+  //     const fileType = files[0]['type'];
+  //     const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+  //     if (validImageTypes.includes(fileType)) {
+  //       setFileList([...fileList, files[0]]);
+  //     } else {
+  //       return;
+  //     }
+  //   }
+  // };
 
   const handleViewedToggle = () => {
     setIsViewedEnabled(!isViewedEnabled);
@@ -65,12 +68,51 @@ export default function ThumbnailsPage() {
         <section className="mt-8 px-8">
           <h2 className="text-center text-2xl">Compare Thumbnails</h2>
           <div className="p-4 my-4 flex flex-col lg:flex-row lg:flex-wrap gap-6 justify-center">
-              { Array.apply(null, Array(2)).map((_, index) => (
-                  <ThumbnailsCard
+          <>
+              <h1 className='text-center my-8 font-bold'>HOME PAGE</h1>
+              <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
+                { imageList.length > 0 && imageList.map((imageSrc, index) => (
+                  <>
+                  <HomepageCard
                     key={index}
                     title={inputValue}
                     isViewedEnabled={isViewedEnabled}
+                    imageSrc={imageSrc}
+                  />
+                  <Spacer x={3} />
+                  </>
+                ))
+                }
+              </div>
+              <Spacer y={10} />
+              <h1 className='text-center my-8 font-bold'>RELATED</h1>
+              <div className="flex md:flex-wrap md:flex-row flex-col justify-center px-10 md:px-5 gap-4">
+              { imageList.length > 0 && imageList.map((imageSrc, index) => (
+                <>
+                <RelatedCard
+                  key={index}
+                  title={inputValue}
+                  isViewedEnabled={isViewedEnabled}
+                  imageSrc={imageSrc}
+                />
+                <Spacer x={3} />
+                </>
+              ))
+              }
+            </div>
+            </>
+              { Array.apply(null, Array(2)).map((_, index) => (
+                  <ThumbnailsCard
+                    key={index}
+                    index={index}
+                    title={inputValue}
+                    isViewedEnabled={isViewedEnabled}
+                    imageList={imageList}
+                    setImageList={setImageList}
                     progress={progress}
+                    setProgress={setProgress}
+                    views={views}
+                    setViews={setViews}
                   />
                 ))}
           </div>
