@@ -1,22 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios';
 import Head from 'next/head';
-import { Input, Button, Spacer, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image, CircularProgress } from '@nextui-org/react';
-import { FaShareAlt, FaTrashAlt } from 'react-icons/fa';
+import { Input, Button, Spacer, CircularProgress } from '@nextui-org/react';
+import { FaShareAlt } from 'react-icons/fa';
 import { useRouter } from 'next/router';
-import SearchCard from '@/components/SearchCard';
-import SkeletonBuilder from '@/components/SkeletonBuilder';
-
-// const ApiKey = 'AIzaSyCTv53RpplKzuvzTH6XY7VsGGAtnYA0oY4';
-const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
-
+import SearchCard from '../components/SearchCard';
+import SkeletonBuilder from '../components/SkeletonBuilder';
+import getSearchVideos from '@/libs/search';
+import getVideo from '@/libs/video';
+import VideoCard from '@/components/VideoCard';
+import TableBuilder from '@/components/TableBuilder';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
   const [urlData, setUrlData] = useState([]);
   const [query, setQuery] = useState("");
-  const [duplicate, setDuplicate] = useState(false);
-  const [isvalidated, setIsvalidated] = useState(true);
+  const [isvalid, setIsvalid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchData, setSearchData ] = useState([]);
@@ -34,7 +32,7 @@ export default function Home() {
 
   useEffect(() => {
     if (addStatus == "pressed") {
-      updateUrlIds();
+      addToListFromInput();
       setIsLoading(false);
       setAddStatus("");
       setIsDisabled(true);
@@ -81,55 +79,61 @@ export default function Home() {
     } catch {
       setQuery(e.target.value);
     }
-    if (duplicate) {
-      setDuplicate(false);
-    }
   }
 
   const handlePress = () => {
     setAddStatus("pressed");
   }
 
-  const addToList = (videoId, title, description, channelTitle, publishedAt) => {
-    if (urlData.find((url) => url.id === videoId)) {
-      setDuplicate(true);
-    } else {
-      setUrlData([...urlData, {
-        number: urlData.length + 1,
+  const addToListFromSearch = (videoId, title, description, channelTitle, publishedAt) => {
+    setUrlData((prevUrlData) => {
+      const newItem = {
+        number: number + 1,
         id: videoId,
         title,
         description,
         channelTitle,
         publishedAt,
-      }]);
-      setNumber(number + 1);
-    }
-  }
+      };
+      return [...prevUrlData, newItem];
+    });
+    setNumber((prevNumber) => prevNumber + 1);
+  };
 
-  const deleteFromList = (videoId) => {
-    setUrlData((items) =>  items.filter((item) => item.id !== videoId));
-    setNumber(number - 1);
-  }
-
+  const deleteFromList = (index) => {
+    setUrlData((items) => {
+     const newItems = items.filter((item) => item.number != index);
+     setNumber(newItems.length);
+     return newItems;
+    });
+    setUrlData((items) => {
+      const newItems = items.map((item, index) => {
+        return {
+          ...item,
+          number: index + 1
+        }
+      });
+      return newItems;
+    });
+  };
+  
   const truncate = (string, length) => {
     return string.length > length ? `${string.substr(0, length)}...` : string;
   }
 
-  const updateUrlIds = async () => {
-    setDuplicate(false); 
+  const addToListFromInput = async () => {
     if (isValidHttpUrl(inputValue)) {
-      setIsvalidated(true);
+      setIsvalid(true);
     } else {
-      setIsvalidated(false);
+      setIsvalid(false);
       return;
     }
-    if (inputValue && isvalidated) {
+    if (inputValue && isvalid) {
       let videoId = inputValue.split('v=')[1];
-      const response = await axios.get(
-        `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${ApiKey}`
-      );
-      const { title, description, channelTitle, publishedAt } = response.data.items[0].snippet;
+      const { data: { response } } = await getVideo(videoId);
+      const { title, description, channelTitle, publishedAt } = response.items[0].snippet;
         setUrlData([...urlData, {
+          number: number + 1,
           id: videoId,
           title,
           description,
@@ -171,10 +175,8 @@ export default function Home() {
     if (!query) return;
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=${ApiKey}`
-      );
-      const videos = response.data.items.map((item) => {
+      const { data: { response } } = await getSearchVideos(query);
+      const videos = response.items.map((item) => {
         return {
           id: item.id.videoId,
           title: item.snippet.title,
@@ -207,12 +209,12 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
-        <h1 className="text-center text-3xl md:text-5xl">YT Playlist Creator and Sharer</h1>
+      <h1 className="text-center px-3 md:px-0 text-3xl">YT Playlist Creator and Sharer</h1>
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
           <Input
             type="text"
             onChange={handleChange}
-            className="w-full md:w-3/5 text-2xl placeholder-slate-400"
+            className="w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400"
             placeholder="Add YouTube Url"
             aria-labelledby="none"
             value={inputValue}
@@ -230,54 +232,31 @@ export default function Home() {
             >Add
           </Button>
         </div>
-        {!isvalidated ? (
+        {!isvalid ? (
           <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
         ): ""}
-        {duplicate ? (
-          <span className="text-danger text-xl md:text-2xl px-6 mt-3">Video has been added already!</span>
-        ): ""}
-         { !isLoading && showSearchResults &&
-             <div className="flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4">
-              {searchData.length > 0 && searchData.map((video, index) => (
-                <>
-                <SearchCard video={video} key={index} addToList={addToList} truncate={truncate} />
-                <Spacer x={6} />
-                </>
-              ))
-              }
-            </div>
-          }
-          {isLoading && <SkeletonBuilder cards={5}/>}
+        { !isLoading && showSearchResults &&
+          <div className="flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4">
+            {searchData.length > 0 && searchData.map((video, index) => (
+              <>
+              <SearchCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
+              <Spacer x={6} />
+              </>
+            ))
+            }
+          </div>
+        }
+          
+          {isLoading && <SkeletonBuilder cards={2}/>}
           {!isLoading && urlData.length > 0 &&
-          <Table
-              aria-label="Example table with dynamic content"
-              className="md:p-6 p-2 mx-3 md:mx-8 my-8 w-100"
-          >
-            <TableHeader>
-              <TableColumn>No.</TableColumn>
-              <TableColumn>Video</TableColumn>
-              <TableColumn>Title</TableColumn>
-              <TableColumn>Uploaded By</TableColumn>
-              <TableColumn>Date Uploaded</TableColumn>
-              <TableColumn>Action</TableColumn>
-            </TableHeader>
-            <TableBody items={urlData}>
-              { (item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{number}</TableCell>
-                  <TableCell><Image width={300} radius="full" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
-                  <TableCell>{decodeHTML(item.title)}</TableCell>
-                  <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
-                  <TableCell>{item.publishedAt}</TableCell>
-                  <TableCell>
-                    <Button onPress={() => deleteFromList(item.id)} isIconOnly color="danger" aria-label="Remove">
-                      <FaTrashAlt />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <>
+            <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
+          <div className="flex flex-col gap-3 p-2 my-8 md:hidden">
+            { urlData.map((item) => (
+              <VideoCard key={item.number} item={item} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
+            ))}
+          </div>
+          </>
           }
           <div className="flex justify-center mt-16">
             { urlData.length > 0 &&

@@ -1,4 +1,6 @@
-import { Button, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Image } from '@nextui-org/react';
+import TableBuilder from '@/components/TableBuilder';
+import VideoCard from '@/components/VideoCard';
+import { Button, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Avatar, Image } from '@nextui-org/react';
 import Head from "next/head";
 import { useState } from 'react';
 import { FaTrashAlt } from 'react-icons/fa';
@@ -32,8 +34,10 @@ export const getServerSideProps = async (context) => {
   return { props: { urlData } };
 };
 
+
 export default function List({ urlData }) {
   const [videoData, setVideoData] = useState(urlData);
+  
   const decodeHTML = (code) => {
     if (typeof window !== "undefined") {
       let text = document.createElement("textarea");
@@ -42,9 +46,22 @@ export default function List({ urlData }) {
     }
   }
 
-  const deleteFromList = (videoId) => {
-    setVideoData((items) =>  items.filter((item) => item.id !== videoId));
-  }
+  const deleteFromList = (index) => {
+    setVideoData((items) => {
+      const newItems = items.filter((item) => item.number != index);
+      // setNumber(newItems.length);
+      return newItems;
+     });
+     setVideoData((items) => {
+       const newItems = items.map((item, index) => {
+         return {
+           ...item,
+           number: index + 1
+         }
+       });
+       return newItems;
+     });
+  }; 
 
   return (
     <>
@@ -54,37 +71,16 @@ export default function List({ urlData }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col">
-        <h1 className="text-center text-[30px]">My Playlist</h1>
-        {urlData.length > 0 ? (
-        <Table
-              aria-label="Example table with dynamic content"
-              className="md:p-6 p-2 mx-3 md:mx-8 my-8 w-100"
-          >
-            <TableHeader>
-              <TableColumn>No.</TableColumn>
-              <TableColumn>Video</TableColumn>
-              <TableColumn>Title</TableColumn>
-              <TableColumn>Uploaded By</TableColumn>
-              <TableColumn>Date Uploaded</TableColumn>
-              <TableColumn>Action</TableColumn>
-            </TableHeader>
-            <TableBody items={videoData}>
-              { (item) => (
-                <TableRow key={item.id}>
-                  <TableCell>{item.number}</TableCell>
-                  <TableCell><Image width={300} radius="full" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video"/></TableCell>
-                  <TableCell>{decodeHTML(item.title)}</TableCell>
-                  <TableCell>{decodeHTML(item.channelTitle)}</TableCell>
-                  <TableCell>{item.publishedAt}</TableCell>
-                  <TableCell>
-                    <Button onPress={() => deleteFromList(item.id)} isIconOnly color="danger" aria-label="Remove">
-                      <FaTrashAlt />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+        <h1 className="text-center px-3 md:px-0 text-3xl">My Playlist</h1>
+        {videoData.length > 0 ? (
+        <>
+          <TableBuilder urlData={videoData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
+        <div className="flex flex-col gap-3 p-2 my-8 md:hidden">
+          { videoData.map((item) => (
+            <VideoCard key={item.number} item={item} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
+          ))}
+        </div>
+        </>
         ) : 
         (<p className="text-center text-gray-500 text-lg">No available playlist</p>)
         }
