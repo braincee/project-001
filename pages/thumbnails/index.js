@@ -25,7 +25,6 @@ export default function ThumbnailsPage() {
       const randomProgress = Math.floor(Math.random() * 100);
       setProgress(randomProgress);
     }
-
   };
 
   useEffect(() => {
@@ -61,63 +60,13 @@ export default function ThumbnailsPage() {
             </Switch>
           </div>
         </section>
-        <section className="mt-8 md:px-8 px-4">
+        <section className="mt-8 md:px-10 px-4 w-full">
           <div className="">
-            <h1 className='text-center my-3 font-bold'>HOMEPAGE</h1>
-            { imageList.length <= 0 && 
-              <span className="flex justify-center">Thumbnails not added yet</span>
-            }
-            <div className="flex md:flex-wrap md:flex-row flex-col justify-center md:px-3 gap-2">
-              { imageList.length > 0 && imageList.map((imageSrc, index) => (
+            <h1 className='my-8 font-bold'>HOMEPAGE</h1>
+            <div className="flex md:flex-wrap md:flex-row flex-col justify-start md:px-3 gap-2">
+              { Array.apply(null, Array(2)).map((_, index) => (
                 <>
                 <HomepageCard
-                  key={index}
-                  title={inputValue}
-                  isViewedEnabled={isViewedEnabled}
-                  imageSrc={imageSrc}
-                  views={numbro(views * (index + 1)).format({
-                    spaceSeparated: false,
-                    average: true,
-                  })}
-                  progress={progress}
-                />
-                <Spacer x={3} />
-                </>
-              ))
-              }
-            </div>
-            <Spacer y={10} />
-            <h1 className='text-center my-3 font-bold'>RELATED</h1>
-            { imageList.length <= 0 && 
-              <span className="flex justify-center">Thumbnails not added yet</span>
-            }
-            <div className="flex md:flex-wrap md:flex-row flex-col justify-center md:px-3 gap-2">
-              { imageList.length > 0 && imageList.map((imageSrc, index) => (
-                <>
-                <RelatedCard
-                  key={index}
-                  title={inputValue}
-                  isViewedEnabled={isViewedEnabled}
-                  imageSrc={imageSrc}
-                  views={numbro(views * (index + 1)).format({
-                    spaceSeparated: false,
-                    average: true,
-                  })}
-                  progress={progress}
-                />
-                <Spacer x={3} />
-                </>
-              ))
-              }
-          </div>
-          </div>
-        </section>
-        <Spacer y={10} />
-        <section className="mt-8 md:px-8 px-4">
-          <h2 className="text-center text-2xl">Compare Thumbnails</h2>
-          <div className="my-4 flex flex-col md:flex-row md:flex-wrap gap-6 justify-center">
-            { Array.apply(null, Array(2)).map((_, index) => (
-                <ThumbnailsCard
                   key={index}
                   index={index}
                   title={inputValue}
@@ -130,7 +79,34 @@ export default function ThumbnailsPage() {
                     average: true,
                   })}
                 />
-              ))}
+                  <Spacer x={3} />
+                </>
+              ))
+              }
+            </div>
+            <Spacer y={10} />
+            <h1 className='my-3 font-bold'>RELATED</h1>
+            <div className="flex md:flex-wrap md:flex-row flex-col justify-start md:px-3 gap-2">
+              { Array.apply(null, Array(2)).map((_, index) => (
+                <>
+                <RelatedCard
+                  key={index}
+                  index={index}
+                  title={inputValue}
+                  isViewedEnabled={isViewedEnabled}
+                  imageList={imageList}
+                  setImageList={setImageList}
+                  progress={progress}
+                  views={numbro(views * (index + 1)).format({
+                    spaceSeparated: false,
+                    average: true,
+                  })}
+                />
+                <Spacer x={3} />
+                </>
+              ))
+              }
+          </div>
           </div>
         </section>
       </main>
