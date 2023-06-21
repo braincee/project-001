@@ -14,9 +14,6 @@ const Header = () => {
             <NavbarItem className="h-full" isActive={router.pathname == '/' && true}>
               <Link href="/" className={`h-full flex items-center text-primary ${router.pathname == '/' && "border-b-3 border-primary"}`}>Home</Link>
             </NavbarItem>
-            <NavbarItem className="h-full" isActive={router.pathname == '/list' && true} href="/list">
-              <Link href="/list"  className={`h-full flex items-center text-primary ${router.pathname == '/list' && "border-b-3 border-primary"}`}>My Playlist</Link>
-            </NavbarItem>
             <NavbarItem className="h-full" isActive={router.pathname == '/thumbnails' && true} href="/thumbnails">
               <Link href="/thumbnails" className={`h-full flex items-center text-primary ${router.pathname == '/thumbnails' && 'border-b-3 border-primary'}`}>
                 Thumbnails

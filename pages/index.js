@@ -247,7 +247,7 @@ export default function Home() {
           </div>
         }
           
-          {isLoading && <SkeletonBuilder cards={2}/>}
+          {isLoading && <SkeletonBuilder cards={5}/>}
           {!isLoading && urlData.length > 0 &&
           <>
             <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />

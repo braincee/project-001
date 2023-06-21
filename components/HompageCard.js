@@ -78,7 +78,7 @@ const HomepageCard = ({ index, title, isViewedEnabled, isNewBadgeEnabled, imageL
                 }
               </ul>
                 {isNewBadgeEnabled && (           
-                  <span className="border bg-[#d0d7de] px-1 py-[3px] text-[12px] font-medium">New</span>
+                  <span className="border bg-[#eeee] text-gray-500 px-1 py-[3px] text-[12px] font-medium">New</span>
                 )}                
                 {isViewedEnabled && (
                   <div>                
