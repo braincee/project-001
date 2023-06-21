@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import ThumbnailsCard from '../../components/ThumbnailsCard';
 import { Input, Spacer, Switch } from '@nextui-org/react';
 import Head from 'next/head';
 import HomepageCard from '@/components/HompageCard';

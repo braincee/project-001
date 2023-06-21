@@ -40,14 +40,16 @@ const HomepageCard = ({ index, title, isViewedEnabled, imageList, setImageList, 
   
   return (
     <div className="w-full md:w-[calc(100%/2-1.5rem)] max-w-[360px]">
-          <div className="flex justify-center items-center w-full">
+          <div className="w-full">
             { imageList[index] ?
-              <div className='flex flex-col w-full'>
+              <>
+              <div className='w-full relative max-h-[200px]'>
+                <img src={imageList[index]} alt="Thumbnail" className="h-[200px] rounded-lg w-full border" onClick={handleThumbnailClick} />   
                 {isViewedEnabled && (
-                  <Progress value={progress} color="danger" size="xs" className="" />
-                )}
-                <img src={imageList[index]} alt="Thumbnail" className="h-[200px] w-full border rounded-xl" onClick={handleThumbnailClick} />
+                <Progress value={progress} color="danger" size="xs" className="absolute bottom-0 left-0 rounded-b-lg h-1 px-[2px]" />
+              )}            
               </div>
+              </>
             :
               <div
                 className="flex flex-col h-[200px] items-center justify-center w-full bg-[#d0d7de] rounded-xl"
@@ -65,13 +67,15 @@ const HomepageCard = ({ index, title, isViewedEnabled, imageList, setImageList, 
             </div>
             <div className='pe-[24px]'>
               <h3 className="text-lg font-bold">{ title ? truncate(title, 30) : "Video Title"}</h3>
+              <li className="flex items-center text-gray-500 text-[16px]">
+                Stephen A.
+                <span className="ps-1"><FaCheckCircle className="min-w-[14px] h-[14px]" /></span>
+              </li>
               <ul className="flex flex-wrap gap-2 text-gray-500 text-[16px]">
-                <li className="flex items-center">
-                  Uploaded by Stephen
-                  <span className="ps-1"><FaCheckCircle className="min-w-[14px] h-[14px]" /></span>
-                </li>
-                <li>{views > 0 ? views + "views": "no views"} </li>
-                <li className="">1 hour ago</li>
+                <li>{views !== 0 && imageList[index] ? views + " views": "no views"} </li>
+                <ul className="list-disc pl-4">
+                <li className="before:p-0">{imageList[index] && "1 hour ago"}</li>
+                </ul>
               </ul>
                   
                 {isViewedEnabled && (
