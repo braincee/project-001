@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar, Progress } from "@nextui-org/react";
 import { FaCheckCircle, FaCloudUploadAlt } from 'react-icons/fa';
 
-const HomepageCard = ({ index, title, isViewedEnabled, imageList, setImageList, progress, views }) => {
+const HomepageCard = ({ index, title, isViewedEnabled, isNewBadgeEnabled, imageList, setImageList, progress, views }) => {
 
   const truncate = (string, length) => {
     return string.length > length ? `${string.substr(0, length)}...` : string;
@@ -42,14 +42,12 @@ const HomepageCard = ({ index, title, isViewedEnabled, imageList, setImageList, 
     <div className="w-full md:w-[calc(100%/2-1.5rem)] max-w-[360px]">
           <div className="w-full">
             { imageList[index] ?
-              <>
               <div className='w-full relative max-h-[200px]'>
                 <img src={imageList[index]} alt="Thumbnail" className="h-[200px] rounded-lg w-full border" onClick={handleThumbnailClick} />   
                 {isViewedEnabled && (
                 <Progress value={progress} color="danger" size="xs" className="absolute bottom-0 left-0 rounded-b-lg h-1 px-[2px]" />
               )}            
               </div>
-              </>
             :
               <div
                 className="flex flex-col h-[200px] items-center justify-center w-full bg-[#d0d7de] rounded-xl"
@@ -65,21 +63,25 @@ const HomepageCard = ({ index, title, isViewedEnabled, imageList, setImageList, 
             <div className="flex flex-col items-center">
               <Avatar className="me-[12px] min-w-[36px] h-[36px]" />
             </div>
-            <div className='pe-[24px]'>
-              <h3 className="text-lg font-bold">{ title ? truncate(title, 30) : "Video Title"}</h3>
-              <li className="flex items-center text-gray-500 text-[16px]">
+            <div className='pe-[24px] w-full'>
+              <h3 className="text-[16px] font-medium">{ title ? truncate(title, 50) : "Video Title"}</h3>
+              <li className="flex items-center text-gray-500 text-[14px]">
                 Stephen A.
                 <span className="ps-1"><FaCheckCircle className="min-w-[14px] h-[14px]" /></span>
               </li>
-              <ul className="flex flex-wrap gap-2 text-gray-500 text-[16px]">
+              <ul className="flex flex-wrap gap-2 text-gray-500 text-[14px] font-normal">
                 <li>{views !== 0 && imageList[index] ? views + " views": "no views"} </li>
-                <ul className="list-disc pl-4">
-                <li className="before:p-0">{imageList[index] && "1 hour ago"}</li>
-                </ul>
+                {imageList[index] &&
+                  <ul className="list-disc pl-4">
+                    <li className="before:p-0"> 1 hour ago</li>
+                  </ul>
+                }
               </ul>
-                  
+                {isNewBadgeEnabled && (           
+                  <span className="border bg-[#d0d7de] px-1 py-[3px] text-[12px] font-medium">New</span>
+                )}                
                 {isViewedEnabled && (
-                  <div className="mt-2">                
+                  <div>                
                     <p className="text-xs text-red-500 mt-1">{progress}% viewed</p>
                   </div>
                 )}

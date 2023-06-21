@@ -7,15 +7,21 @@ import numbro from 'numbro';
 
 
 export default function ThumbnailsPage() {
-  const [inputValue, setInputValue] = useState('');
+  const [titleValue, setTitleValue] = useState('');
+  const [channelName, setChannelName] = useState('');
   const [imageList, setImageList] = useState([]);
   const [isViewedEnabled, setIsViewedEnabled] = useState(false);
+  const [isNewBadgeEnabled, SetIsNewBadgeEnabled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [views, setViews] = useState(0);
 
   const handleTitleChange = (e) => {
-    setInputValue(e.target.value);
+    setTitleValue(e.target.value);
   };
+
+  const handleNameChange = (e) => {
+    setChannelName(e.target.value);
+  }
 
   const handleViewedToggle = () => {
     setIsViewedEnabled(!isViewedEnabled);
@@ -25,6 +31,10 @@ export default function ThumbnailsPage() {
       setProgress(randomProgress);
     }
   };
+
+  const handleNewBadgeToggle = () => {
+    SetIsNewBadgeEnabled(!isNewBadgeEnabled);
+  }
 
   useEffect(() => {
     if (isViewedEnabled) {
@@ -45,31 +55,55 @@ export default function ThumbnailsPage() {
       <main className="mt-4 mb-[50px] flex flex-col">
         <h1 className="text-center px-3 md:px-0 text-3xl">Thumbnails Page</h1>
         <section>
-          <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
+          <div className="flex flex-col justify-center items-center mt-8 gap-4 w-[100%]">
             <Input
               type="text"
               onChange={handleTitleChange}
               className="w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400"
-              placeholder="Add title"
+              placeholder="Enter a video title"
               aria-labelledby="Title"
-              value={inputValue}
+              value={titleValue}
             />
-            <Switch checked={isViewedEnabled} onChange={handleViewedToggle} color="primary">
-              Viewed
-            </Switch>
+            <Input
+              type="text"
+              onChange={handleNameChange}
+              className="w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400"
+              placeholder="Enter a channel name"
+              aria-labelledby="Channel name"
+              value={channelName}
+            />
+            <div className="flex justify-between w-full md:w-3/5 px-4 md:px-0">
+              <p>Viewed</p>
+              <Switch
+                checked={isViewedEnabled}
+                onChange={handleViewedToggle}
+                color="primary"
+                size="xl"
+              /> 
+            </div>
+            <div className="flex justify-between w-full md:w-3/5 px-4 md:px-0">
+              <p>Toggle new badge</p>
+              <Switch
+                checked={isNewBadgeEnabled}
+                onChange={handleNewBadgeToggle}
+                color="primary"
+                size="xl"
+              />
+            </div>
           </div>
         </section>
         <section className="mt-8 md:px-10 px-4 w-full">
           <div className="">
             <h1 className='my-8 font-bold'>HOMEPAGE</h1>
-            <div className="flex md:flex-wrap md:flex-row flex-col justify-start md:px-3 gap-2">
+            <div className="flex md:flex-wrap md:flex-row flex-col justify-start md:px-3 gap-6">
               { Array.apply(null, Array(2)).map((_, index) => (
                 <>
                 <HomepageCard
                   key={index}
                   index={index}
-                  title={inputValue}
+                  title={titleValue}
                   isViewedEnabled={isViewedEnabled}
+                  isNewBadgeEnabled={isNewBadgeEnabled}
                   imageList={imageList}
                   setImageList={setImageList}
                   progress={progress}
@@ -85,14 +119,15 @@ export default function ThumbnailsPage() {
             </div>
             <Spacer y={10} />
             <h1 className='my-3 font-bold'>RELATED</h1>
-            <div className="flex md:flex-wrap md:flex-row flex-col justify-start md:px-3 gap-2">
+            <div className="flex md:flex-wrap md:flex-row flex-col justify-start md:px-3 gap-6">
               { Array.apply(null, Array(2)).map((_, index) => (
                 <>
                 <RelatedCard
                   key={index}
                   index={index}
-                  title={inputValue}
+                  title={titleValue}
                   isViewedEnabled={isViewedEnabled}
+                  isNewBadgeEnabled={isNewBadgeEnabled}
                   imageList={imageList}
                   setImageList={setImageList}
                   progress={progress}
