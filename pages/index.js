@@ -57,13 +57,24 @@ export default function Home() {
 
   useEffect(() => {
     if (editStatus == "pressed") {
-      setIsEditing(!isEditing);
-      setEditStatus("");
+      if (isEditing) {
+        finishAndShare();
+        setEditStatus("");
+      } else {
+        setIsEditing(!isEditing);
+        setEditStatus("");
+      }
     } else if (shareStatus == "pressed") {
-      setIsEditing(!isEditing);
+      setIsEditing(false);
       setShareStatus("");
     }
-  }, [editStatus, shareStatus])
+  }, [editStatus, shareStatus]);
+
+  useEffect(() => {
+    if (router.query.list == "" || Object.keys(router.query).length == 0) {
+      setIsEditing(true);
+    }
+  }, [router.query.list]);
 
   const isValidHttpUrl = (string) => {
     try {
@@ -153,8 +164,10 @@ export default function Home() {
     setInputValue('')
   }
 
-  const handleShare = () => {
-    setShareStatus("pressed");
+  const handleShare = (e) => {
+    if (e) {
+      setShareStatus("pressed");
+    }
     let lists = '';
     urlData.forEach((url, index) => {
       if (index + 1 === urlData.length) {
@@ -207,6 +220,11 @@ export default function Home() {
       setIsLoading(false);
     }
   };
+
+  const finishAndShare = () => {
+    setIsEditing(false);
+    handleShare();
+  }
 
   const decodeHTML = (code) => {
     let text = document.createElement("textarea");
@@ -272,7 +290,7 @@ export default function Home() {
         </div>
 
         {!isLoading && urlData.length > 0 &&
-          <section className="px-5">
+          <section className="px-10">
             { isEditing ? 
               <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} isEditing={isEditing} />
             :
