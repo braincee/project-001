@@ -9,6 +9,7 @@ import getSearchVideos from '@/libs/search';
 import getVideo from '@/libs/video';
 import VideoCard from '@/components/VideoCard';
 import TableBuilder from '@/components/TableBuilder';
+import TableBuilder2 from '@/components/TableBuilder2';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
@@ -19,17 +20,13 @@ export default function Home() {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [searchData, setSearchData] = useState([]);
   const [addStatus, setAddStatus] = useState("");
+  const [shareStatus, setShareStatus] = useState("");
+  const [editStatus, setEditStatus] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
-  const [isEnabled, setIsEnabled] =useState(false);
+  const [isEditing, setIsEditing] =useState(false);
   const [number, setNumber] = useState(0);
 
   const router = useRouter();
-
-  useEffect(() => {
-    if (addStatus == "pressed") {
-      setIsLoading(true);
-    }
-  }, [addStatus]);
 
   useEffect(() => {
     if (addStatus == "pressed") {
@@ -57,6 +54,16 @@ export default function Home() {
       }, 1000);
     }
   }, [inputValue]);
+
+  useEffect(() => {
+    if (editStatus == "pressed") {
+      setIsEditing(!isEditing);
+      setEditStatus("");
+    } else if (shareStatus == "pressed") {
+      setIsEditing(!isEditing);
+      setShareStatus("");
+    }
+  }, [editStatus, shareStatus])
 
   const isValidHttpUrl = (string) => {
     try {
@@ -147,6 +154,7 @@ export default function Home() {
   }
 
   const handleShare = () => {
+    setShareStatus("pressed");
     let lists = '';
     urlData.forEach((url, index) => {
       if (index + 1 === urlData.length) {
@@ -174,7 +182,7 @@ export default function Home() {
   }
 
   const handleMode = () => {
-    setIsEnabled(!isEnabled);
+    setEditStatus("pressed");
   }
 
   const searchVideos = async () => {
@@ -216,32 +224,35 @@ export default function Home() {
       </Head>
       <main className="mt-4 mb-[50px] flex flex-col gap-5">
         <h1 className="text-center px-3 md:px-0 text-3xl">YT Playlist Creator and Sharer</h1>
-        <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
-          <Input
-            type="text"
-            onChange={handleChange}
-            className="w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400"
-            placeholder="Add YouTube Url"
-            aria-labelledby="none"
-            value={inputValue}
-            endContent={
-              isLoading &&
-              <CircularProgress aria-label="Loading..." />
-            }
-          />
-          <Button
-            color="primary"
-            className="text-white"
-            size="xl"
-            onPress={handlePress}
-            isDisabled={isDisabled}
-          >Add
-          </Button>
-          {!isvalid ? (
-            <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
-          ) : ""}
-        </div>
-        {!isLoading && showSearchResults &&
+        {isEditing && 
+          <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
+            <Input
+              type="text"
+              onChange={handleChange}
+              className="w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400"
+              placeholder="Add YouTube Url"
+              aria-labelledby="none"
+              value={inputValue}
+              endContent={
+                isLoading &&
+                <CircularProgress aria-label="Loading..." />
+              }
+            />
+            <Button
+              color="primary"
+              className="text-white"
+              size="xl"
+              onPress={handlePress}
+              isDisabled={isDisabled}
+            >Add
+            </Button>
+            {!isvalid ? (
+              <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
+            ) : ""}
+          </div>
+        }
+
+        {!isLoading && showSearchResults && isEditing &&
           <div className="flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4">
             {searchData.length > 0 && searchData.map((video, index) => (
               <>
@@ -252,21 +263,24 @@ export default function Home() {
             }
           </div>
         }
-        {isLoading && <SkeletonBuilder cards={5} />}
+
+        {isLoading && isEditing && <SkeletonBuilder cards={5} />}
+
         <div className="flex justify-end px-10 md:px-7 gap-5">
-          {urlData.length > 0 &&
-            <>
-              <Button color="success" className="text-dark px-7" size="lg" onPress={handleShare} endIcon={<FaShareAlt />} >Share</Button>
-              <Button color="primary" className="text-dark px-10" size="lg" onPress={handleMode}>{isEnabled ? "View" : "Edit"}</Button>
-            </>
-          }
+          <Button color="success" className="text-dark px-7" size="lg" onPress={handleShare} endIcon={<FaShareAlt />} >Share</Button>
+          <Button color="primary" className="text-dark px-10" size="lg" onPress={handleMode}>{isEditing ? "Done" : "Edit"}</Button>
         </div>
+
         {!isLoading && urlData.length > 0 &&
           <section className="px-5">
-            <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} isEnabled={isEnabled} />
+            { isEditing ? 
+              <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} isEditing={isEditing} />
+            :
+              <TableBuilder2 urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} /> 
+            }
             <div className="flex flex-col gap-3 p-2 my-8 md:hidden">
               {urlData.map((item) => (
-                <VideoCard key={item.number} item={item} decodeHTML={decodeHTML} deleteFromList={deleteFromList} isEnabled={isEnabled} />
+                <VideoCard key={item.number} item={item} decodeHTML={decodeHTML} deleteFromList={deleteFromList} isEditing={isEditing} />
               ))}
             </div>
           </section>

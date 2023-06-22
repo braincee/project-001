@@ -1,7 +1,7 @@
 import { Button, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Avatar } from '@nextui-org/react';
 import { FaTrashAlt } from "react-icons/fa";
 
-const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
+const TableBuilder2 = ({ urlData, decodeHTML, deleteFromList }) => {
 
   return (
     <Table
@@ -24,12 +24,7 @@ const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
             <TableCell>{decodeHTML(item.title.toUpperCase())}</TableCell>
             <TableCell>{decodeHTML(item.channelTitle.toUpperCase())}</TableCell>
             <TableCell>{item.publishedAt.toUpperCase()}</TableCell> 
-            <TableCell>
-                <Button onPress={() => deleteFromList(item.number)} isIconOnly color="danger" aria-label="Remove">
-                  <FaTrashAlt />
-                </Button>
-            
-            </TableCell>
+            <TableCell></TableCell>
           </TableRow>
         )}
       </TableBody>
@@ -37,4 +32,4 @@ const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
   )
 }
 
-export default TableBuilder;
+export default TableBuilder2;
