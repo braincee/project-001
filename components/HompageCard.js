@@ -45,7 +45,7 @@ const HomepageCard = ({ index, title, isViewedEnabled, isNewBadgeEnabled, imageL
               <div className='w-full relative max-h-[200px]'>
                 <img src={imageList[index]} alt="Thumbnail" className="h-[200px] rounded-lg w-full border" onClick={handleThumbnailClick} />   
                 {isViewedEnabled && (
-                <Progress value={progress} color="danger" size="xs" className="absolute bottom-0 left-0 rounded-b-lg h-1 px-[2px]" />
+                <Progress value={progress} color="danger" size="xs" className="absolute bottom-3 left-0 rounded-b-lg h-1 px-[2px]" />
               )}            
               </div>
             :

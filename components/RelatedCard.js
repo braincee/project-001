@@ -47,12 +47,12 @@ const RelatedCard = ({ index, title, isViewedEnabled, isNewBadgeEnabled, imageLi
                 <div className='w-full relative max-h-[94px]'>
                   <img src={imageList[index]} alt="Thumbnail" className=" h-[94px] w-[168px] rounded-lg border" onClick={handleThumbnailClick} />
                   {isViewedEnabled && (
-                    <Progress value={progress} color="danger" size="xs" className="absolute bottom-0 left-0 rounded-b-lg h-1 px-[2px]" />
+                    <Progress value={progress} color="danger" size="xs" className="absolute bottom-3 left-0 rounded-b-lg h-1 px-[2px]" />
                   )}
                 </div>
               :
                 <div
-                  className="flex flex-col h-[94px] w-full items-center justify-start w-[168px] bg-[#d0d7de] rounded-xl"
+                  className="flex flex-col h-[94px] w-full items-center justify-start bg-[#d0d7de] rounded-xl"
                   onClick={handleThumbnailClick}
                 >
                   <FaCloudUploadAlt className="flex w-full mt-1" size={30} color="gray" />
