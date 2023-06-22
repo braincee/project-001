@@ -1,11 +1,11 @@
 import { Button, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Avatar } from '@nextui-org/react';
 import { FaTrashAlt } from "react-icons/fa";
 
-const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
+const TableBuilder = ({ urlData, decodeHTML, deleteFromList, isEnabled }) => {
   return (
     <Table
-      aria-label="Example table with dynamic content"
-      className="p-6 mx-8 my-8 w-100 hidden md:flex bg-black text-white"
+      aria-label="Selected videos list"
+      className="p-8 mx-8 my-8 w-100 hidden md:flex p-auto"
     >
       <TableHeader>
         <TableColumn>No.</TableColumn>
@@ -24,9 +24,11 @@ const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
             <TableCell>{decodeHTML(item.channelTitle.toUpperCase())}</TableCell>
             <TableCell>{item.publishedAt.toUpperCase()}</TableCell>
             <TableCell>
-              <Button onPress={() => deleteFromList(item.number)} isIconOnly color="danger" aria-label="Remove">
-                <FaTrashAlt />
-              </Button>
+              {isEnabled && 
+                <Button onPress={() => deleteFromList(item.number)} isIconOnly color="danger" aria-label="Remove">
+                  <FaTrashAlt />
+                </Button>
+              }
             </TableCell>
           </TableRow>
         )}

@@ -17,9 +17,10 @@ export default function Home() {
   const [isvalid, setIsvalid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
-  const [searchData, setSearchData ] = useState([]);
-  const [addStatus, setAddStatus] = useState(""); 
+  const [searchData, setSearchData] = useState([]);
+  const [addStatus, setAddStatus] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isEnabled, setIsEnabled] =useState(false);
   const [number, setNumber] = useState(0);
 
   const router = useRouter();
@@ -50,7 +51,7 @@ export default function Home() {
   }, [query]);
 
   useEffect(() => {
-    if (!inputValue) {      
+    if (!inputValue) {
       setTimeout(() => {
         setShowSearchResults(false);
       }, 1000);
@@ -102,9 +103,9 @@ export default function Home() {
 
   const deleteFromList = (index) => {
     setUrlData((items) => {
-     const newItems = items.filter((item) => item.number != index);
-     setNumber(newItems.length);
-     return newItems;
+      const newItems = items.filter((item) => item.number != index);
+      setNumber(newItems.length);
+      return newItems;
     });
     setUrlData((items) => {
       const newItems = items.map((item, index) => {
@@ -116,7 +117,7 @@ export default function Home() {
       return newItems;
     });
   };
-  
+
   const truncate = (string, length) => {
     return string.length > length ? `${string.substr(0, length)}...` : string;
   }
@@ -132,15 +133,15 @@ export default function Home() {
       let videoId = inputValue.split('v=')[1];
       const { data: { response } } = await getVideo(videoId);
       const { title, description, channelTitle, publishedAt } = response.items[0].snippet;
-        setUrlData([...urlData, {
-          number: number + 1,
-          id: videoId,
-          title,
-          description,
-          channelTitle,
-          publishedAt: new Date(publishedAt).toUTCString(),
-        }]);
-        setNumber(number + 1);
+      setUrlData([...urlData, {
+        number: number + 1,
+        id: videoId,
+        title,
+        description,
+        channelTitle,
+        publishedAt: new Date(publishedAt).toUTCString(),
+      }]);
+      setNumber(number + 1);
     }
     setInputValue('')
   }
@@ -161,16 +162,21 @@ export default function Home() {
     const stringPublishedAt = urlData.map((url) => `${new Date(url.publishedAt).toDateString()}`).join(',');
 
     router.push({
-      pathname: "/list",
-      query: { 
+      pathname: "/",
+      query: {
         list: lists,
         title: stringTitle,
         description: stringDescription,
         channelTitle: stringChannelTitle,
         publishedAt: stringPublishedAt,
       }
-    }, `/list/?list=${lists}`);
+    }, `/?list=${lists}`);
   }
+
+  const handleMode = () => {
+    setIsEnabled(!isEnabled);
+  }
+
   const searchVideos = async () => {
     if (!query) return;
     try {
@@ -199,7 +205,7 @@ export default function Home() {
     text.innerHTML = code;
     return text.value
   }
-  
+
   return (
     <>
       <Head>
@@ -208,8 +214,8 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="mt-4 mb-[50px] flex flex-col">
-      <h1 className="text-center px-3 md:px-0 text-3xl">YT Playlist Creator and Sharer</h1>
+      <main className="mt-4 mb-[50px] flex flex-col gap-5">
+        <h1 className="text-center px-3 md:px-0 text-3xl">YT Playlist Creator and Sharer</h1>
         <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
           <Input
             type="text"
@@ -223,46 +229,48 @@ export default function Home() {
               <CircularProgress aria-label="Loading..." />
             }
           />
-          <Button 
+          <Button
             color="primary"
             className="text-white"
             size="xl"
             onPress={handlePress}
             isDisabled={isDisabled}
-            >Add
+          >Add
           </Button>
+          {!isvalid ? (
+            <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
+          ) : ""}
         </div>
-        {!isvalid ? (
-          <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
-        ): ""}
-        { !isLoading && showSearchResults &&
+        {!isLoading && showSearchResults &&
           <div className="flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4">
             {searchData.length > 0 && searchData.map((video, index) => (
               <>
-              <SearchCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
-              <Spacer x={6} />
+                <SearchCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
+                <Spacer x={6} />
               </>
             ))
             }
           </div>
         }
-          
-          {isLoading && <SkeletonBuilder cards={5}/>}
-          {!isLoading && urlData.length > 0 &&
-          <>
-            <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
-          <div className="flex flex-col gap-3 p-2 my-8 md:hidden">
-            { urlData.map((item) => (
-              <VideoCard key={item.number} item={item} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
-            ))}
-          </div>
-          </>
+        {isLoading && <SkeletonBuilder cards={5} />}
+        <div className="flex justify-end px-10 md:px-7 gap-5">
+          {urlData.length > 0 &&
+            <>
+              <Button color="success" className="text-dark px-7" size="lg" onPress={handleShare} endIcon={<FaShareAlt />} >Share</Button>
+              <Button color="primary" className="text-dark px-10" size="lg" onPress={handleMode}>{isEnabled ? "View" : "Edit"}</Button>
+            </>
           }
-          <div className="flex justify-center mt-16">
-            { urlData.length > 0 &&
-              <Button color="success" className=" text-dark" size="lg" onPress={handleShare} endIcon={<FaShareAlt />} >Share</Button>
-            }
-          </div>
+        </div>
+        {!isLoading && urlData.length > 0 &&
+          <section className="px-5">
+            <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} isEnabled={isEnabled} />
+            <div className="flex flex-col gap-3 p-2 my-8 md:hidden">
+              {urlData.map((item) => (
+                <VideoCard key={item.number} item={item} decodeHTML={decodeHTML} deleteFromList={deleteFromList} isEnabled={isEnabled} />
+              ))}
+            </div>
+          </section>
+        }
       </main>
     </>
   )
