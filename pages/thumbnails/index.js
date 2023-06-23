@@ -55,7 +55,7 @@ export default function ThumbnailsPage() {
       <main className="mt-4 mb-[50px] flex flex-col">
         <h1 className="text-center px-3 md:px-0 text-3xl">Thumbnails Page</h1>
         <section>
-          <div className="flex flex-col justify-center items-center mt-8 gap-4 w-[100%]">
+          <div className="flex flex-col justify-center items-center mt-8 gap-4 w-full">
             <Input
               type="text"
               onChange={handleTitleChange}
@@ -92,9 +92,9 @@ export default function ThumbnailsPage() {
             </div>
           </div>
         </section>
-        <section className="flex flex-col items-center mt-8 md:px-10 px-4">
+        <section className="mt-8 md:pl-20 lg:pl-32 pl-5 w-full">
             <p className='my-4 font-2xl text-[30px] md:mr-[550px] tracking-widest italic'>HOMEPAGE</p>
-            <div className="flex md:flex-row flex-col md:px-3 gap-20">
+            <div className="flex md:flex-row flex-col px-3 md:px-0 md:gap-3 gap-5 lg:gap-10">
               { Array.apply(null, Array(2)).map((_, index) => (
                 <>
                 <HomepageCard
@@ -118,7 +118,7 @@ export default function ThumbnailsPage() {
             </div>
             <Spacer y={10} />
             <p className='my-4 font-2xl text-[30px] md:mr-[600px] tracking-widest italic'>RELATED</p>
-            <div className="flex md:flex-row flex-col md:px-3 gap-6">
+            <div className="flex md:flex-row flex-col px-3 md:px-0 gap-6">
               { Array.apply(null, Array(2)).map((_, index) => (
                 <>
                 <RelatedCard
