@@ -1,7 +1,6 @@
-import { Button, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Avatar } from '@nextui-org/react';
-import { FaTrashAlt } from "react-icons/fa";
+import { Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Avatar } from '@nextui-org/react';
 
-const TableBuilder2 = ({ urlData, decodeHTML, deleteFromList }) => {
+const TableBuilder2 = ({ urlData, decodeHTML }) => {
 
   return (
     <Table
