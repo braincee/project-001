@@ -37,10 +37,8 @@ export default function ThumbnailsPage() {
   }
 
   useEffect(() => {
-    if (imageList.length > 0) {
+    if (imageList.length == 1) {
       setViews(Math.floor(Math.random() * 10000));
-    } else {
-      setViews(0);
     }
   }, [imageList.length]);
 
