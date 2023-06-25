@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Progress } from '@nextui-org/react';
 import { FaCheckCircle, FaCloudUploadAlt } from 'react-icons/fa';
 
-const RelatedCard = ({ index, title, isViewedEnabled, isNewBadgeEnabled, imageList, setImageList, progress, views }) => {
+const RelatedCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled, imageList, setImageList, progress, views }) => {
 
   const truncate = (string, length) => {
     return string.length > length ? `${string.substr(0, length)}...` : string;
@@ -63,10 +63,12 @@ const RelatedCard = ({ index, title, isViewedEnabled, isNewBadgeEnabled, imageLi
             <div className="flex items-start justify-start w-full text-[14px]">             
               <div>
               <h3 className="text-[16px] font-medium">{ title ? truncate(title, 50) : "Video Title"}</h3>
-              <li className="flex items-center text-gray-500 text-[14px]">
-                Stephen A.
-                <span className="ps-1"><FaCheckCircle className="min-w-[14px] h-[14px]" /></span>
-              </li>
+              {channel &&
+                <li className="flex items-center text-gray-500 text-[14px]">
+                  { truncate(channel, 30)}
+                  <span className="ps-1"><FaCheckCircle className="min-w-[14px] h-[14px]" /></span>
+                </li>
+              }
               <ul className="flex flex-wrap gap-2 text-gray-500 text-[14px] font-normal">
                 <li>{views !== 0 && imageList[index] ? views + " views": "no views"} </li>
                 {imageList[index] &&

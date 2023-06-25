@@ -101,6 +101,7 @@ export default function ThumbnailsPage() {
                   key={index}
                   index={index}
                   title={titleValue}
+                  channel={channelName}
                   isViewedEnabled={isViewedEnabled}
                   isNewBadgeEnabled={isNewBadgeEnabled}
                   imageList={imageList}
@@ -125,6 +126,7 @@ export default function ThumbnailsPage() {
                   key={index}
                   index={index}
                   title={titleValue}
+                  channel={channelName}
                   isViewedEnabled={isViewedEnabled}
                   isNewBadgeEnabled={isNewBadgeEnabled}
                   imageList={imageList}
