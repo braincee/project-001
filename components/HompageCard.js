@@ -46,7 +46,12 @@ const HomepageCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnable
               <div className='w-full relative max-h-[200px]'>
                 <img src={imageList[index]} alt="Thumbnail" className="h-[200px] rounded-lg w-full border" onClick={handleThumbnailClick} />   
                 {isViewedEnabled && (
-                <Progress value={progress} color="danger" size="xs" className="absolute bottom-0 left-0 rounded-b-lg h-1 px-[2px]" />
+                  <Progress 
+                    value={progress}
+                    size="lg"
+                    radius="none"
+                    className="progress-bar absolute bottom-0 left-0 h-[5px] px-[1px]"
+                  />
               )}            
               </div>
             :

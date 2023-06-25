@@ -34,3 +34,13 @@ iframe {
   width: 100%;
   height: 100%;
 }
+
+.progress-bar > div {
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  
+}
+
+.progress-bar > div > div {
+  background-color: #f00;
+}
