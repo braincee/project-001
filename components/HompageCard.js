@@ -82,13 +82,6 @@ const HomepageCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnable
                 {isNewBadgeEnabled && (           
                   <span className="text-slate-400 bg-slate-600 px-1 py-[2px] text-[12px] font-medium">New</span>
                 )}                
-                {isViewedEnabled && (
-                  <div>                
-                    <p className="text-xs text-red-500 mt-1">{progress}% viewed</p>
-                  </div>
-                )}
-              
-              
             </div>
           </div>
     </div>

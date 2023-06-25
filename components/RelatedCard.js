@@ -62,29 +62,24 @@ const RelatedCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled
             </div>
             <div className="flex items-start justify-start w-full text-[14px]">             
               <div>
-              <h3 className="text-[16px] font-medium">{ title ? truncate(title, 50) : "Video Title"}</h3>
-              {channel &&
-                <li className="flex items-center text-gray-500 text-[14px]">
-                  { truncate(channel, 30)}
-                  <span className="ps-1"><FaCheckCircle className="min-w-[14px] h-[14px]" /></span>
-                </li>
-              }
-              <ul className="flex flex-wrap gap-2 text-gray-500 text-[14px] font-normal">
-                <li>{views !== 0 && imageList[index] ? views + " views": "no views"} </li>
-                {imageList[index] &&
-                  <ul className="list-disc pl-4">
-                    <li className="before:p-0"> 1 hour ago</li>
-                  </ul>
+                <h3 className="text-[16px] font-medium">{ title ? truncate(title, 50) : "Video Title"}</h3>
+                {channel &&
+                  <li className="flex items-center text-gray-500 text-[14px]">
+                    { truncate(channel, 30)}
+                    <span className="ps-1"><FaCheckCircle className="min-w-[14px] h-[14px]" /></span>
+                  </li>
                 }
-              </ul>
+                <ul className="flex flex-wrap gap-2 text-gray-500 text-[14px] font-normal">
+                  <li>{views !== 0 && imageList[index] ? views + " views": "no views"} </li>
+                  {imageList[index] &&
+                    <ul className="list-disc pl-4">
+                      <li className="before:p-0"> 1 hour ago</li>
+                    </ul>
+                  }
+                </ul>
                 {isNewBadgeEnabled && (           
                   <span className="text-slate-400 bg-slate-600 px-1 py-[2px] text-[12px] font-medium">New</span>
                 )}   
-                {isViewedEnabled && (
-                  <div className="mt-2">
-                    <p className="text-xs text-red-500 mt-1">{progress}% viewed</p>
-                  </div>
-                )}
               </div>
             </div>
           </div>
