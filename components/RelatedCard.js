@@ -20,7 +20,7 @@ const RelatedCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      if (imageList.length >= 2) {
+      if (imageList[index] !== undefined) {
         setImageList((prevImageList) => {      
           const items = prevImageList.map((item, i) => {
             if (index === i) {
@@ -70,7 +70,7 @@ const RelatedCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled
                   </li>
                 }
                 <ul className="flex flex-wrap gap-2 text-gray-500 text-[14px] font-normal">
-                  <li>{views !== 0 && imageList[index] ? views + " views": "no views"} </li>
+                  <li>{imageList[index] ? views + " views": "no views"} </li>
                   {imageList[index] &&
                     <ul className="list-disc pl-4">
                       <li className="before:p-0"> 1 hour ago</li>
@@ -78,7 +78,7 @@ const RelatedCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled
                   }
                 </ul>
                 {isNewBadgeEnabled && (           
-                  <span className="text-slate-400 bg-slate-600 px-1 py-[2px] text-[12px] font-medium">New</span>
+                  <span className="text-[#606060] bg-[#0000000d] px-[4px] py-[2px] text-[12px] font-medium rounded-[4px]">New</span>
                 )}   
               </div>
             </div>

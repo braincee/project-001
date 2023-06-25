@@ -37,12 +37,12 @@ export default function ThumbnailsPage() {
   }
 
   useEffect(() => {
-    if (isViewedEnabled) {
+    if (imageList.length > 0) {
       setViews(Math.floor(Math.random() * 10000));
     } else {
       setViews(0);
     }
-  }, [isViewedEnabled]);
+  }, [imageList.length]);
 
   return (
     <>
@@ -111,6 +111,7 @@ export default function ThumbnailsPage() {
                     spaceSeparated: false,
                     average: true,
                   })}
+                  setViews={setViews}
                 />
                   <Spacer x={3} />
                 </>
