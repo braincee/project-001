@@ -284,13 +284,12 @@ export default function Home() {
 
         {isLoading && isEditing && <SkeletonBuilder cards={5} />}
 
-        <div className="flex justify-end px-10 md:px-7 gap-5">
-          <Button color="success" className="text-dark px-7" size="lg" onPress={handleShare} endIcon={<FaShareAlt />} >Share</Button>
-          <Button color="primary" className="text-dark px-10" size="lg" onPress={handleMode}>{isEditing ? "Done" : "Edit"}</Button>
-        </div>
-
         {!isLoading && urlData.length > 0 &&
           <section className="px-10">
+            <div className="flex justify-end px-10 md:px-7 gap-5">
+             <Button color="success" className="text-dark px-7" size="lg" onPress={handleShare} endIcon={<FaShareAlt />} >Share</Button>
+             <Button color="primary" className="text-dark px-10" size="lg" onPress={handleMode}>{isEditing ? "Done" : "Edit"}</Button>
+             </div>
             { isEditing ? 
               <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} isEditing={isEditing} />
             :
