@@ -10,6 +10,7 @@ import getVideo from '@/libs/video';
 import VideoCard from '@/components/VideoCard';
 import TableBuilder from '@/components/TableBuilder';
 import TableBuilder2 from '@/components/TableBuilder2';
+import copy from 'copy-to-clipboard';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
@@ -181,6 +182,9 @@ export default function Home() {
     const stringDescription = urlData.map((url) => `${url.description}`).join(',');
     const stringChannelTitle = urlData.map((url) => `${url.channelTitle}`).join(',');
     const stringPublishedAt = urlData.map((url) => `${new Date(url.publishedAt).toDateString()}`).join(',');
+    const shareUrl = `${window.location.origin}/?list=${lists}`;
+
+    copy(shareUrl)
 
     router.push({
       pathname: "/",
