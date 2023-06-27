@@ -18,7 +18,7 @@ const SkeletonBuilder = ({ cards }) => {
         </div>
         <Spacer x={6} />
         </>
-      )) };
+      )) }
     </div>
   );
 };

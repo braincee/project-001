@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import ThumbnailsCard from '../../components/ThumbnailsCard';
 import { Input, Spacer, Switch } from '@nextui-org/react';
 import Head from 'next/head';
 import HomepageCard from '@/components/HompageCard';
@@ -8,15 +7,21 @@ import numbro from 'numbro';
 
 
 export default function ThumbnailsPage() {
-  const [inputValue, setInputValue] = useState('');
+  const [titleValue, setTitleValue] = useState('');
+  const [channelName, setChannelName] = useState('');
   const [imageList, setImageList] = useState([]);
   const [isViewedEnabled, setIsViewedEnabled] = useState(false);
+  const [isNewBadgeEnabled, SetIsNewBadgeEnabled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [views, setViews] = useState(0);
 
   const handleTitleChange = (e) => {
-    setInputValue(e.target.value);
+    setTitleValue(e.target.value);
   };
+
+  const handleNameChange = (e) => {
+    setChannelName(e.target.value);
+  }
 
   const handleViewedToggle = () => {
     setIsViewedEnabled(!isViewedEnabled);
@@ -25,16 +30,17 @@ export default function ThumbnailsPage() {
       const randomProgress = Math.floor(Math.random() * 100);
       setProgress(randomProgress);
     }
-
   };
 
+  const handleNewBadgeToggle = () => {
+    SetIsNewBadgeEnabled(!isNewBadgeEnabled);
+  }
+
   useEffect(() => {
-    if (isViewedEnabled) {
+    if (imageList.length == 1) {
       setViews(Math.floor(Math.random() * 10000));
-    } else {
-      setViews(0);
     }
-  }, [isViewedEnabled]);
+  }, [imageList.length]);
 
   return (
     <>
@@ -47,81 +53,81 @@ export default function ThumbnailsPage() {
       <main className="mt-4 mb-[50px] flex flex-col">
         <h1 className="text-center px-3 md:px-0 text-3xl">Thumbnails Page</h1>
         <section>
-          <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
+          <div className="flex flex-col justify-center items-center mt-8 gap-4 w-full">
             <Input
               type="text"
               onChange={handleTitleChange}
               className="w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400"
-              placeholder="Add title"
+              placeholder="Enter a video title"
               aria-labelledby="Title"
-              value={inputValue}
+              value={titleValue}
             />
-            <Switch checked={isViewedEnabled} onChange={handleViewedToggle} color="primary">
-              Viewed
-            </Switch>
+            <Input
+              type="text"
+              onChange={handleNameChange}
+              className="w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400"
+              placeholder="Enter a channel name"
+              aria-labelledby="Channel name"
+              value={channelName}
+            />
+            <div className="flex justify-between w-full md:w-3/5 px-4 md:px-0">
+              <p>Viewed</p>
+              <Switch
+                checked={isViewedEnabled}
+                onChange={handleViewedToggle}
+                color="primary"
+                size="xl"
+              /> 
+            </div>
+            <div className="flex justify-between w-full md:w-3/5 px-4 md:px-0">
+              <p>Toggle new badge</p>
+              <Switch
+                checked={isNewBadgeEnabled}
+                onChange={handleNewBadgeToggle}
+                color="primary"
+                size="xl"
+              />
+            </div>
           </div>
         </section>
-        <section className="mt-8 md:px-8 px-4">
-          <div className="">
-            <h1 className='text-center my-3 font-bold'>HOMEPAGE</h1>
-            { imageList.length <= 0 && 
-              <span className="flex justify-center">Thumbnails not added yet</span>
-            }
-            <div className="flex md:flex-wrap md:flex-row flex-col justify-center md:px-3 gap-2">
-              { imageList.length > 0 && imageList.map((imageSrc, index) => (
+        <section className="mt-8 md:pl-20 lg:pl-32 pl-5 w-full">
+            <p className='my-4 font-2xl text-[30px] md:mr-[550px] tracking-widest italic'>HOMEPAGE</p>
+            <div className="flex md:flex-row flex-col px-3 md:px-0 md:gap-3 gap-5 lg:gap-10">
+              { Array.apply(null, Array(2)).map((_, index) => (
                 <>
                 <HomepageCard
                   key={index}
-                  title={inputValue}
+                  index={index}
+                  title={titleValue}
+                  channel={channelName}
                   isViewedEnabled={isViewedEnabled}
-                  imageSrc={imageSrc}
+                  isNewBadgeEnabled={isNewBadgeEnabled}
+                  imageList={imageList}
+                  setImageList={setImageList}
+                  progress={progress}
                   views={numbro(views * (index + 1)).format({
                     spaceSeparated: false,
                     average: true,
                   })}
-                  progress={progress}
+                  setViews={setViews}
                 />
-                <Spacer x={3} />
+                  <Spacer x={3} />
                 </>
               ))
               }
             </div>
             <Spacer y={10} />
-            <h1 className='text-center my-3 font-bold'>RELATED</h1>
-            { imageList.length <= 0 && 
-              <span className="flex justify-center">Thumbnails not added yet</span>
-            }
-            <div className="flex md:flex-wrap md:flex-row flex-col justify-center md:px-3 gap-2">
-              { imageList.length > 0 && imageList.map((imageSrc, index) => (
+            <p className='my-4 font-2xl text-[30px] md:mr-[600px] tracking-widest italic'>RELATED</p>
+            <div className="flex md:flex-row flex-col px-3 md:px-0 gap-6">
+              { Array.apply(null, Array(2)).map((_, index) => (
                 <>
                 <RelatedCard
                   key={index}
-                  title={inputValue}
-                  isViewedEnabled={isViewedEnabled}
-                  imageSrc={imageSrc}
-                  views={numbro(views * (index + 1)).format({
-                    spaceSeparated: false,
-                    average: true,
-                  })}
-                  progress={progress}
-                />
-                <Spacer x={3} />
-                </>
-              ))
-              }
-          </div>
-          </div>
-        </section>
-        <Spacer y={10} />
-        <section className="mt-8 md:px-8 px-4">
-          <h2 className="text-center text-2xl">Compare Thumbnails</h2>
-          <div className="my-4 flex flex-col md:flex-row md:flex-wrap gap-6 justify-center">
-            { Array.apply(null, Array(2)).map((_, index) => (
-                <ThumbnailsCard
-                  key={index}
                   index={index}
-                  title={inputValue}
+                  title={titleValue}
+                  channel={channelName}
                   isViewedEnabled={isViewedEnabled}
+                  isNewBadgeEnabled={isNewBadgeEnabled}
                   imageList={imageList}
                   setImageList={setImageList}
                   progress={progress}
@@ -130,7 +136,10 @@ export default function ThumbnailsPage() {
                     average: true,
                   })}
                 />
-              ))}
+                <Spacer x={3} />
+                </>
+              ))
+              }
           </div>
         </section>
       </main>

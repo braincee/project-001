@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Avatar, Progress } from '@nextui-org/react';
 import { FaCloudUploadAlt, FaCheckCircle } from 'react-icons/fa';
-import numbro from 'numbro';
 
 export default function ThumbnailsCard({ index, title, isViewedEnabled, imageList, setImageList, progress, views }) {
 
@@ -13,7 +12,7 @@ export default function ThumbnailsCard({ index, title, isViewedEnabled, imageLis
     fileInput.onchange = handleFileChange;
     fileInput.click();
   };
-  console.log(index)
+
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
@@ -33,10 +32,7 @@ export default function ThumbnailsCard({ index, title, isViewedEnabled, imageLis
         setImageList([...imageList, URL.createObjectURL(selectedFile)]);
       }
     }
-    console.log(imageList.length)
   };
-
-  console.log()
 
   return (
     <div className="w-full md:w-[400px] relative">

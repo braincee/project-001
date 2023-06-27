@@ -9,6 +9,8 @@ import getSearchVideos from '@/libs/search';
 import getVideo from '@/libs/video';
 import VideoCard from '@/components/VideoCard';
 import TableBuilder from '@/components/TableBuilder';
+import TableBuilder2 from '@/components/TableBuilder2';
+import copy from 'copy-to-clipboard';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
@@ -17,18 +19,15 @@ export default function Home() {
   const [isvalid, setIsvalid] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
-  const [searchData, setSearchData ] = useState([]);
-  const [addStatus, setAddStatus] = useState(""); 
+  const [searchData, setSearchData] = useState([]);
+  const [addStatus, setAddStatus] = useState("");
+  const [shareStatus, setShareStatus] = useState("");
+  const [editStatus, setEditStatus] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
+  const [isEditing, setIsEditing] =useState(false);
   const [number, setNumber] = useState(0);
 
   const router = useRouter();
-
-  useEffect(() => {
-    if (addStatus == "pressed") {
-      setIsLoading(true);
-    }
-  }, [addStatus]);
 
   useEffect(() => {
     if (addStatus == "pressed") {
@@ -50,12 +49,33 @@ export default function Home() {
   }, [query]);
 
   useEffect(() => {
-    if (!inputValue) {      
+    if (!inputValue) {
       setTimeout(() => {
         setShowSearchResults(false);
       }, 1000);
     }
   }, [inputValue]);
+
+  useEffect(() => {
+    if (editStatus == "pressed") {
+      if (isEditing) {
+        finishAndShare();
+        setEditStatus("");
+      } else {
+        setIsEditing(!isEditing);
+        setEditStatus("");
+      }
+    } else if (shareStatus == "pressed") {
+      setIsEditing(false);
+      setShareStatus("");
+    }
+  }, [editStatus, shareStatus]);
+
+  useEffect(() => {
+    if (router.query.list == "" || Object.keys(router.query).length == 0) {
+      setIsEditing(true);
+    }
+  }, [router.query.list]);
 
   const isValidHttpUrl = (string) => {
     try {
@@ -102,9 +122,9 @@ export default function Home() {
 
   const deleteFromList = (index) => {
     setUrlData((items) => {
-     const newItems = items.filter((item) => item.number != index);
-     setNumber(newItems.length);
-     return newItems;
+      const newItems = items.filter((item) => item.number != index);
+      setNumber(newItems.length);
+      return newItems;
     });
     setUrlData((items) => {
       const newItems = items.map((item, index) => {
@@ -116,7 +136,7 @@ export default function Home() {
       return newItems;
     });
   };
-  
+
   const truncate = (string, length) => {
     return string.length > length ? `${string.substr(0, length)}...` : string;
   }
@@ -132,20 +152,23 @@ export default function Home() {
       let videoId = inputValue.split('v=')[1];
       const { data: { response } } = await getVideo(videoId);
       const { title, description, channelTitle, publishedAt } = response.items[0].snippet;
-        setUrlData([...urlData, {
-          number: number + 1,
-          id: videoId,
-          title,
-          description,
-          channelTitle,
-          publishedAt: new Date(publishedAt).toUTCString(),
-        }]);
-        setNumber(number + 1);
+      setUrlData([...urlData, {
+        number: number + 1,
+        id: videoId,
+        title,
+        description,
+        channelTitle,
+        publishedAt: new Date(publishedAt).toUTCString(),
+      }]);
+      setNumber(number + 1);
     }
     setInputValue('')
   }
 
-  const handleShare = () => {
+  const handleShare = (e) => {
+    if (e) {
+      setShareStatus("pressed");
+    }
     let lists = '';
     urlData.forEach((url, index) => {
       if (index + 1 === urlData.length) {
@@ -159,18 +182,26 @@ export default function Home() {
     const stringDescription = urlData.map((url) => `${url.description}`).join(',');
     const stringChannelTitle = urlData.map((url) => `${url.channelTitle}`).join(',');
     const stringPublishedAt = urlData.map((url) => `${new Date(url.publishedAt).toDateString()}`).join(',');
+    const shareUrl = `${window.location.origin}/?list=${lists}`;
+
+    copy(shareUrl)
 
     router.push({
-      pathname: "/list",
-      query: { 
+      pathname: "/",
+      query: {
         list: lists,
         title: stringTitle,
         description: stringDescription,
         channelTitle: stringChannelTitle,
         publishedAt: stringPublishedAt,
       }
-    }, `/list/?list=${lists}`);
+    }, `/?list=${lists}`);
   }
+
+  const handleMode = () => {
+    setEditStatus("pressed");
+  }
+
   const searchVideos = async () => {
     if (!query) return;
     try {
@@ -194,12 +225,17 @@ export default function Home() {
     }
   };
 
+  const finishAndShare = () => {
+    setIsEditing(false);
+    handleShare();
+  }
+
   const decodeHTML = (code) => {
     let text = document.createElement("textarea");
     text.innerHTML = code;
     return text.value
   }
-  
+
   return (
     <>
       <Head>
@@ -208,61 +244,68 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="mt-4 mb-[50px] flex flex-col">
-      <h1 className="text-center px-3 md:px-0 text-3xl">YT Playlist Creator and Sharer</h1>
-        <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
-          <Input
-            type="text"
-            onChange={handleChange}
-            className="w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400"
-            placeholder="Add YouTube Url"
-            aria-labelledby="none"
-            value={inputValue}
-            endContent={
-              isLoading &&
-              <CircularProgress aria-label="Loading..." />
-            }
-          />
-          <Button 
-            color="primary"
-            className="text-white"
-            size="xl"
-            onPress={handlePress}
-            isDisabled={isDisabled}
+      <main className="mt-4 mb-[50px] flex flex-col gap-5">
+        <h1 className="text-center px-3 md:px-0 text-3xl">YT Playlist Creator and Sharer</h1>
+        {isEditing && 
+          <div className="flex flex-col md:flex-row justify-center items-center mt-8 gap-4">
+            <Input
+              type="text"
+              onChange={handleChange}
+              className="w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400"
+              placeholder="Add YouTube Url"
+              aria-labelledby="none"
+              value={inputValue}
+              endContent={
+                isLoading &&
+                <CircularProgress aria-label="Loading..." />
+              }
+            />
+            <Button
+              color="primary"
+              className="text-white"
+              size="xl"
+              onPress={handlePress}
+              isDisabled={isDisabled}
             >Add
-          </Button>
-        </div>
-        {!isvalid ? (
-          <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
-        ): ""}
-        { !isLoading && showSearchResults &&
+            </Button>
+            {!isvalid ? (
+              <span className="text-danger text-xl md:text-2xl px-6 mt-3">Invalid URL!</span>
+            ) : ""}
+          </div>
+        }
+
+        {!isLoading && showSearchResults && isEditing &&
           <div className="flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4">
             {searchData.length > 0 && searchData.map((video, index) => (
               <>
-              <SearchCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
-              <Spacer x={6} />
+                <SearchCard video={video} key={index} addToList={addToListFromSearch} truncate={truncate} />
+                <Spacer x={6} />
               </>
             ))
             }
           </div>
         }
-          
-          {isLoading && <SkeletonBuilder cards={2}/>}
-          {!isLoading && urlData.length > 0 &&
-          <>
-            <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
-          <div className="flex flex-col gap-3 p-2 my-8 md:hidden">
-            { urlData.map((item) => (
-              <VideoCard key={item.number} item={item} decodeHTML={decodeHTML} deleteFromList={deleteFromList} />
-            ))}
-          </div>
-          </>
-          }
-          <div className="flex justify-center mt-16">
-            { urlData.length > 0 &&
-              <Button color="success" className=" text-dark" size="lg" onPress={handleShare} endIcon={<FaShareAlt />} >Share</Button>
+
+        {isLoading && isEditing && <SkeletonBuilder cards={5} />}
+
+        {!isLoading && urlData.length > 0 &&
+          <section className="px-10">
+            <div className="flex justify-end px-10 md:px-7 gap-5">
+             <Button color="success" className="text-dark px-7" size="lg" onPress={handleShare} endIcon={<FaShareAlt />} >Share</Button>
+             <Button color="primary" className="text-dark px-10" size="lg" onPress={handleMode}>{isEditing ? "Done" : "Edit"}</Button>
+             </div>
+            { isEditing ? 
+              <TableBuilder urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} isEditing={isEditing} />
+            :
+              <TableBuilder2 urlData={urlData} decodeHTML={decodeHTML} deleteFromList={deleteFromList} /> 
             }
-          </div>
+            <div className="flex flex-col gap-3 p-2 my-8 md:hidden">
+              {urlData.map((item) => (
+                <VideoCard key={item.number} item={item} decodeHTML={decodeHTML} deleteFromList={deleteFromList} isEditing={isEditing} />
+              ))}
+            </div>
+          </section>
+        }
       </main>
     </>
   )

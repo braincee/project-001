@@ -1,8 +1,8 @@
-import { Button, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Avatar } from '@nextui-org/react';
-import { FaTrashAlt } from "react-icons/fa";
-import dayjs from "dayjs"
+import { Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Avatar } from '@nextui-org/react';
+import dayjs from 'dayjs';
 
-const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
+
+const TableBuilder2 = ({ urlData, decodeHTML }) => {
 
   const formatDate = (date) => {
     return dayjs(date).format('MMMM DD, YYYY');
@@ -19,7 +19,6 @@ const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
         <TableColumn>Title</TableColumn>
         <TableColumn>Uploaded By</TableColumn>
         <TableColumn>Date Uploaded</TableColumn>
-        <TableColumn>Action</TableColumn>
       </TableHeader>
       <TableBody items={urlData}>
         {(item) => (
@@ -29,12 +28,6 @@ const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
             <TableCell>{decodeHTML(item.title.toUpperCase())}</TableCell>
             <TableCell>{decodeHTML(item.channelTitle.toUpperCase())}</TableCell>
             <TableCell>{formatDate(item.publishedAt).toUpperCase()}</TableCell>
-            <TableCell>
-                <Button onPress={() => deleteFromList(item.number)} isIconOnly color="danger" aria-label="Remove">
-                  <FaTrashAlt />
-                </Button>
-            
-            </TableCell>
           </TableRow>
         )}
       </TableBody>
@@ -42,4 +35,4 @@ const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
   )
 }
 
-export default TableBuilder;
+export default TableBuilder2;
