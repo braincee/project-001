@@ -13,6 +13,8 @@
     "@next/font": "13.4.2",
     "@nextui-org/react": "0.0.0-dev-v2-20230505232443",
     "axios": "^1.4.0",
+    "copy-to-clipboard": "^3.3.3",
+    "dayjs": "^1.11.8",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.2",
     "formidable": "^2.1.1",
