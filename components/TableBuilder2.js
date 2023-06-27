@@ -1,6 +1,12 @@
 import { Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Avatar } from '@nextui-org/react';
+import dayjs from 'dayjs';
+
 
 const TableBuilder2 = ({ urlData, decodeHTML }) => {
+
+  const formatDate = (date) => {
+    return dayjs(date).format('MMMM DD, YYYY');
+  };
 
   return (
     <Table
@@ -13,7 +19,6 @@ const TableBuilder2 = ({ urlData, decodeHTML }) => {
         <TableColumn>Title</TableColumn>
         <TableColumn>Uploaded By</TableColumn>
         <TableColumn>Date Uploaded</TableColumn>
-        <TableColumn>Action</TableColumn>
       </TableHeader>
       <TableBody items={urlData}>
         {(item) => (
@@ -22,8 +27,7 @@ const TableBuilder2 = ({ urlData, decodeHTML }) => {
             <TableCell><Avatar isBordered radius="xl" size="xl" color="primary" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video" /></TableCell>
             <TableCell>{decodeHTML(item.title.toUpperCase())}</TableCell>
             <TableCell>{decodeHTML(item.channelTitle.toUpperCase())}</TableCell>
-            <TableCell>{item.publishedAt.toUpperCase()}</TableCell> 
-            <TableCell></TableCell>
+            <TableCell>{formatDate(item.publishedAt).toUpperCase()}</TableCell>
           </TableRow>
         )}
       </TableBody>

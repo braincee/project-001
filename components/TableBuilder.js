@@ -1,7 +1,12 @@
 import { Button, Table, TableBody, TableRow, TableCell, TableHeader, TableColumn, Avatar } from '@nextui-org/react';
 import { FaTrashAlt } from "react-icons/fa";
+import dayjs from "dayjs"
 
 const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
+
+  const formatDate = (date) => {
+    return dayjs(date).format('MMMM DD, YYYY');
+  };
 
   return (
     <Table
@@ -23,7 +28,7 @@ const TableBuilder = ({ urlData, decodeHTML, deleteFromList }) => {
             <TableCell><Avatar isBordered radius="xl" size="xl" color="primary" src={`http://img.youtube.com/vi/${item.id}/sddefault.jpg`} alt="Youtube Video" /></TableCell>
             <TableCell>{decodeHTML(item.title.toUpperCase())}</TableCell>
             <TableCell>{decodeHTML(item.channelTitle.toUpperCase())}</TableCell>
-            <TableCell>{item.publishedAt.toUpperCase()}</TableCell> 
+            <TableCell>{formatDate(item.publishedAt).toUpperCase()}</TableCell>
             <TableCell>
                 <Button onPress={() => deleteFromList(item.number)} isIconOnly color="danger" aria-label="Remove">
                   <FaTrashAlt />
