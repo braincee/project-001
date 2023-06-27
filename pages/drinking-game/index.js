@@ -26,22 +26,23 @@ const DrinkingGame = () => {
     <link rel="icon" href="/favicon.ico" />
   </Head>
    <main>
-   <div className='flex flex-col mx-auto w-[42%]'>
+   <div className='flex flex-col mx-auto w-[96%] md:w-[42%]'>
     <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
      <div className='border border-gray-200 rounded-lg p-4'>
         <div className="flex justify-center items-center gap-3">
-      <div className='flex flex-row border border-gray-200 rounded-lg gap-3 px-4'>
-      <div className="my-3">
+      <div className='flex flex-col border border-gray-200 rounded-lg md:gap-3 p-2'>
+      <div className="mb-1">
         <input
           type="text"
           id="youtubeUrl"
           value={youtubeUrl}
           onChange={handleYoutubeUrlChange}
-          className="border border-gray-300 rounded px-4 py-2"
+          className="border border-gray-300 rounded px-4 py-2 w-full"
           placeholder='youtube.com/watch?v=iZ30YqKehSM'
         />
       </div>
-      <div className="my-3">
+     <div className="flex flex-row gap-1">
+      <div className="">
         <select
           id="selectedWord"
           value={selectedWord}
@@ -62,9 +63,11 @@ const DrinkingGame = () => {
           <FiSettings size={25} />
         </div>
       </div>
+      </div>
+      
     </div>
       </div>
-      <div className="mx-auto rounded-lg border border-gray-200 my-2 w-[100%] h-[400px] p-4">
+      <div className="mx-auto rounded-lg border border-gray-200 my-2 w-[100%] h-[300px] p-4">
     </div>
   </div>
      <div className="border-b border-gray-200 mt-10"></div>
