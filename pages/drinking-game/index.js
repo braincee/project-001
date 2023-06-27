@@ -30,7 +30,7 @@ const DrinkingGame = () => {
     <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
      <div className='border border-gray-200 rounded-lg p-4'>
         <div className="flex justify-center items-center gap-3">
-      <div className='flex flex-col border border-gray-200 rounded-lg md:gap-3 p-2'>
+      <div className='flex flex-col border border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row'>
       <div className="mb-1">
         <input
           type="text"
