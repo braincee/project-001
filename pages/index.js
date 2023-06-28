@@ -11,6 +11,7 @@ import VideoCard from '@/components/VideoCard';
 import TableBuilder from '@/components/TableBuilder';
 import TableBuilder2 from '@/components/TableBuilder2';
 import copy from 'copy-to-clipboard';
+import Api from '../libs/api';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
@@ -26,6 +27,7 @@ export default function Home() {
   const [isDisabled, setIsDisabled] = useState(true);
   const [isEditing, setIsEditing] =useState(false);
   const [number, setNumber] = useState(0);
+  const [youtuber, setYoutuber] = useState([]);
 
   const router = useRouter();
 
@@ -235,6 +237,13 @@ export default function Home() {
     text.innerHTML = code;
     return text.value
   }
+
+  useEffect(() => {
+      Api.getYouTubers()
+      .then(res => {
+          setYoutuber(res)
+      });
+  }, []);
 
   return (
     <>
