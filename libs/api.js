@@ -35,6 +35,24 @@ const Api = {
         const results = await response.json()
         return results;
     },
+    getYouTuber: async (channelId) => {
+        const response = await fetch(`/api/youtuber/${channelId}`);
+        const results = await response.json();
+        return results;
+    },
+    updateCaption: async (videoId) => {
+        const JSONData = JSON.stringify(captionData);
+        const options = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSONData,
+        }
+        const response = await fetch('/api/captions/update', options);
+        const results = await response.json()
+        return results;
+    }
 }
 
 export default Api;

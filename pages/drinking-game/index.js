@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
 import { FaTwitter, FaGithub } from 'react-icons/fa';
-
+import { addCaption, addYoutuber } from '@/libs/data';
+import Api from '@/libs/api';
 
 const DrinkingGame = () => {
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [selectedWord, setSelectedWord] = useState('');
+  const [youtuber, setYoutuber] = useState([]);
 
   const handleYoutubeUrlChange = (e) => {
     setYoutubeUrl(e.target.value);
@@ -16,6 +18,22 @@ const DrinkingGame = () => {
   const handleWordSelect = (e) => {
     setSelectedWord(e.target.value);
   };
+
+  useEffect(() => {
+    addYoutuber();
+    addCaption();
+}, []);
+
+console.log(youtuber);
+
+  useEffect(() => {
+    if (!youtuber) {
+      Api.getYouTubers()
+      .then(res => {
+          setYoutuber(res)
+      });
+    } 
+}, [youtuber]);
 
   return (
     <>

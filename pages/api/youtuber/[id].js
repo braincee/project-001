@@ -1,10 +1,10 @@
 import supabase from "../../../libs/supabase";
 
 export default async function handler(req, res) {
-    const { id } = req.params;
+    const { channelId } = req.params;
     const { data, error } = await supabase
         .from('YouTuber')
         .select()
-        .where({ id });
+        .where('id', channelId);
     res.status(200).json(data ?? error);
 }

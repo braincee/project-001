@@ -3,6 +3,7 @@ import { countRepeatedWords, openai, ytCategoryIds } from './utils';
 import ytdl from 'ytdl-core';
 import * as cheerio from 'cheerio';
 import { createCaption, createYoutuber, getYoutuber } from './data';
+import Api from '../api';
 // import path from
 
 const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
@@ -12,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 console.log('directory-name 👉️', __dirname);
 
-export const scrapeCaptionsAndSave = async ({ videoId }, context) => {
+export const scrapeCaptionsAndSave = async ({ videoId }) => {
   try {
     const info = await axios.get(`https://www.googleapis.com/youtube/v3/list?part=snippet&key=${ApiKey}&id=${videoId}`);
      
@@ -50,14 +51,14 @@ export const scrapeCaptionsAndSave = async ({ videoId }, context) => {
       }
     });
 
-    let youTuber = await getYoutuber(channelId);
+    let youTuber = await Api.getYouTuber(channelId);
 
     if (!youTuber) {
       let data = {
         id: channelId,
         name: channelTitle || ' ',
       };
-      youTuber = await createYoutuber(data);
+      youTuber = await Api.addYoutuber(data);
     }
 
     let data = {
@@ -68,7 +69,7 @@ export const scrapeCaptionsAndSave = async ({ videoId }, context) => {
       captionChunks: JSON.stringify(captions),
     };
 
-    const caption = await createCaption(data);
+    const caption = await Api.addCaption(data);
 
     return caption;
 
@@ -255,34 +256,28 @@ export const generateCaptionsAndSave = async (
       };
     });
 
-    let youTuber = await context.entities.YouTuber.findFirst({
-      where: { id: channelId },
-    });
+    let youTuber = await Api.getYouTuber(channelId);
 
     if (!youTuber) {
-      youTuber = await context.entities.YouTuber.create({
-        data: {
-          id: channelId,
-          name: channelTitle || ' ',
-        },
-      });
+      let data = {
+        id: channelId,
+        name: channelTitle || ' ',
+      };
+      youTuber = await Api.addYoutuber(data);
     }
 
-    return await context.entities.Caption.upsert({
-      where: { videoId },
-      create: {
-        videoId,
-        videoTitle: title || ' ',
-        youTuberId: channelId,
-        thumbnail: thumbnail,
-        captionChunks: JSON.stringify(timestampedCaptions),
-        transcribedWithLyrics: transcribeWithLyrics,
-      },
-      update: {
-        captionChunks: JSON.stringify(timestampedCaptions),
-        transcribedWithLyrics: transcribeWithLyrics,
-      },
-    });
+    let data = {
+      videoId,
+      videoTitle: title || ' ',
+      youTuberId: channelId,
+      thumbnail: thumbnail,
+      captionChunks: JSON.stringify(timestampedCaptions),
+      transcribedWithLyrics: transcribeWithLyrics,
+    }
+
+    const caption = await Api.updateCaption(data);
+    return caption;
+
   } catch (error) {
     throw error;
   }
