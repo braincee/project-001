@@ -20,23 +20,29 @@ const Api = {
   },
 
   addToPollsStorage: async (file) => {
-    const filename = `${uuidv4()}-${file.name}`;
-
-    const {data, error} = await supabase.storage
+    const filename = `${uuidv4()}.${file.name.substring(file.name.lastIndexOf('.') + 1, file.name.length)}`;
+    await supabase.storage
       .from("polls")
       .upload(filename, file, {
         cacheControl: "3600",
         upsert: false,
       });
-    return data;
+    return filename;
   },
 
-  getFileURL: async (filename) => {
+  getFilePublicURL: async (filename) => {
     const { data } = await supabase.storage
       .from('polls')
       .getPublicUrl(filename);
     return data;
   },
+
+  addNewPoll: async (options) => {
+    const { data } = await axios(('/api/create'), {
+      options
+    })
+    return data;
+  }
 }
 
 export default Api;

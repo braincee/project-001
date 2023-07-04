@@ -4,6 +4,9 @@ import Head from 'next/head';
 import HomepageCard from '@/components/HompageCard';
 import RelatedCard from '@/components/RelatedCard';
 import numbro from 'numbro';
+import Api from '@/libs/api';
+import { v4 as uuidv4 } from "uuid";
+
 
 
 export default function ThumbnailsPage() {
@@ -38,9 +41,20 @@ export default function ThumbnailsPage() {
     SetIsNewBadgeEnabled(!isNewBadgeEnabled);
   }
 
-  const handleVoteCreation = () => {
-    console.log("clicked");
-    console.log(files[0].name.substring(files[0].name.lastIndexOf('.') + 1, files[0].name.length));
+  const handleVoteCreation = async () => {
+    const newPoll = {
+      id: uuidv4(),
+      options: []
+    }
+    files.forEach( async (file, index) => {
+      const pollName = await Api.addToPollsStorage(file)
+      const url = await Api.getFilePublicURL(pollName);
+      newPoll.options.push({id: index + 1, image_url: url});
+    })
+    const options = await Api.addNewPoll(newPoll);
+    console.log(options);
+    //files[0].name.substring(files[0].name.lastIndexOf('.') + 1, files[0].name.length);
+
   }
 
   useEffect(() => {
