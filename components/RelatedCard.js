@@ -32,10 +32,23 @@ const RelatedCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled
           return items;
         }
         );
+        setFiles((prevFiles) => {      
+          const items = prevFiles.map((item, i) => {
+            if (index === i) {
+              return selectedFile
+            } else {
+              return item;
+            }
+          });
+          return items;
+        }
+        );
       } else {
         setImageList([...imageList, URL.createObjectURL(selectedFile)]);
+        setFiles([...files, selectedFile ])
       }
     }
+    
   };
   
 

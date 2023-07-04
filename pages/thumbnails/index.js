@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Input, Spacer, Switch } from '@nextui-org/react';
+import { Button, Input, Spacer, Switch } from '@nextui-org/react';
 import Head from 'next/head';
 import HomepageCard from '@/components/HompageCard';
 import RelatedCard from '@/components/RelatedCard';
@@ -14,6 +14,8 @@ export default function ThumbnailsPage() {
   const [isNewBadgeEnabled, SetIsNewBadgeEnabled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [views, setViews] = useState(0);
+  const [disabled, setDisabled] = useState(false);
+  const [files, setFiles] = useState([]);
 
   const handleTitleChange = (e) => {
     setTitleValue(e.target.value);
@@ -36,9 +38,19 @@ export default function ThumbnailsPage() {
     SetIsNewBadgeEnabled(!isNewBadgeEnabled);
   }
 
+  const handleVoteCreation = () => {
+    console.log("clicked");
+    console.log(files[0].name.substring(files[0].name.lastIndexOf('.') + 1, files[0].name.length));
+  }
+
   useEffect(() => {
     if (imageList.length == 1) {
       setViews(Math.floor(Math.random() * 10000));
+    }
+    if (imageList.length < 2) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
     }
   }, [imageList.length]);
 
@@ -88,6 +100,16 @@ export default function ThumbnailsPage() {
                 size="xl"
               />
             </div>
+            <div>
+              <Button
+                color="primary"
+                variant="bordered"
+                onPress={handleVoteCreation}
+                isDisabled={disabled}
+              >
+                Create Vote
+              </Button>
+            </div>
           </div>
         </section>
         <section className="mt-8 md:pl-20 lg:pl-32 pl-5 w-full">
@@ -110,6 +132,8 @@ export default function ThumbnailsPage() {
                     average: true,
                   })}
                   setViews={setViews}
+                  setFiles={setFiles}
+                  files={files}
                 />
                   <Spacer x={3} />
                 </>
@@ -135,6 +159,8 @@ export default function ThumbnailsPage() {
                     spaceSeparated: false,
                     average: true,
                   })}
+                  setFiles={setFiles}
+                  files={files}
                 />
                 <Spacer x={3} />
                 </>

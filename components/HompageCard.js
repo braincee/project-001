@@ -3,7 +3,7 @@ import { Avatar, Progress } from "@nextui-org/react";
 import { FaCheckCircle, FaCloudUploadAlt } from 'react-icons/fa';
 
 
-const HomepageCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled, imageList, setImageList, progress, views }) => {
+const HomepageCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled, imageList, setImageList, progress, views, files, setFiles }) => {
 
   const truncate = (string, length) => {
     return string.length > length ? `${string.substr(0, length)}...` : string;
@@ -33,10 +33,23 @@ const HomepageCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnable
           return items;
         }
         );
+        setFiles((prevFiles) => {      
+          const items = prevFiles.map((item, i) => {
+            if (index === i) {
+              return selectedFile
+            } else {
+              return item;
+            }
+          });
+          return items;
+        }
+        );
       } else {
         setImageList([...imageList, URL.createObjectURL(selectedFile)]);
+        setFiles([...files, selectedFile ])
       }
     }
+    
   };
   
   return (
