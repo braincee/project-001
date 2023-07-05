@@ -6,8 +6,7 @@ import HomepageCard from '@/components/HompageCard';
 import RelatedCard from '@/components/RelatedCard';
 import numbro from 'numbro';
 import Api from '@/libs/api';
-
-
+import { v4 as uuidv4 } from "uuid";
 
 export default function ThumbnailsPage() {
   const [titleValue, setTitleValue] = useState('');
@@ -44,19 +43,20 @@ export default function ThumbnailsPage() {
 
   const handleVoteCreation = async () => {
     const options = [];
+    const pollId = uuidv4();
     for (let i = 0; i < files.length; i++) {
       const pollName = await Api.addToPollsStorage(files[i]);
       const url = await Api.getFilePublicURL(pollName);
       console.log(pollName, url, i);
       options.push({id: i + 1, image_url: url.publicUrl});
     }
-    await Api.addNewPoll(options);
+    await Api.addNewPoll({options, pollId});
 
     const imageUrls = options.map((option) => option.image_url);
     router.push({
-      pathname: '/vote',
+      pathname: `/vote/${pollId}`,
       query: { imageUrl: imageUrls },
-    });
+    }, `/vote/${pollId}`);
   }
 
   useEffect(() => {
