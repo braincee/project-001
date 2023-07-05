@@ -5,7 +5,6 @@ import HomepageCard from '@/components/HompageCard';
 import RelatedCard from '@/components/RelatedCard';
 import numbro from 'numbro';
 import Api from '@/libs/api';
-import { v4 as uuidv4 } from "uuid";
 
 
 
@@ -42,19 +41,14 @@ export default function ThumbnailsPage() {
   }
 
   const handleVoteCreation = async () => {
-    const newPoll = {
-      id: uuidv4(),
-      options: []
-    }
-    files.forEach( async (file, index) => {
-      const pollName = await Api.addToPollsStorage(file)
+    const options = [];
+    for (let i = 0; i < files.length; i++) {
+      const pollName = await Api.addToPollsStorage(files[i]);
       const url = await Api.getFilePublicURL(pollName);
-      newPoll.options.push({id: index + 1, image_url: url});
-    })
-    const options = await Api.addNewPoll(newPoll);
-    console.log(options);
-    //files[0].name.substring(files[0].name.lastIndexOf('.') + 1, files[0].name.length);
-
+      console.log(pollName, url, i);
+      options.push({id: i + 1, image_url: url.publicUrl});
+    }
+    await Api.addNewPoll(options);
   }
 
   useEffect(() => {

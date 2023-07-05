@@ -38,7 +38,7 @@ const Api = {
   },
 
   addNewPoll: async (options) => {
-    const { data } = await axios(('/api/create'), {
+    const data  = await axios.post(('/api/create'), {
       options
     })
     return data;
