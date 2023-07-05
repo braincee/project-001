@@ -1,31 +1,31 @@
 import { useState } from 'react';
 
-export default function VoteCard({ imageUrl }) {
+export default function VoteCard({ options, index, setPickedOption }) {
   const [vote, setVote] = useState(false);
 
-  const handleVoteChange = () => {
-    setVote(!vote);
+  const handleVoteChange = (e) => {
+    setPickedOption(e.target.value);
   };
 
   return (
-   
-        <div className='border border-blue-700 rounded-lg'>
-             <div className="w-[300px] shadow-lg rounded-lg p-4">
-            <div className="relative">
-            <img src={imageUrl} alt="Thumbnail" className="w-full h-45 rounded-lg object-cover" />
+    <div className='border-2 border-blue-400 rounded-lg'>
+      <div className="w-[300px] shadow-lg rounded-lg p-4">
+        <div className="relative">
+          <img src={options[index].image_url} alt="Thumbnail" className="w-full h-45 h-[200px] rounded-lg object-cover" />
         </div>
         <div className="flex justify-center items-center mt-10 text-2xl">
-            <input
+          <input
             type="radio"
             id="vote-option"
             name="vote-option"
-            checked={vote}
             onChange={handleVoteChange}
             className="mr-2"
-            />
-            <label htmlFor="vote-option" className="text-sm font-semibold">
+            value={options[index].id}
+            aria-label=""
+          />
+          <label htmlFor="vote-option" className="text-sm font-semibold">
             Vote
-            </label>
+          </label>
         </div>
       </div>
     </div>

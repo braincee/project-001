@@ -41,22 +41,20 @@ export default function ThumbnailsPage() {
     SetIsNewBadgeEnabled(!isNewBadgeEnabled);
   }
 
-  const handleVoteCreation = async () => {
+  const handlePollCreation = async () => {
     const options = [];
     const pollId = uuidv4();
     for (let i = 0; i < files.length; i++) {
       const pollName = await Api.addToPollsStorage(files[i]);
       const url = await Api.getFilePublicURL(pollName);
-      console.log(pollName, url, i);
-      options.push({id: i + 1, image_url: url.publicUrl});
+      options.push({id: uuidv4(), image_url: url.publicUrl});
     }
     await Api.addNewPoll({options, pollId});
 
     const imageUrls = options.map((option) => option.image_url);
     router.push({
       pathname: `/vote/${pollId}`,
-      query: { imageUrl: imageUrls },
-    }, `/vote/${pollId}`);
+    });
   }
 
   useEffect(() => {
@@ -120,7 +118,7 @@ export default function ThumbnailsPage() {
               <Button
                 color="primary"
                 variant="bordered"
-                onPress={handleVoteCreation}
+                onPress={handlePollCreation}
                 isDisabled={disabled}
               >
                 Create Vote

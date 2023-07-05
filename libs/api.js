@@ -1,6 +1,7 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import supabase from "./supabase";
+import { select } from "cheerio-select";
 
 const Api = {
   getSearchVideos: async (query) => {
@@ -40,6 +41,28 @@ const Api = {
   addNewPoll: async ({options, pollId}) => {
     const data  = await axios.post(('/api/create'), {
       options, pollId
+    })
+    return data;
+  },
+
+  addNewVote: async ({pickedOption, pollId}) => {
+    const {data}  = await axios.post(('/api/vote'), {
+      pickedOption, pollId,
+    })
+    return data;
+  },
+
+  getPoll: async (id) => {
+    const data  = await supabase
+    .from('polls')
+    .select()
+    .eq('id', id)
+    return data;
+  },
+
+  getVotes: async (pollId) => {
+    const data  = await axios.get(('/api/vote'), {
+      pollId,
     })
     return data;
   }
