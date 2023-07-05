@@ -1,0 +1,74 @@
+import supabase from "./supabase";
+
+const categories  = [
+    {
+        name: "Marketing"
+    },
+    {
+        name: "Business"
+    },
+    {
+        name: "Finance"
+    },
+];
+
+const softwares = [
+    {
+        name: "MidJourney",
+    },
+    {
+        name: "Dall-E",
+    },
+    {
+       name: "ChatGPT",
+    },
+    {
+       name: "Stable Diffusion",
+    },
+];
+
+const users = [
+    {
+        name: "Chris",
+        email: "chris@email.com",
+        avatar_url: "/",
+    },
+    {
+        name: "Solomon",
+        email: "solo@email.com",
+        avatar_url: "/"
+
+    },
+    {
+      name: "Stephen",
+      email: "appiah@email.com",
+      avatar_url: "/",
+    },
+];
+
+export function addUsers() {
+   users.map(async (user) => {
+    const { data, error } = await supabase
+    .from('users')
+    .insert({...user})
+
+    console.log(data ?? error)  
+   });
+   
+}
+
+export async function addCategories() {
+    const { data, error } = await supabase
+    .from('category')
+    .insert(...categories)
+
+    console.log(data ?? error)
+}
+
+export async function addSoftwares() {
+    const { data, error } = await supabase
+    .from('software')
+    .insert(...softwares)
+
+    console.log(data ?? error)
+}

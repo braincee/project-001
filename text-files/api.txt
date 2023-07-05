@@ -1,0 +1,74 @@
+const Api = {
+    getUsers: async () => {
+        const response = await fetch('/api/users/all');
+        const result = await response.json();
+        return result;
+    },
+    getSoftwares: async () => {
+        const response = await fetch('/api/software/all');
+        const result = await response.json();
+        return result;
+    },
+    getCategories: async () => {
+        const response = await fetch('/api/category/all');
+        const result = await response.json();
+        return result;
+    },
+    addPrompt: async (promptData) => {
+        const JSONdata = JSON.stringify(promptData);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSONdata,
+        }
+        const response = await fetch('/api/prompts/add', options);
+        const result = await response.json();
+        console.log(result);
+        return result;
+    },
+    getAllPrompts: async () => {
+        const response = await fetch('/api/prompts/all');
+        const result = await response.json();
+        return result;
+    },
+    addPerson: async (personData) => {
+        const JSONdata = JSON.stringify(personData);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSONdata,
+        }
+        const response = await fetch('/api/people/add', options);
+        const result = await response.json();
+        return result;
+    },
+    getAllPeople: async () => {
+        const response = await fetch('/api/people/all');
+        const result = await response.json();
+        return result;
+    },
+    addTool: async (toolData) => {
+        const JSONData = JSON.stringify(toolData);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSONData,
+        }
+        const response = await fetch('/api/tools/add', options);
+        const result = await response.json()
+        return result;
+    },
+    getAllTools: async () => {
+        const response = await fetch('/api/tools/all');
+        const result = await response.json();
+        return result;
+    },
+}
+
+export default Api; 

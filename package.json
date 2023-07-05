@@ -12,7 +12,9 @@
   "dependencies": {
     "@next/font": "13.4.2",
     "@nextui-org/react": "0.0.0-dev-v2-20230505232443",
+    "@supabase/supabase-js": "^2.26.0",
     "axios": "^1.4.0",
+    "cheerio": "^1.0.0-rc.12",
     "copy-to-clipboard": "^3.3.3",
     "dayjs": "^1.11.8",
     "eslint": "8.40.0",
@@ -24,10 +26,14 @@
     "next-seo": "^6.0.0",
     "next-sitemap": "^4.1.3",
     "numbro": "^2.3.6",
+    "openai": "^3.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.9.0",
-    "youtubei": "^1.1.2"
+    "supabase": "^1.74.2",
+    "youtube-captions-scraper": "^2.0.0",
+    "youtubei": "^1.1.2",
+    "ytdl-core": "^4.11.4"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",

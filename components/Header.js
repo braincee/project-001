@@ -17,8 +17,13 @@ const Header = () => {
             <NavbarItem className="h-full" isActive={router.pathname == '/thumbnails' && true} href="/thumbnails">
               <Link href="/thumbnails" className={`h-full flex items-center text-primary ${router.pathname == '/thumbnails' && 'border-b-3 border-primary'}`}>
                 Thumbnails
-          </Link>
-        </NavbarItem>
+              </Link>
+             </NavbarItem>
+             <NavbarItem className="h-full" isActive={router.pathname == '/drinking-game' && true} href="/drinking-game">
+              <Link href="/drinking-game" className={`h-full flex items-center text-primary ${router.pathname == '/drinking-game' && 'border-b-3 border-primary'}`}>
+                Drinking Game
+              </Link>
+             </NavbarItem>
           </NavbarContent>
         
         {colorTheme === "light" ? (
