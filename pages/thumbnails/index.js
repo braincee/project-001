@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { Button, Input, Spacer, Switch } from '@nextui-org/react';
 import Head from 'next/head';
 import HomepageCard from '@/components/HompageCard';
@@ -18,6 +19,7 @@ export default function ThumbnailsPage() {
   const [views, setViews] = useState(0);
   const [disabled, setDisabled] = useState(false);
   const [files, setFiles] = useState([]);
+  const router = useRouter();
 
   const handleTitleChange = (e) => {
     setTitleValue(e.target.value);
@@ -49,6 +51,12 @@ export default function ThumbnailsPage() {
       options.push({id: i + 1, image_url: url.publicUrl});
     }
     await Api.addNewPoll(options);
+
+    const imageUrls = options.map((option) => option.image_url);
+    router.push({
+      pathname: '/vote',
+      query: { imageUrl: imageUrls },
+    });
   }
 
   useEffect(() => {
