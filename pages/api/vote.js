@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
-    const { pollId } = req.body;
+    const { pollId } = req.query;
     const { data, error } = await supabase
       .from('votes')
       .select()

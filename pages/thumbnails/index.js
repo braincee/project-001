@@ -50,8 +50,6 @@ export default function ThumbnailsPage() {
       options.push({id: uuidv4(), image_url: url.publicUrl});
     }
     await Api.addNewPoll({options, pollId});
-
-    const imageUrls = options.map((option) => option.image_url);
     router.push({
       pathname: `/vote/${pollId}`,
     });
