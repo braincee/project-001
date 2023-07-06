@@ -13,11 +13,10 @@ export default function VotePage({ id }) {
   const [options, setOptions] = useState([]);
   const [votes, setVotes] = useState([]);
   const [voteCount, setVoteCount] = useState({first: 0, second: 0})
-  const [pickedOption, setPickedOption] = useState();
+  const [pickedOption, setPickedOption] = useState("");
   const [voted, setVoted] = useState(false);
   const [voteText, setVoteText] = useState("VOTE");
   const [disabled, setDisabled] = useState(false);
-  const [option, setOption] = useState();
 
   const handleVoteCreation = async () => {
     if (pickedOption) {
@@ -46,7 +45,6 @@ export default function VotePage({ id }) {
       }) 
   }, [id]);
 
-
   useEffect(() => {
     if (votes.length > 0 && !disabled && options.length > 0) {
       votes.forEach((vote) => {
@@ -54,26 +52,24 @@ export default function VotePage({ id }) {
           setVoteCount((prevCount) => {
             let temp = Object.assign({}, prevCount);
             temp.first += 1;
-            setOption(vote.picked_option)
             return temp;
           });
         } else if (vote.picked_option == options[1].id) {
           setVoteCount((prevCount) => {
             let temp = Object.assign({}, prevCount);
             temp.second += 1;
-            setOption(vote.picked_option)
             return temp;
           });
         }
       });
-    } else if (disabled) {
-      if (option == options[0].id) {
+    } else if (disabled && options.length > 0) {
+      if (pickedOption == options[0].id) {
         setVoteCount((prevCount) => {
           let temp = Object.assign({}, prevCount);
           temp.first += 1;
           return temp;
         });
-      } else if (option == options[1].id) {
+      } else if (pickedOption == options[1].id) {
         setVoteCount((prevCount) => {
           let temp = Object.assign({}, prevCount);
           temp.second += 1;
@@ -81,7 +77,7 @@ export default function VotePage({ id }) {
         });
       }
     }
-  }, [votes.length]);
+  }, [votes.length, options.length]);
 
   return (
     <div className="py-5">
