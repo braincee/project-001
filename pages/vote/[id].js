@@ -31,7 +31,6 @@ export default function VotePage({ id }) {
 
     }
   }
-  console.log(pickedOption);
 
   useEffect(() => {
     Api.getPoll({ id })
@@ -86,8 +85,6 @@ export default function VotePage({ id }) {
       }
     }
   }, [votes.length]);
-
-  console.log(voteCount);
 
   return (
     <div className="py-5">
