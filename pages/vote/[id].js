@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 
 import { Spacer, Button } from '@nextui-org/react';
 import VoteCard from '@/components/VoteCard';
@@ -28,19 +27,17 @@ export default function VotePage({ id }) {
       setVoted(true);
       setVoteText("VOTED");
       setDisabled(true);
-
     }
   }
 
   useEffect(() => {
     Api.getPoll({ id })
-    .then((res) => {
-      if (res.data) {
-        const opts = JSON.parse(res.data[0].options);
-        setOptions([...opts]);
-      }
-    });
-
+      .then((res) => {
+        if (res.data) {
+          const opts = JSON.parse(res.data[0].options);
+          setOptions([...opts]);
+        }
+      });
     Api.getVotes({pollId: id})
       .then((res) => {
         if (res.data){
@@ -51,7 +48,7 @@ export default function VotePage({ id }) {
 
 
   useEffect(() => {
-    if (votes.length > 0 && !disabled) {
+    if (votes.length > 0 && !disabled && options.length > 0) {
       votes.forEach((vote) => {
         if (vote.picked_option == options[0].id) {
           setVoteCount((prevCount) => {
@@ -90,10 +87,10 @@ export default function VotePage({ id }) {
     <div className="py-5">
       <h1 className="text-center px-3 md:px-0 text-3xl">Vote for your favorite Thumbnail</h1>
       <section className="mt-8 md:pl-20 lg:pl-32 pl-5 w-full">
-        <div className="flex md:flex-row flex-col px-3 md:px-0 md:gap-3 gap-5 lg:gap-10">
+        <div className="flex md:flex-row flex-col px-3 md:px-0 md:gap-8 gap-10 lg:gap-16">
           {options.map((imageUrl, index) => (
-            <>
               <VoteCard
+                key={index}
                 imageUrl={imageUrl}
                 options={options}
                 index={index}
@@ -102,8 +99,6 @@ export default function VotePage({ id }) {
                 voteCount={voteCount}
                 voted={voted}
               />
-              <Spacer x={3} />
-            </>
           ))}
         </div>
         <Spacer y={10} />

@@ -44,7 +44,7 @@ export default function VoteCard({ options, index, setPickedOption, votes, voteC
 
   return (
     <div className='border-2 border-blue-400 rounded-lg'>
-      <div className="w-[300px] shadow-lg rounded-lg p-4">
+      <div className="md:w-[300px] shadow-lg rounded-lg p-4">
         <div className="relative">
           <img src={options[index].image_url} alt="Thumbnail" className="w-full h-45 h-[200px] rounded-lg object-cover" />
         </div>
