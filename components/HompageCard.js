@@ -54,7 +54,7 @@ const HomepageCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnable
   
   return (
     <div className="w-full md:w-[calc(100%/2-1.5rem)] max-w-[360px]">
-          <div className="w-full">
+          <div className="w-full  hover:cursor-pointer">
             { imageList[index] ?
               <div className='w-full relative max-h-[200px]'>
                 <img src={imageList[index]} alt="Thumbnail" className="h-[200px] rounded-lg w-full border" onClick={handleThumbnailClick} />   

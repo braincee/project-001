@@ -1,5 +1,5 @@
 
-import { Spacer, Button } from '@nextui-org/react';
+import { Spacer, Button, Spinner } from '@nextui-org/react';
 import VoteCard from '@/components/VoteCard';
 import { useEffect, useState } from 'react';
 import Api from '@/libs/api';
@@ -17,15 +17,18 @@ export default function VotePage({ id }) {
   const [voted, setVoted] = useState(false);
   const [voteText, setVoteText] = useState("VOTE");
   const [disabled, setDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleVoteCreation = async () => {
     if (pickedOption) {
+      setLoading(true);
       await Api.addNewVote({pickedOption, pollId: id});
       const {data} = await Api.getVotes({pollId: id});
       setVotes([...data]);
       setVoted(true);
       setVoteText("VOTED");
       setDisabled(true);
+      setLoading(false);
     }
   }
 
@@ -100,10 +103,12 @@ export default function VotePage({ id }) {
         <Spacer y={10} />
         <div className="flex justify-center">
           <Button
-            className='px-10 py-4 rounded-md bg-gray-100 text-2xl text-black'
             onPress={handleVoteCreation}
             isDisabled={disabled}
           >
+            { loading &&
+              <Spinner size='sm'/>
+            }
             {voteText}
           </Button>
         </div>

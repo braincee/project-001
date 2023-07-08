@@ -55,7 +55,7 @@ const RelatedCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled
   return (
     <div className="flex flex-col md:max-w-[400px] w-full h-full">
           <div className="flex flex-row h-full w-full">
-            <div className="flex justify-start min-w-[168px] me-2">
+            <div className="flex justify-start min-w-[168px] me-2 hover:cursor-pointer">
               { imageList[index] ?
                 <div className='w-full relative max-h-[94px]'>
                   <img src={imageList[index]} alt="Thumbnail" className=" h-[94px] w-[168px] rounded-lg border" onClick={handleThumbnailClick} />

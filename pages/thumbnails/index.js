@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Button, Input, Spacer, Switch } from '@nextui-org/react';
+import { Button, Input, Spacer, Spinner, Switch } from '@nextui-org/react';
 import Head from 'next/head';
 import HomepageCard from '@/components/HompageCard';
 import RelatedCard from '@/components/RelatedCard';
@@ -17,6 +17,7 @@ export default function ThumbnailsPage() {
   const [progress, setProgress] = useState(0);
   const [views, setViews] = useState(0);
   const [disabled, setDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const router = useRouter();
 
@@ -42,6 +43,8 @@ export default function ThumbnailsPage() {
   }
 
   const handlePollCreation = async () => {
+    setLoading(true);
+    setDisabled(true);
     const options = [];
     const pollId = uuidv4();
     for (let i = 0; i < files.length; i++) {
@@ -50,6 +53,7 @@ export default function ThumbnailsPage() {
       options.push({id: uuidv4(), image_url: url.publicUrl});
     }
     await Api.addNewPoll({options, pollId});
+    setLoading(false);
     router.push({
       pathname: `/vote/${pollId}`,
     });
@@ -114,11 +118,15 @@ export default function ThumbnailsPage() {
             </div>
             <div>
               <Button
+                isLoading
                 color="primary"
                 variant="bordered"
                 onPress={handlePollCreation}
                 isDisabled={disabled}
               >
+                { loading &&
+                  <Spinner size='sm'/>
+                }
                 Create Vote
               </Button>
             </div>
