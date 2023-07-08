@@ -82,11 +82,13 @@ export default function VotePage({ id }) {
     }
   }, [votes.length, options.length]);
 
+  console.log(pickedOption);
+
   return (
     <div className="py-5">
       <h1 className="text-center px-3 md:px-0 text-3xl">Vote for your favorite Thumbnail</h1>
-      <section className="mt-8 md:pl-20 lg:pl-32 pl-5 w-full">
-        <div className="flex md:flex-row flex-col px-3 md:px-0 md:gap-8 gap-10 lg:gap-16">
+      <section className="mt-8 w-full">
+        <div className="flex md:flex-row flex-col justify-center px-10 md:px-0 gap-10 md:gap-16">
           {options.map((imageUrl, index) => (
               <VoteCard
                 key={index}
@@ -105,6 +107,8 @@ export default function VotePage({ id }) {
           <Button
             onPress={handleVoteCreation}
             isDisabled={disabled}
+            color='primary'
+            variant='bordered'
           >
             { loading &&
               <Spinner size='sm'/>

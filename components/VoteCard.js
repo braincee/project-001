@@ -17,7 +17,7 @@ export default function VoteCard({ options, index, setPickedOption, votes, voteC
           onChange={handleVoteChange}
           className="mr-2"
           value={options[index].id}
-          aria-label=""
+          aria-label="vote options"
         />
         <label htmlFor="vote-option" className="text-sm font-semibold">
           Vote
