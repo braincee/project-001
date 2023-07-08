@@ -1,7 +1,7 @@
 
 import { Spacer, Button, Spinner } from '@nextui-org/react';
 import VoteCard from '@/components/VoteCard';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Api from '@/libs/api';
 import supabase from '@/libs/supabase';
 
@@ -11,10 +11,10 @@ export const getServerSideProps = async (context) => {
     .from('polls')
     .select()
     .eq('id', id);
-  let opts;
+  let options;
 
   if (poll.data) {
-    opts = JSON.parse(poll.data[0].options);
+    options = JSON.parse(poll.data[0].options);
   }
   
   const allVotes = await supabase
@@ -27,26 +27,25 @@ export const getServerSideProps = async (context) => {
     second: 0,
   }
 
-  if ((allVotes.data && allVotes.data.length > 0) && (opts && opts.length > 0)) {
+  if ((allVotes.data && allVotes.data.length > 0) && (options && options.length > 0)) {
     allVotes.data.forEach((vote) => {
-      if (vote.picked_option == opts[0].id) {
+      if (vote.picked_option == options[0].id) {
         let temp = Object.assign({}, initialVoteCount);
         temp.first += 1; 
         initialVoteCount = temp;
-      } else if (vote.picked_option == opts[1].id) {
+      } else if (vote.picked_option == options[1].id) {
         let temp = Object.assign({}, initialVoteCount);
         temp.second += 1; 
         initialVoteCount = temp;
       }
     });
   }
-  return { props: { id , opts, allVotes, initialVoteCount }}
+  return { props: { id , options, allVotes, initialVoteCount }}
 }
 
-export default function VotePage({ id, opts, allVotes, initialVoteCount }) {
+export default function VotePage({ id, options, allVotes, initialVoteCount }) {
   const { data } = allVotes;
-  const [options, setOptions] = useState([...opts]);
-  const [votes, setVotes] = useState([...data]);
+  const [votesLength, setVotesLength] = useState(data.length);
   const [voteCount, setVoteCount] = useState(initialVoteCount)
   const [pickedOption, setPickedOption] = useState("");
   const [voted, setVoted] = useState(false);
@@ -58,8 +57,7 @@ export default function VotePage({ id, opts, allVotes, initialVoteCount }) {
     if (pickedOption) {
       setLoading(true);
       await Api.addNewVote({pickedOption, pollId: id});
-      const { data } = await Api.getVotes({pollId: id});
-      setVotes([...data]);
+      setVotesLength(data.length + 1);
       setVoted(true);
       setVoteText("VOTED");
       setDisabled(true);
@@ -91,7 +89,7 @@ export default function VotePage({ id, opts, allVotes, initialVoteCount }) {
                 imageUrl={imageUrl}
                 options={options}
                 index={index}
-                votes={votes}
+                votesLength={votesLength}
                 setPickedOption={setPickedOption}
                 voteCount={voteCount}
                 voted={voted}

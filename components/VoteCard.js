@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export default function VoteCard({ options, index, setPickedOption, votes, voteCount, voted }) {
+export default function VoteCard({ options, index, setPickedOption, votesLength, voteCount, voted }) {
   const [voteSection, setVoteSection] = useState();
 
   const handleVoteChange = (e) => {
@@ -33,14 +33,14 @@ export default function VoteCard({ options, index, setPickedOption, votes, voteC
   useEffect(() => {
     if (voted) {
       if (index == 0) {
-        const firstVotes = Math.round((voteCount.first / votes.length) * 100);
+        const firstVotes = Math.round((voteCount.first / votesLength) * 100);
         setVoteSection(`${firstVotes}% Voted`)
       } else if (index == 1) {
-        const secondVotes = Math.round((voteCount.second / votes.length) * 100);
+        const secondVotes = Math.round((voteCount.second / votesLength) * 100);
         setVoteSection(`${secondVotes}% Voted`)
       }
     }
-  }, [voted, voteCount, votes])
+  }, [voted, voteCount, votesLength])
 
   return (
     <div className='border-2 border-blue-400 rounded-lg'>
