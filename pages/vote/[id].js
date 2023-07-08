@@ -3,16 +3,51 @@ import { Spacer, Button, Spinner } from '@nextui-org/react';
 import VoteCard from '@/components/VoteCard';
 import { useEffect, useState } from 'react';
 import Api from '@/libs/api';
+import supabase from '@/libs/supabase';
 
 export const getServerSideProps = async (context) => {
   const { id } = context.query;
-  return { props: { id }}
+  const poll  = await supabase
+    .from('polls')
+    .select()
+    .eq('id', id);
+  let opts;
+
+  if (poll.data) {
+    opts = JSON.parse(poll.data[0].options);
+  }
+  
+  const allVotes = await supabase
+    .from('votes')
+    .select()
+    .eq('poll', id);
+
+  let initialVoteCount = {
+    first: 0,
+    second: 0,
+  }
+
+  if ((allVotes.data && allVotes.data.length > 0) && (opts && opts.length > 0)) {
+    allVotes.data.forEach((vote) => {
+      if (vote.picked_option == opts[0].id) {
+        let temp = Object.assign({}, initialVoteCount);
+        temp.first += 1; 
+        initialVoteCount = temp;
+      } else if (vote.picked_option == opts[1].id) {
+        let temp = Object.assign({}, initialVoteCount);
+        temp.second += 1; 
+        initialVoteCount = temp;
+      }
+    });
+  }
+  return { props: { id , opts, allVotes, initialVoteCount }}
 }
 
-export default function VotePage({ id }) {
-  const [options, setOptions] = useState([]);
-  const [votes, setVotes] = useState([]);
-  const [voteCount, setVoteCount] = useState({first: 0, second: 0})
+export default function VotePage({ id, opts, allVotes, initialVoteCount }) {
+  const { data } = allVotes;
+  const [options, setOptions] = useState([...opts]);
+  const [votes, setVotes] = useState([...data]);
+  const [voteCount, setVoteCount] = useState(initialVoteCount)
   const [pickedOption, setPickedOption] = useState("");
   const [voted, setVoted] = useState(false);
   const [voteText, setVoteText] = useState("VOTE");
@@ -23,49 +58,12 @@ export default function VotePage({ id }) {
     if (pickedOption) {
       setLoading(true);
       await Api.addNewVote({pickedOption, pollId: id});
-      const {data} = await Api.getVotes({pollId: id});
+      const { data } = await Api.getVotes({pollId: id});
       setVotes([...data]);
       setVoted(true);
       setVoteText("VOTED");
       setDisabled(true);
       setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    Api.getPoll({ id })
-      .then((res) => {
-        if (res.data) {
-          const opts = JSON.parse(res.data[0].options);
-          setOptions([...opts]);
-        }
-      });
-    Api.getVotes({pollId: id})
-      .then((res) => {
-        if (res.data){
-          setVotes(res.data);
-        }
-      }) 
-  }, [id]);
-
-  useEffect(() => {
-    if (votes.length > 0 && !disabled && options.length > 0) {
-      votes.forEach((vote) => {
-        if (vote.picked_option == options[0].id) {
-          setVoteCount((prevCount) => {
-            let temp = Object.assign({}, prevCount);
-            temp.first += 1;
-            return temp;
-          });
-        } else if (vote.picked_option == options[1].id) {
-          setVoteCount((prevCount) => {
-            let temp = Object.assign({}, prevCount);
-            temp.second += 1;
-            return temp;
-          });
-        }
-      });
-    } else if (disabled && options.length > 0) {
       if (pickedOption == options[0].id) {
         setVoteCount((prevCount) => {
           let temp = Object.assign({}, prevCount);
@@ -80,9 +78,7 @@ export default function VotePage({ id }) {
         });
       }
     }
-  }, [votes.length, options.length]);
-
-  console.log(pickedOption);
+  }
 
   return (
     <div className="py-5">

@@ -52,14 +52,6 @@ const Api = {
     return data;
   },
 
-  getPoll: async ({ id }) => {
-    const data  = await supabase
-      .from('polls')
-      .select()
-      .eq('id', id)
-    return data;
-  },
-
   getVotes: async ({pollId}) => {
     const data  = await axios.get(('/api/vote'), {
       params: { pollId },
