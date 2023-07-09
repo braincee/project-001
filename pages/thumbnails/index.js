@@ -134,7 +134,7 @@ export default function ThumbnailsPage() {
         </section>
         <section className="mt-8 w-full">
             <p className='my-4 font-2xl text-[30px] tracking-widest italic text-center w-full'>HOMEPAGE</p>
-            <div className="flex md:flex-row flex-col px-3 justify-center gap-10">
+            <div className="flex md:flex-row flex-col px-3 justify-center gap-10 items-center w-full">
               { Array.apply(null, Array(2)).map((_, index) => (
                 <HomepageCard
                   key={index}
@@ -159,7 +159,7 @@ export default function ThumbnailsPage() {
             </div>
             <Spacer y={10} />
             <p className='my-4 font-2xl text-[30px] md:mr-[600px] tracking-widest italic text-center w-full'>RELATED</p>
-            <div className="flex md:flex-row flex-col justify-center px-5 gap-6">
+            <div className="flex md:flex-row flex-col justify-center px-5 gap-6 items-center w-full">
               { Array.apply(null, Array(2)).map((_, index) => (
                 <RelatedCard
                   key={index}

@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Progress } from '@nextui-org/react';
 import { FaCheckCircle, FaCloudUploadAlt } from 'react-icons/fa';
 
-const RelatedCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled, imageList, setImageList, progress, views }) => {
+const RelatedCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled, imageList, setImageList, progress, views, files, setFiles }) => {
 
   const truncate = (string, length) => {
     return string.length > length ? `${string.substr(0, length)}...` : string;
@@ -53,7 +53,7 @@ const RelatedCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled
   
 
   return (
-    <div className="flex flex-col md:max-w-[400px] w-full h-full">
+    <div className="flex flex-col md:max-w-[400px] h-full">
           <div className="flex flex-row h-full w-full">
             <div className="flex justify-start min-w-[168px] me-2 hover:cursor-pointer">
               { imageList[index] ?
@@ -75,7 +75,7 @@ const RelatedCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled
             </div>
             <div className="flex items-start justify-start w-full text-[14px]">             
               <div>
-                <h3 className="text-[16px] font-medium">{ title ? truncate(title, 50) : "Video Title"}</h3>
+                <h3 className="text-[16px] font-medium">{ title ? truncate(title, 40) : "Video Title"}</h3>
                 {channel &&
                   <li className="flex items-center text-gray-500 text-[14px]">
                     { truncate(channel, 30)}

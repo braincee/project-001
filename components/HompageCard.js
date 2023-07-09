@@ -83,7 +83,7 @@ const HomepageCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnable
               <Avatar className="me-[12px] min-w-[36px] h-[36px]" />
             </div>
             <div className='pe-[24px] w-full'>
-              <h3 className="text-[16px] font-medium">{ title ? truncate(title, 50) : "Video Title"}</h3>
+              <h3 className="text-[16px] font-medium">{ title ? truncate(title, 40) : "Video Title"}</h3>
               {channel &&
                 <li className="flex items-center text-gray-500 text-[14px]">
                   { truncate(channel, 30)}
