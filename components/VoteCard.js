@@ -15,11 +15,11 @@ export default function VoteCard({ options, index, setPickedOption, votesLength,
           id="vote-option"
           name="vote-option"
           onChange={handleVoteChange}
-          className="mr-2"
+          className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-600"
           value={options[index].id}
           aria-label="vote options"
         />
-        <label htmlFor="vote-option" className="text-sm font-semibold">
+        <label htmlFor="vote-option" className="ml-2 text-lg font-medium text-gray-900 dark:text-gray-300">
           Vote
         </label>
       </>
@@ -48,7 +48,7 @@ export default function VoteCard({ options, index, setPickedOption, votesLength,
         <div className="relative">
           <img src={options[index].image_url} alt="Thumbnail" className="w-full h-45 h-[200px] rounded-lg object-cover" />
         </div>
-        <div className="flex justify-center items-center mt-10 text-2xl">
+        <div className="flex justify-center items-center mt-10">
           {voteSection}
         </div>
       </div>
