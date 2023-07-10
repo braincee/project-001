@@ -48,7 +48,7 @@ export default function VoteCard({ options, index, setPickedOption, votesLength,
         <div className="relative">
           <img src={options[index].image_url} alt="Thumbnail" className="w-full h-45 h-[200px] rounded-lg object-cover" />
         </div>
-        <div className="flex justify-center items-center mt-10">
+        <div className="flex justify-center items-center mt-10 text-lg">
           {voteSection}
         </div>
       </div>
