@@ -5,12 +5,11 @@ import { FaShareAlt } from 'react-icons/fa';
 import { useRouter } from 'next/router';
 import SearchCard from '../components/SearchCard';
 import SkeletonBuilder from '../components/SkeletonBuilder';
-import getSearchVideos from '@/libs/search';
-import getVideo from '@/libs/video';
 import VideoCard from '@/components/VideoCard';
 import TableBuilder from '@/components/TableBuilder';
 import TableBuilder2 from '@/components/TableBuilder2';
 import copy from 'copy-to-clipboard';
+import Api from '@/libs/api';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState("");
@@ -150,7 +149,7 @@ export default function Home() {
     }
     if (inputValue && isvalid) {
       let videoId = inputValue.split('v=')[1];
-      const { data: { response } } = await getVideo(videoId);
+      const { data: { response } } = await Api.getVideo(videoId);
       const { title, description, channelTitle, publishedAt } = response.items[0].snippet;
       setUrlData([...urlData, {
         number: number + 1,
@@ -206,7 +205,7 @@ export default function Home() {
     if (!query) return;
     try {
       setIsLoading(true);
-      const { data: { response } } = await getSearchVideos(query);
+      const { data: { response } } = await Api.getSearchVideos(query);
       const videos = response.items.map((item) => {
         return {
           id: item.id.videoId,

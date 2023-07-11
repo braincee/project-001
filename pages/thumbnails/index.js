@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Input, Spacer, Switch } from '@nextui-org/react';
+import { useRouter } from 'next/router';
+import { Button, Input, Spacer, Spinner, Switch } from '@nextui-org/react';
 import Head from 'next/head';
 import HomepageCard from '@/components/HompageCard';
 import RelatedCard from '@/components/RelatedCard';
 import numbro from 'numbro';
-
+import Api from '@/libs/api';
+import { v4 as uuidv4 } from "uuid";
 
 export default function ThumbnailsPage() {
   const [titleValue, setTitleValue] = useState('');
@@ -14,6 +16,10 @@ export default function ThumbnailsPage() {
   const [isNewBadgeEnabled, SetIsNewBadgeEnabled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [views, setViews] = useState(0);
+  const [disabled, setDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [files, setFiles] = useState([]);
+  const router = useRouter();
 
   const handleTitleChange = (e) => {
     setTitleValue(e.target.value);
@@ -36,9 +42,31 @@ export default function ThumbnailsPage() {
     SetIsNewBadgeEnabled(!isNewBadgeEnabled);
   }
 
+  const handlePollCreation = async () => {
+    setLoading(true);
+    setDisabled(true);
+    const options = [];
+    const pollId = uuidv4();
+    for (let i = 0; i < files.length; i++) {
+      const pollName = await Api.addToPollsStorage(files[i]);
+      const url = await Api.getFilePublicURL(pollName);
+      options.push({id: uuidv4(), image_url: url.publicUrl});
+    }
+    await Api.addNewPoll({options, pollId});
+    setLoading(false);
+    router.push({
+      pathname: `/vote/${pollId}`,
+    });
+  }
+
   useEffect(() => {
     if (imageList.length == 1) {
       setViews(Math.floor(Math.random() * 10000));
+    }
+    if (imageList.length < 2) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
     }
   }, [imageList.length]);
 
@@ -88,13 +116,26 @@ export default function ThumbnailsPage() {
                 size="xl"
               />
             </div>
+            <div>
+              <Button
+                isLoading
+                color="primary"
+                variant="bordered"
+                onPress={handlePollCreation}
+                isDisabled={disabled}
+              >
+                { loading &&
+                  <Spinner size='sm'/>
+                }
+                Create Vote
+              </Button>
+            </div>
           </div>
         </section>
-        <section className="mt-8 md:pl-20 lg:pl-32 pl-5 w-full">
-            <p className='my-4 font-2xl text-[30px] md:mr-[550px] tracking-widest italic'>HOMEPAGE</p>
-            <div className="flex md:flex-row flex-col px-3 md:px-0 md:gap-3 gap-5 lg:gap-10">
+        <section className="mt-8 w-full">
+            <p className='my-4 font-2xl text-[30px] tracking-widest italic text-center w-full'>HOMEPAGE</p>
+            <div className="flex md:flex-row flex-col px-3 justify-center gap-10 items-center w-full">
               { Array.apply(null, Array(2)).map((_, index) => (
-                <>
                 <HomepageCard
                   key={index}
                   index={index}
@@ -110,17 +151,16 @@ export default function ThumbnailsPage() {
                     average: true,
                   })}
                   setViews={setViews}
+                  setFiles={setFiles}
+                  files={files}
                 />
-                  <Spacer x={3} />
-                </>
               ))
               }
             </div>
             <Spacer y={10} />
-            <p className='my-4 font-2xl text-[30px] md:mr-[600px] tracking-widest italic'>RELATED</p>
-            <div className="flex md:flex-row flex-col px-3 md:px-0 gap-6">
+            <p className='my-4 font-2xl text-[30px] md:mr-[600px] tracking-widest italic text-center w-full'>RELATED</p>
+            <div className="flex md:flex-row flex-col justify-center px-5 gap-6 items-center w-full">
               { Array.apply(null, Array(2)).map((_, index) => (
-                <>
                 <RelatedCard
                   key={index}
                   index={index}
@@ -135,9 +175,9 @@ export default function ThumbnailsPage() {
                     spaceSeparated: false,
                     average: true,
                   })}
+                  setFiles={setFiles}
+                  files={files}
                 />
-                <Spacer x={3} />
-                </>
               ))
               }
           </div>

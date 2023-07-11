@@ -3,7 +3,7 @@ import { Avatar, Progress } from "@nextui-org/react";
 import { FaCheckCircle, FaCloudUploadAlt } from 'react-icons/fa';
 
 
-const HomepageCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled, imageList, setImageList, progress, views }) => {
+const HomepageCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnabled, imageList, setImageList, progress, views, files, setFiles }) => {
 
   const truncate = (string, length) => {
     return string.length > length ? `${string.substr(0, length)}...` : string;
@@ -33,15 +33,28 @@ const HomepageCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnable
           return items;
         }
         );
+        setFiles((prevFiles) => {      
+          const items = prevFiles.map((item, i) => {
+            if (index === i) {
+              return selectedFile
+            } else {
+              return item;
+            }
+          });
+          return items;
+        }
+        );
       } else {
         setImageList([...imageList, URL.createObjectURL(selectedFile)]);
+        setFiles([...files, selectedFile ])
       }
     }
+    
   };
   
   return (
     <div className="w-full md:w-[calc(100%/2-1.5rem)] max-w-[360px]">
-          <div className="w-full">
+          <div className="w-full hover:cursor-pointer">
             { imageList[index] ?
               <div className='w-full relative max-h-[200px]'>
                 <img src={imageList[index]} alt="Thumbnail" className="h-[200px] rounded-lg w-full border" onClick={handleThumbnailClick} />   
@@ -70,7 +83,7 @@ const HomepageCard = ({ index, title, channel, isViewedEnabled, isNewBadgeEnable
               <Avatar className="me-[12px] min-w-[36px] h-[36px]" />
             </div>
             <div className='pe-[24px] w-full'>
-              <h3 className="text-[16px] font-medium">{ title ? truncate(title, 50) : "Video Title"}</h3>
+              <h3 className="text-[16px] font-medium">{ title ? truncate(title, 40) : "Video Title"}</h3>
               {channel &&
                 <li className="flex items-center text-gray-500 text-[14px]">
                   { truncate(channel, 30)}
