@@ -2,7 +2,6 @@ import { getSubtitles } from 'youtube-captions-scraper';
 import { countRepeatedWords, openai, ytCategoryIds } from './utils';
 import ytdl from 'ytdl-core';
 import * as cheerio from 'cheerio';
-import { createCaption, createYoutuber, getYoutuber } from './data';
 import Api from '../api';
 // import path from
 

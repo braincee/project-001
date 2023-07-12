@@ -5,6 +5,6 @@ export default async function handler(req, res) {
     const { data, error } = await supabase
         .from('YouTuber')
         .select()
-        .where('id', channelId);
+        .eq('id', channelId);
     res.status(200).json(data ?? error);
 }
