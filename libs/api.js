@@ -1,7 +1,6 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import supabase from "./supabase";
-import { select } from "cheerio-select";
 
 const Api = {
   getSearchVideos: async (query) => {
@@ -105,10 +104,11 @@ const Api = {
     return results;
   },
 
-  getCaption: async ({videoId}) => {
-    const response = await fetch(`/api/caption/${videoId}`);
-    const results = await response.json();
-    return results;
+  getCaption: async ({ id }) => {
+    const data = await axios.get(('/api/caption/single'), {
+      params: { id },
+    })
+    return data;
   },
 
   updateCaption: async (captionData) => {
@@ -123,9 +123,7 @@ const Api = {
     const response = await fetch('/api/captions/update', options);
     const results = await response.json()
     return results;
-  }
-
-
+  },
 }
 
 export default Api;

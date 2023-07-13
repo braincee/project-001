@@ -1,7 +1,7 @@
-import supabase from "../../../libs/supabase";
+import supabase from "@/libs/supabase";
 
 export default async function handler(req, res) {
-    const { id } = req.params;
+    const { id } = req.query;
     const { data, error } = await supabase
         .from('Caption')
         .select()
