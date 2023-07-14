@@ -4,7 +4,7 @@ import { countRepeatedWords } from "./utils";
 const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
 
 export const getVideoInfo =  async ({ id }) => {
-  let info = await axios.get(`https://www.googleapis.com/youtube/v3/list?part=snippet&key=${ApiKey}&id=${id}`);
+  let info = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${id}`);
 
   if (!info.data.items) throw new HttpError(404, 'Video not found');
 

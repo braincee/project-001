@@ -4,7 +4,7 @@ import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
 import { FaTwitter, FaGithub } from 'react-icons/fa';
 import { Input, Spinner } from '@nextui-org/react';
-import { getCaptions, getRepeatedWords } from '@/libs/server/queries';
+import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
 import { scrapeCaptionsAndSave } from '@/libs/server/action';
 
 const DrinkingGame = () => {
@@ -14,12 +14,14 @@ const DrinkingGame = () => {
   const [selectedWord, setSelectedWord] = useState('');
   const [youtuber, setYoutuber] = useState([]);
   const [isFetchingRptWrds, setIsFetchingRptWrds] = useState(false);
+  const [isFetched, setIsFetched] = useState(false);
   const [isFetchingRptWrdsAgain, setIsFetchingRptWrdsAgain] = useState(false);
   const [captions, setCaptions] = useState(null);
   const [repeatedWords, setRepeatedWords] = useState(null);
   const [areCaptionsSaved, setAreCaptionsSaved] = useState(false);
   const [dbCaptions, setDbCaptions] = useState(null);
   const [counter, setCounter] = useState(0);
+  cosnt [videoInfo, setVideoInfo] = useState(null);
 
   const inputRef = useRef(null);
 
@@ -68,6 +70,22 @@ const DrinkingGame = () => {
       })
     }
   }, [videoId, chosenWord]);
+
+  useEffect(() => {
+    if (videoId && areCaptionsSaved) {
+      getVideoInfo({ id: videoId })
+      .then((res) => {
+        setVideoInfo(res.data);
+      })
+    }
+  }, [videoId, areCaptionsSaved]);
+
+  useEffect(() => {
+    if (isFetched && repeatedWords && dbCaptions) {
+      setCaptions(dbCaptions);
+      setAreCaptionsSaved(true);
+    }
+  }, [repeatedWords, dbCaptions]);
 
   useEffect(() => {
     if (repeatedWords?.length) {
