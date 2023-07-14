@@ -6,13 +6,12 @@ import { FaTwitter, FaGithub } from 'react-icons/fa';
 import { Input, Spinner } from '@nextui-org/react';
 import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
 import { scrapeCaptionsAndSave } from '@/libs/server/action';
+import YouTubePlayer from '@/components/YouTubePlayer';
 
 const DrinkingGame = () => {
   const [videoId, setVideoId] = useState('');
   const [ascOrder, setAscOrder] = useState(false);
-  const [youtubeUrl, setYoutubeUrl] = useState('');
   const [selectedWord, setSelectedWord] = useState('');
-  const [youtuber, setYoutuber] = useState([]);
   const [isFetchingRptWrds, setIsFetchingRptWrds] = useState(false);
   const [isFetched, setIsFetched] = useState(false);
   const [isFetchingRptWrdsAgain, setIsFetchingRptWrdsAgain] = useState(false);
@@ -45,8 +44,6 @@ const DrinkingGame = () => {
       //   }
       // );
     }
-
-    setYoutubeUrl(e.target.value);
   };
 
   const handleWordSelect = (e) => {
@@ -89,7 +86,7 @@ const DrinkingGame = () => {
   }, [repeatedWords, dbCaptions]);
 
   useEffect(() => {
-    if (repeatedWords?.length) {
+    if (repeatedWords) {
       setIsFetchingRptWrds(false);
     }
     const fetchCaptions = async () => {
@@ -119,8 +116,6 @@ const DrinkingGame = () => {
     }
   }, [videoId]);
 
-  console.log(captions);
-
   return (
     <>
       <Head>
@@ -137,8 +132,7 @@ const DrinkingGame = () => {
               <div className='flex flex-col border justify-center items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row'>
                 <div className="mb-1">
                   <Input
-                    type="text"
-                    min='30'
+                    size='sm'
                     onChange={handleYoutubeUrlChange}
                     className="border border-gray-300 rounded w-full"
                     placeholder='youtube.com/watch?v=iZ30YqKehSM'
@@ -155,10 +149,6 @@ const DrinkingGame = () => {
                         onChange={handleWordSelect}
                         className="border border-gray-300 rounded px-4 py-2"
                       >
-                        {/* <option value="" disabled hidden>Select a highly occurred word</option>
-                        <option value="word1">Word 1</option>
-                        <option value="word2">Word 2</option>
-                        <option value="word3">Word 3</option> */}
                         {repeatedWords && !ascOrder
                       ? repeatedWords?.map(([word, number]) => (
                           <option key={word} value={word}>
@@ -188,6 +178,19 @@ const DrinkingGame = () => {
               </div>
             </div>
             <div className="mx-auto rounded-lg border border-gray-200 my-2 w-[100%] h-[300px] p-4">
+              {videoId && !repeatedWords &&
+                <div className="h-full flex justify-center items-center">
+                  <Spinner />
+                </div>
+              }
+              {videoId && (
+                <YouTubePlayer
+                  setCounter={setCounter}
+                  captions={captions}
+                  chosenWord={selectedWord}
+                  videoId={videoId}
+                />
+              )}
             </div>
           </div>
           <div className="border-b border-gray-200 mt-10"></div>

@@ -1,6 +1,7 @@
 import { Card } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 import YouTube from 'react-youtube';
+
 const YouTubePlayer = ({
   setCounter,
   isClinkSound,
@@ -56,7 +57,7 @@ const YouTubePlayer = ({
         }
       }
     }
-  }, [currentTime]);
+  }, [currentTime, captions]);
 
   const onPlayerReady = (event) => {
     setYoutubePlayer(event.target);
@@ -70,6 +71,8 @@ const YouTubePlayer = ({
     event.target.pauseVideo();
   };
 
+  console.log(captions);
+
   const onStateChange = (event) => {};
 
   const opts = {
@@ -82,7 +85,7 @@ const YouTubePlayer = ({
   };
 
   return (
-    <Card>
+    <Card className="h-full">
       <YouTube id="yt-player" videoId={videoId} opts={opts} onReady={onPlayerReady} onStateChange={onStateChange}/>
     </Card>
   )
