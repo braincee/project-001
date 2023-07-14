@@ -9,7 +9,6 @@ import { scrapeCaptionsAndSave } from '@/libs/server/action';
 
 const DrinkingGame = () => {
   const [videoId, setVideoId] = useState('');
-  const [chosenWord, setChosenWord] = useState('');
   const [ascOrder, setAscOrder] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [selectedWord, setSelectedWord] = useState('');
@@ -58,26 +57,26 @@ const DrinkingGame = () => {
     if (videoId) {
       getRepeatedWords({ id: videoId })
       .then((res) => {
-        console.log(res)
         setRepeatedWords(res);
       });
     }
   }, [videoId]);
 
   useEffect(() => {
-    if (videoId && chosenWord) {
-      getCaptions({ id: videoId, chosenWord})
+    if (videoId && selectedWord) {
+      getCaptions({ id: videoId, chosenWord: selectedWord})
       .then((res) => {
-        setDbCaptions(res.data);
+        setDbCaptions(res);
+        setIsFetched(true);
       })
     }
-  }, [videoId, chosenWord]);
+  }, [videoId, selectedWord]);
 
   useEffect(() => {
     if (videoId && areCaptionsSaved) {
       getVideoInfo({ id: videoId })
       .then((res) => {
-        setVideoInfo(res.data);
+        setVideoInfo(res);
       })
     }
   }, [videoId, areCaptionsSaved]);
@@ -111,7 +110,7 @@ const DrinkingGame = () => {
     if (videoId) {
       setCounter(0);
       setCaptions(null);
-      setChosenWord('');
+      setSelectedWord('');
       if (!repeatedWords) {
         setIsFetchingRptWrds(true)
       } else {
@@ -120,7 +119,7 @@ const DrinkingGame = () => {
     }
   }, [videoId]);
 
-  console.log(repeatedWords);
+  console.log(captions);
 
   return (
     <>

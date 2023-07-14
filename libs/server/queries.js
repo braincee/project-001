@@ -48,7 +48,7 @@ export const getRepeatedWords = async ({ id }) => {
 export const getCaptions = async ({ id, chosenWord }) => {
   const caption = await Api.getCaption({ id });
 
-  let captions = caption?.captionChunks || [];
+  let captions = JSON.parse(caption[0]?.captionChunks) || [];
 
   const cleanedCaptions = captions.map((caption) => {
     // split the text into an array of words and remove any punctuation
