@@ -1,21 +1,21 @@
-import { getSubtitles } from 'youtube-captions-scraper';
 import { countRepeatedWords, openai, ytCategoryIds } from './utils';
 import ytdl from 'ytdl-core';
 import * as cheerio from 'cheerio';
 import Api from '../api';
+import { getSubtitles } from 'youtube-captions-scraper';
+import axios from 'axios';
 // import path from
 
 const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
 
-const __filename = fileURLToPath(import.meta.url);
+// const __filename = fileURLToPath(import.meta.url);
 
-const __dirname = path.dirname(__filename);
-console.log('directory-name 👉️', __dirname);
+// const __dirname = path.dirname(__filename);
+// console.log('directory-name 👉️', __dirname);
 
 export const scrapeCaptionsAndSave = async ({ videoId }) => {
   try {
-    const info = await axios.get(`https://www.googleapis.com/youtube/v3/list?part=snippet&key=${ApiKey}&id=${videoId}`);
-     
+    const info = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${videoId}`);
 
     if (!info.data.items) throw new HttpError(404, 'Video not found');
 
@@ -31,11 +31,7 @@ export const scrapeCaptionsAndSave = async ({ videoId }) => {
       : info.data.items[0]?.snippet?.defaultAudioLanguage;
 
     if (!channelId) throw new HttpError(404, 'Channel not found');
-
-    const captions = (await getSubtitles({
-      videoID: videoId,
-      lang: defaultLanguage || defaultAudioLanguage || 'en',
-    }));
+    const captions = await Api.fetchSubtitles({ videoId, defaultLanguage, defaultAudioLanguage });
 
     if (!captions) throw new HttpError(404, 'Captions not found');
 
@@ -52,13 +48,14 @@ export const scrapeCaptionsAndSave = async ({ videoId }) => {
 
     let youTuber = await Api.getYouTuber(channelId);
 
-    if (!youTuber) {
+    if (youTuber.length <= 0) {
       let data = {
         id: channelId,
-        name: channelTitle || ' ',
+        name: channelTitle || '',
       };
       youTuber = await Api.addYoutuber(data);
     }
+
 
     let data = {
       videoId,
@@ -78,14 +75,11 @@ export const scrapeCaptionsAndSave = async ({ videoId }) => {
   }
 };
 
-export const generateCaptionsAndSave = async (
-  { videoId, transcribeWithLyrics },
-  context
-) => {
+export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics }) => {
   try {
     const url = `https://www.youtube.com/watch?v=${videoId}`;
-    const vidInfo = await axios.get(`https://www.googleapis.com/youtube/v3/list?part=snippet&key=${ApiKey}&id=${videoId}`);
-    
+    const vidInfo = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${videoId}`);
+
     console.log('transcribeWithLyrics??? >>> ', transcribeWithLyrics);
     if (!vidInfo.data.items) throw new HttpError(404, 'Video not found');
 
@@ -140,31 +134,31 @@ export const generateCaptionsAndSave = async (
       quality: categoryId === '10' ? 'highestaudio' : 'lowestaudio',
     });
     console.log('audioFormat ', audioFormat);
-    const audioStream = ytdl(url, { format: audioFormat }).pipe(
-      fs.createWriteStream(path.join(__dirname, `${videoId}.${audioFormat.container}`))
-    );
-    const audioStreamPromise = new Promise((resolve, reject) => {
-      audioStream.on('finish', resolve);
-      audioStream.on('error', reject);
-    });
+    // const audioStream = ytdl(url, { format: audioFormat }).pipe(
+    //   fs.createWriteStream(path.join(__dirname, `${videoId}.${audioFormat.container}`))
+    // );
+    // const audioStreamPromise = new Promise((resolve, reject) => {
+    //   audioStream.on('finish', resolve);
+    //   audioStream.on('error', reject);
+    // });
 
-    await audioStreamPromise;
+    // await audioStreamPromise;
 
-    const filePath = path.join(__dirname, `${videoId}.${audioFormat.container}`);
+    // const filePath = path.join(__dirname, `${videoId}.${audioFormat.container}`);
 
-    const stats = fs.statSync(filePath);
-    const fileSizeInBytes = stats.size;
-    const fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
-    console.log('fileSizeInMegabytes ', fileSizeInMegabytes);
-    if (fileSizeInMegabytes > 25) {
-      throw new HttpError(413, 'File size is too large');
-    }
+    // const stats = fs.statSync(filePath);
+    // const fileSizeInBytes = stats.size;
+    // const fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
+    // console.log('fileSizeInMegabytes ', fileSizeInMegabytes);
+    // if (fileSizeInMegabytes > 25) {
+    //   throw new HttpError(413, 'File size is too large');
+    // }
 
-    const file = fs.createReadStream(filePath);
-    const model = 'whisper-1';
-    const format = 'verbose_json';
+    // const file = fs.createReadStream(filePath);
+    // const model = 'whisper-1';
+    // const format = 'verbose_json';
 
-    const accessToken = process.env.GENIUS_API_KEY;
+    // const accessToken = process.env.GENIUS_API_KEY;
 
     let lyrics = '';
 
@@ -243,7 +237,7 @@ export const generateCaptionsAndSave = async (
       format
     ));
 
-    fs.unlinkSync(filePath);
+    // fs.unlinkSync(filePath);
 
     if (!resp.data.segments) throw new HttpError(400, 'Error generating captions');
 

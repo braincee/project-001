@@ -59,49 +59,34 @@ const Api = {
   },
 
   getYouTubers: async () => {
-    const response = await fetch('/api/youtuber/all');
-    const results = await response.json();
-    return results;
+    const data = await axios.get('/api/youtuber/all');
+    return data;
   },
 
   getCaptions: async () => {
-    const response = await fetch('/api/caption/all');
-    const results = await response.json();
-    return results
+    const data = await axios.get('/api/caption/all');
+    return data;
   },
 
   addYoutuber: async (youtuberData) => {
-    const JSONData = JSON.stringify(youtuberData);
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSONData,
-    }
-    const response = await fetch('/api/youtuber/add', options);
-    const results = await response.json()
-    return results;
+    const { data } = await axios.post(('/api/youtuber/add'), {
+      youtuberData
+    })
+    return data;
   },
 
   addCaption: async (captionData) => {
-    const JSONData = JSON.stringify(captionData);
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSONData,
-    }
-    const response = await fetch('/api/youtuber/add', options);
-    const results = await response.json()
-    return results;
+    const { data } = await axios.post(('/api/caption/add'), {
+      captionData
+    })
+    return data;
   },
 
   getYouTuber: async (channelId) => {
-    const response = await fetch(`/api/youtuber/${channelId}`);
-    const results = await response.json();
-    return results;
+    const { data } = await axios.get(('/api/youtuber/single'), {
+      params: { channelId },
+    })
+    return data;
   },
 
   getCaption: async ({ id }) => {
@@ -112,18 +97,18 @@ const Api = {
   },
 
   updateCaption: async (captionData) => {
-    const JSONData = JSON.stringify(captionData);
-    const options = {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSONData,
-    }
-    const response = await fetch('/api/captions/update', options);
-    const results = await response.json()
-    return results;
+    const { data } = await axios.post(('/api/caption/update'), {
+      captionData
+    })
+    return data;
   },
+
+  fetchSubtitles: async ({ videoId, defaultLanguage, defaultAudioLanguage }) => {
+    const {data} = await axios.post('/api/subtitle', {
+      videoId, defaultLanguage, defaultAudioLanguage,
+    });
+    return data.response;
+  }
 }
 
 export default Api;

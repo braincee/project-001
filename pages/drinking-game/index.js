@@ -4,7 +4,8 @@ import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
 import { FaTwitter, FaGithub } from 'react-icons/fa';
 import { Input, Spinner } from '@nextui-org/react';
-import { getRepeatedWords } from '@/libs/server/queries';
+import { getCaptions, getRepeatedWords } from '@/libs/server/queries';
+import { scrapeCaptionsAndSave } from '@/libs/server/action';
 
 const DrinkingGame = () => {
   const [videoId, setVideoId] = useState('');
@@ -13,8 +14,14 @@ const DrinkingGame = () => {
   const [selectedWord, setSelectedWord] = useState('');
   const [youtuber, setYoutuber] = useState([]);
   const [isFetchingRptWrds, setIsFetchingRptWrds] = useState(false);
-  const inputRef = useRef(null);
+  const [isFetchingRptWrdsAgain, setIsFetchingRptWrdsAgain] = useState(false);
+  const [captions, setCaptions] = useState(null);
   const [repeatedWords, setRepeatedWords] = useState(null);
+  const [areCaptionsSaved, setAreCaptionsSaved] = useState(false);
+  const [dbCaptions, setDbCaptions] = useState(null);
+  const [counter, setCounter] = useState(0);
+
+  const inputRef = useRef(null);
 
   const handleYoutubeUrlChange = (e) => {
     const str = e.target.value;
@@ -44,20 +51,6 @@ const DrinkingGame = () => {
     setSelectedWord(e.target.value);
   };
 
-  // useEffect(() => {
-  //   addYoutuber();
-  //   addCaption();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!youtuber) {
-  //     Api.getYouTubers()
-  //       .then(res => {
-  //         setYoutuber(res)
-  //       });
-  //   }
-  // }, [youtuber]);
-
   useEffect(() => {
     if (videoId) {
       getRepeatedWords({ id: videoId })
@@ -67,7 +60,43 @@ const DrinkingGame = () => {
     }
   }, [videoId]);
 
-  console.log(videoId, repeatedWords);
+  useEffect(() => {
+    if (videoId && chosenWord) {
+      getCaptions({ id: videoId, chosenWord})
+      .then((res) => {
+        setDbCaptions(res.data);
+      })
+    }
+  }, [videoId, chosenWord]);
+
+  useEffect(() => {
+    if (repeatedWords?.length) {
+      setIsFetchingRptWrds(false);
+    }
+    const fetchCaptions = async () => {
+      try {
+        if (!isFetchingRptWrdsAgain && videoId && !repeatedWords) {
+          await scrapeCaptionsAndSave({ videoId });
+          setAreCaptionsSaved(true);
+        }
+      } catch (error) {
+        setIsFetchingRptWrds(false);
+        document.getElementById('transcribe')?.focus();
+      }
+    }
+    fetchCaptions();
+  }, [repeatedWords]);
+
+  useEffect(() => {
+    if (videoId) {
+      setCounter(0);
+      setCaptions(null);
+      setChosenWord('');
+      if (!repeatedWords) {
+        setIsFetchingRptWrds(true)
+      }
+    }
+  }, [videoId]);
 
   return (
     <>
@@ -95,8 +124,8 @@ const DrinkingGame = () => {
                 </div>
                 <div className="flex gap-1">
                   <div className="">
-                    {/* {isFetchingRptWrds && <Spinner />}
-                    {!isFetchingRptWrds && ( */}
+                    {isFetchingRptWrds && <Spinner />}
+                    {!isFetchingRptWrds && (
                       <select
                         id="selectedWord"
                         value={selectedWord}
@@ -121,7 +150,7 @@ const DrinkingGame = () => {
                           ))
                           .reverse()}
                       </select>
-                    {/* )} */}
+                      )}
                   </div>
                   <div className="flex items-center justify-center">
                     <div className="rounded-lg border border-gray-300 p-1">
