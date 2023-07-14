@@ -26,7 +26,7 @@ export const getCaptionsInfo = async ({ id }) => {
 export const getRepeatedWords = async ({ id }) => {
   const caption = await Api.getCaption({id});
 
-  const captions = caption?.captionChunks || [];
+  const captions = JSON.parse(caption[0]?.captionChunks) || [];
 
   const cleanedCaptions = captions.map((caption) => {
     const text = caption.text.split(/\s+/).map((word) => {

@@ -10,6 +10,7 @@ import { scrapeCaptionsAndSave } from '@/libs/server/action';
 const DrinkingGame = () => {
   const [videoId, setVideoId] = useState('');
   const [chosenWord, setChosenWord] = useState('');
+  const [ascOrder, setAscOrder] = useState(false);
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [selectedWord, setSelectedWord] = useState('');
   const [youtuber, setYoutuber] = useState([]);
@@ -21,7 +22,7 @@ const DrinkingGame = () => {
   const [areCaptionsSaved, setAreCaptionsSaved] = useState(false);
   const [dbCaptions, setDbCaptions] = useState(null);
   const [counter, setCounter] = useState(0);
-  cosnt [videoInfo, setVideoInfo] = useState(null);
+  const [videoInfo, setVideoInfo] = useState(null);
 
   const inputRef = useRef(null);
 
@@ -57,7 +58,8 @@ const DrinkingGame = () => {
     if (videoId) {
       getRepeatedWords({ id: videoId })
       .then((res) => {
-        setRepeatedWords(res.data);
+        console.log(res)
+        setRepeatedWords(res);
       });
     }
   }, [videoId]);
@@ -112,9 +114,13 @@ const DrinkingGame = () => {
       setChosenWord('');
       if (!repeatedWords) {
         setIsFetchingRptWrds(true)
+      } else {
+        setIsFetchingRptWrds(false)
       }
     }
   }, [videoId]);
+
+  console.log(repeatedWords);
 
   return (
     <>
@@ -125,8 +131,7 @@ const DrinkingGame = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-     
-        <div className='flex flex-col mx-auto w-[96%] md:w-[42%]'>
+        <div className='flex flex-col mx-auto w-[96%] md:w-[50%]'>
           <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
           <div className='border border-gray-200 rounded-lg p-4'>
             <div className="flex justify-center items-center gap-3">
@@ -134,8 +139,9 @@ const DrinkingGame = () => {
                 <div className="mb-1">
                   <Input
                     type="text"
+                    min='30'
                     onChange={handleYoutubeUrlChange}
-                    className="border border-gray-300 rounded px-4 py-2 w-full"
+                    className="border border-gray-300 rounded w-full"
                     placeholder='youtube.com/watch?v=iZ30YqKehSM'
                     aria-labelledby="Youtube url"
                   />
@@ -154,7 +160,7 @@ const DrinkingGame = () => {
                         <option value="word1">Word 1</option>
                         <option value="word2">Word 2</option>
                         <option value="word3">Word 3</option> */}
-                        {repeatedWords?.length && !ascOrder
+                        {repeatedWords && !ascOrder
                       ? repeatedWords?.map(([word, number]) => (
                           <option key={word} value={word}>
                             {word}
@@ -183,15 +189,7 @@ const DrinkingGame = () => {
               </div>
             </div>
             <div className="mx-auto rounded-lg border border-gray-200 my-2 w-[100%] h-[300px] p-4">
-              <iframe src=""></iframe>
             </div>
-            <Input
-                    type="text"
-                    onChange={handleYoutubeUrlChange}
-                    className="border border-gray-300 rounded px-4 py-2 w-full"
-                    placeholder='youtube.com/watch?v=iZ30YqKehSM'
-                    aria-labelledby="Youtube url"
-                  />
           </div>
           <div className="border-b border-gray-200 mt-10"></div>
           <div className="flex justify-end items-center mt-10 gap-2">

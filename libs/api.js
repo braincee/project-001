@@ -64,7 +64,7 @@ const Api = {
   },
 
   getCaptions: async () => {
-    const data = await axios.get('/api/caption/all');
+    const { data } = await axios.get('/api/caption/all');
     return data;
   },
 
@@ -90,7 +90,7 @@ const Api = {
   },
 
   getCaption: async ({ id }) => {
-    const data = await axios.get(('/api/caption/single'), {
+    const { data } = await axios.get(('/api/caption/single'), {
       params: { id },
     })
     return data;

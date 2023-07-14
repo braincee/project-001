@@ -7,8 +7,6 @@ const YouTubePlayer = ({
   captions,
   chosenWord,
   videoId,
-  pointerEvents,
-  dimensions,
 }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [prevCaption, setPrevCaption] = useState('');
@@ -75,8 +73,8 @@ const YouTubePlayer = ({
   const onStateChange = (event) => {};
 
   const opts = {
-    height: dimensions?.height || '360',
-    width: dimensions?.width || '640',
+    height: '360',
+    width: '640',
     playerVars: {
       // https://developers.google.com/youtube/player_parameters
       autoplay: 0,
