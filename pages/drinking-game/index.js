@@ -62,6 +62,7 @@ const DrinkingGame = () => {
         .then((res) => {
           setRepeatedWords(res);
           setIsDisabled(false);
+          setIsFetched(true);
         });
     }
   }, [videoId, areCaptionsSaved]);
@@ -153,6 +154,8 @@ const DrinkingGame = () => {
       }
     }
   }, [isFetched, repeatedWords]);
+
+  console.log(isFetched);
 
   return (
     <>
