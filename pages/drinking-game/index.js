@@ -3,11 +3,12 @@ import Head from 'next/head';
 import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
 import { FaTwitter, FaGithub } from 'react-icons/fa';
-import { Input, Spinner } from '@nextui-org/react';
+import { Input, Spacer, Spinner } from '@nextui-org/react';
 import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
 import { scrapeCaptionsAndSave } from '@/libs/server/action';
 import YouTubePlayer from '@/components/YouTubePlayer';
 import { useRouter } from 'next/router';
+import AnimatedCounter from '@/components/AnimatedCounter';
 
 const DrinkingGame = () => {
   const [videoId, setVideoId] = useState('');
@@ -24,6 +25,7 @@ const DrinkingGame = () => {
   const [videoInfo, setVideoInfo] = useState(null);
   const [showOption, setShowOptions] = useState(false)
   const [isDisabled, setIsDisabled] = useState(true)
+  const [poo, setPoo] = useState(false);
 
   const inputRef = useRef(null);
   const selectRef = useRef(null)
@@ -92,14 +94,14 @@ const DrinkingGame = () => {
       setAreCaptionsSaved(true);
     }
   }, [repeatedWords, dbCaptions]);
-  
+
   useEffect(() => {
     if (router.query?.v) {
       const videoId = router.query?.v;
       if (videoId) {
         setVideoId(videoId);
       }
-    } 
+    }
   }, [router.query]);
 
   useEffect(() => {
@@ -246,6 +248,13 @@ const DrinkingGame = () => {
                 />
               )}
             </div>
+          </div>
+          <div className="mt-4 text-2xl flex">
+            <p>{counter > 0 ? counter : ''}</p>
+            <AnimatedCounter
+              counter={counter}
+              emoji={!poo ? '🥃' : videoInfo?.youTuberId === 'UCbRP3c757lWg9M-U7TyEkXA' ? '🥸' : '💩'}
+            />
           </div>
           <div className="border-b border-gray-200 mt-10"></div>
           <div className="flex justify-end items-center mt-10 gap-2">
