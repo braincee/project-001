@@ -7,6 +7,7 @@ import { Input, Spinner } from '@nextui-org/react';
 import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
 import { scrapeCaptionsAndSave } from '@/libs/server/action';
 import YouTubePlayer from '@/components/YouTubePlayer';
+import { useRouter } from 'next/router';
 
 const DrinkingGame = () => {
   const [videoId, setVideoId] = useState('');
@@ -26,6 +27,8 @@ const DrinkingGame = () => {
 
   const inputRef = useRef(null);
   const selectRef = useRef(null)
+
+  const router = useRouter();
 
   const handleYoutubeUrlChange = (e) => {
     const str = e.target.value;
@@ -54,14 +57,14 @@ const DrinkingGame = () => {
   };
 
   useEffect(() => {
-    if (videoId) {
+    if (videoId && areCaptionsSaved) {
       getRepeatedWords({ id: videoId })
         .then((res) => {
           setRepeatedWords(res);
           setIsDisabled(false);
         });
     }
-  }, [videoId]);
+  }, [videoId, areCaptionsSaved]);
 
   useEffect(() => {
     if (videoId && selectedWord) {
@@ -88,6 +91,15 @@ const DrinkingGame = () => {
       setAreCaptionsSaved(true);
     }
   }, [repeatedWords, dbCaptions]);
+  
+  useEffect(() => {
+    if (router.query?.v) {
+      const videoId = router.query?.v;
+      if (videoId) {
+        setVideoId(videoId);
+      }
+    } 
+  }, [router.query]);
 
   useEffect(() => {
     if (repeatedWords) {
@@ -100,25 +112,47 @@ const DrinkingGame = () => {
           setAreCaptionsSaved(true);
         }
       } catch (error) {
+        console.error(error);
         setIsFetchingRptWrds(false);
         document.getElementById('transcribe')?.focus();
       }
     }
     fetchCaptions();
-  }, [repeatedWords]);
+  }, [repeatedWords, videoId]);
+
 
   useEffect(() => {
-    if (videoId) {
+    if (videoId && router.query?.v !== videoId) {
+      router.push(`/drinking-game?v=${videoId}`)
       setCounter(0);
       setCaptions(null);
       setSelectedWord('');
       if (!repeatedWords) {
-        setIsFetchingRptWrds(true)
+        setIsFetchingRptWrds(true);
       } else {
-        setIsFetchingRptWrds(false)
+        setIsFetchingRptWrds(false);
       }
     }
   }, [videoId]);
+
+  useEffect(() => {
+    if (selectedWord) {
+      router.push(`/drinking-game/?v=${videoId}&w=${selectedWord}`)
+    }
+  }, [selectedWord]);
+
+  useEffect(() => {
+    if (isFetched && repeatedWords) {
+      const wordParam = router.query?.w;
+      if (wordParam && !selectedWord) {
+        const wordExists = repeatedWords.find(([word, number]) => word === wordParam);
+
+        if (wordExists) {
+          setSelectedWord(wordParam);
+        }
+      }
+    }
+  }, [isFetched, repeatedWords]);
 
   return (
     <>
