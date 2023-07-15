@@ -144,7 +144,7 @@ const DrinkingGame = () => {
                 />
               </div>
               <div className="flex gap-1">
-                <div className="">
+                <div className="min-w-[250px] flex justify-center items center">
                   {isFetchingRptWrds && <Spinner />}
                   {!isFetchingRptWrds && (
                     <select
@@ -152,7 +152,7 @@ const DrinkingGame = () => {
                       id="selectedWord"
                       value={selectedWord}
                       onChange={handleWordSelect}
-                      className="border border-gray-300 rounded px-4 py-2"
+                      className="border border-gray-300 rounded px-4 py-2 after:pe-4"
                       placeholder="Select a highly occuring word"
                       disabled={isDisabled}
                     >
