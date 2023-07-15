@@ -21,8 +21,11 @@ const DrinkingGame = () => {
   const [dbCaptions, setDbCaptions] = useState(null);
   const [counter, setCounter] = useState(0);
   const [videoInfo, setVideoInfo] = useState(null);
+  const [showOption, setShowOptions] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(true)
 
   const inputRef = useRef(null);
+  const selectRef = useRef(null)
 
   const handleYoutubeUrlChange = (e) => {
     const str = e.target.value;
@@ -53,28 +56,29 @@ const DrinkingGame = () => {
   useEffect(() => {
     if (videoId) {
       getRepeatedWords({ id: videoId })
-      .then((res) => {
-        setRepeatedWords(res);
-      });
+        .then((res) => {
+          setRepeatedWords(res);
+          setIsDisabled(false);
+        });
     }
   }, [videoId]);
 
   useEffect(() => {
     if (videoId && selectedWord) {
-      getCaptions({ id: videoId, chosenWord: selectedWord})
-      .then((res) => {
-        setDbCaptions(res);
-        setIsFetched(true);
-      })
+      getCaptions({ id: videoId, chosenWord: selectedWord })
+        .then((res) => {
+          setDbCaptions(res);
+          setIsFetched(true);
+        })
     }
   }, [videoId, selectedWord]);
 
   useEffect(() => {
     if (videoId && areCaptionsSaved) {
       getVideoInfo({ id: videoId })
-      .then((res) => {
-        setVideoInfo(res);
-      })
+        .then((res) => {
+          setVideoInfo(res);
+        })
     }
   }, [videoId, areCaptionsSaved]);
 
@@ -125,70 +129,85 @@ const DrinkingGame = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className='flex flex-col mx-auto w-[96%] md:w-[50%]'>
+        <div className='flex flex-col mx-auto w-[96%] md:w-[60%]'>
           <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
           <div className='border border-gray-200 rounded-lg p-4'>
-            <div className="flex justify-center items-center gap-3">
-              <div className='flex flex-col border justify-center items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row'>
-                <div className="mb-1">
-                  <Input
-                    size='sm'
-                    onChange={handleYoutubeUrlChange}
-                    className="border border-gray-300 rounded w-full"
-                    placeholder='youtube.com/watch?v=iZ30YqKehSM'
-                    aria-labelledby="Youtube url"
-                  />
-                </div>
-                <div className="flex gap-1">
-                  <div className="">
-                    {isFetchingRptWrds && <Spinner />}
-                    {!isFetchingRptWrds && (
-                      <select
-                        id="selectedWord"
-                        value={selectedWord}
-                        onChange={handleWordSelect}
-                        className="border border-gray-300 rounded px-4 py-2"
-                      >
-                        {repeatedWords && !ascOrder
-                      ? repeatedWords?.map(([word, number]) => (
+            <div className='flex flex-col border items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row'>
+              <div className="mb-1">
+                <Input
+                  ref={inputRef}
+                  size='sm'
+                  onChange={handleYoutubeUrlChange}
+                  className="border border-gray-300 rounded w-full"
+                  placeholder='youtube.com/watch?v=iZ30YqKehSM'
+                  aria-labelledby="Youtube url"
+                />
+              </div>
+              <div className="flex gap-1">
+                <div className="">
+                  {isFetchingRptWrds && <Spinner />}
+                  {!isFetchingRptWrds && (
+                    <select
+                      ref={selectRef}
+                      id="selectedWord"
+                      value={selectedWord}
+                      onChange={handleWordSelect}
+                      className="border border-gray-300 rounded px-4 py-2"
+                      placeholder="Select a highly occuring word"
+                      disabled={isDisabled}
+                    >
+                      <option value="">Select a highly occuring word</option>
+                      {repeatedWords && !ascOrder
+                        ? repeatedWords?.map(([word, number]) => (
                           <option key={word} value={word}>
                             {word}
                           </option>
                         ))
-                      : repeatedWords
+                        : repeatedWords
                           ?.map(([word, number]) => (
                             <option key={word} value={word}>
                               {word}
                             </option>
                           ))
                           .reverse()}
-                      </select>
-                      )}
+                    </select>
+                  )}
+                </div>
+                <div className="flex items-center justify-center">
+                  <div className="rounded-lg border border-gray-300 p-1">
+                    <BiUserVoice size={25} />
                   </div>
-                  <div className="flex items-center justify-center">
-                    <div className="rounded-lg border border-gray-300 p-1">
-                      <BiUserVoice size={25} />
-                    </div>
-                    <div className="rounded-lg border border-gray-300 p-1 ml-2">
-                      <FiSettings size={25} />
-                    </div>
+                  <div className="rounded-lg border border-gray-300 p-1 ml-2">
+                    <FiSettings size={25} onClick={() => {
+                      setShowOptions(!showOption)
+                    }} />
                   </div>
                 </div>
-
               </div>
+
             </div>
-            <div className="mx-auto rounded-lg border border-gray-200 my-2 w-[100%] h-[300px] p-4">
+            <div
+              className="border border-gray-200 w-[100%] h-[300px] mt-2 z-20 aspect-video"
+              onClick={() => {
+                if (!videoId) {
+                  inputRef.current?.focus();
+                } else if (videoId && !selectedWord) {
+                  selectRef.current?.focus();
+                }
+              }}
+            >
               {videoId && !repeatedWords &&
                 <div className="h-full flex justify-center items-center">
                   <Spinner />
                 </div>
               }
-              {videoId && (
+              {videoId && repeatedWords && (
                 <YouTubePlayer
                   setCounter={setCounter}
                   captions={captions}
                   chosenWord={selectedWord}
                   videoId={videoId}
+                  selectRef={selectRef}
                 />
               )}
             </div>

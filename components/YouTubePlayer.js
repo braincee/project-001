@@ -1,4 +1,4 @@
-import { Card } from '@nextui-org/react';
+import { Card, user } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 import YouTube from 'react-youtube';
 
@@ -71,7 +71,16 @@ const YouTubePlayer = ({
     event.target.pauseVideo();
   };
 
-  console.log(captions);
+  useEffect(() => {
+    const iframe = document.getElementById('yt-player');
+    if (videoId && !chosenWord) {
+      iframe.style.pointerEvents = 'none';
+      iframe.style.opacity = 0.7
+    } else {
+      iframe.style.pointerEvents = 'all';
+      iframe.style.opacity = 1;
+    }
+  })
 
   const onStateChange = (event) => {};
 
