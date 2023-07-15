@@ -155,8 +155,6 @@ const DrinkingGame = () => {
     }
   }, [isFetched, repeatedWords]);
 
-  console.log(isFetched);
-
   return (
     <>
       <Head>
@@ -224,7 +222,7 @@ const DrinkingGame = () => {
 
             </div>
             <div
-              className="border border-gray-200 w-[100%] h-[300px] mt-2 z-20 aspect-video"
+              className="border border-gray-200 w-[100%] h-[300px] mt-2 aspect-video bg-black"
               onClick={() => {
                 if (!videoId) {
                   inputRef.current?.focus();

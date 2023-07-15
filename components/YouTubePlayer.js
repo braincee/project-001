@@ -75,7 +75,7 @@ const YouTubePlayer = ({
     const iframe = document.getElementById('yt-player');
     if (videoId && !chosenWord) {
       iframe.style.pointerEvents = 'none';
-      iframe.style.opacity = 0.7
+      iframe.style.opacity = 0.7;
     } else {
       iframe.style.pointerEvents = 'all';
       iframe.style.opacity = 1;
@@ -94,8 +94,8 @@ const YouTubePlayer = ({
   };
 
   return (
-    <Card className="h-full">
-      <YouTube id="yt-player" videoId={videoId} opts={opts} onReady={onPlayerReady} onStateChange={onStateChange}/>
+    <Card className="h-full !rounded-none !border-0">
+      <YouTube className='!border-0' id="yt-player" videoId={videoId} opts={opts} onReady={onPlayerReady} onStateChange={onStateChange}/>
     </Card>
   )
 }
