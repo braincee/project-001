@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
 import { FaTwitter, FaGithub } from 'react-icons/fa';
-import { Input, Spacer, Spinner } from '@nextui-org/react';
+import { Input, Spacer, Spinner, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger, Switch } from '@nextui-org/react';
 import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
 import { scrapeCaptionsAndSave } from '@/libs/server/action';
 import YouTubePlayer from '@/components/YouTubePlayer';
@@ -23,9 +23,9 @@ const DrinkingGame = () => {
   const [dbCaptions, setDbCaptions] = useState(null);
   const [counter, setCounter] = useState(0);
   const [videoInfo, setVideoInfo] = useState(null);
-  const [showOption, setShowOptions] = useState(false)
   const [isDisabled, setIsDisabled] = useState(true)
   const [poo, setPoo] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
 
   const inputRef = useRef(null);
   const selectRef = useRef(null)
@@ -157,6 +157,10 @@ const DrinkingGame = () => {
     }
   }, [isFetched, repeatedWords]);
 
+  const handleDropdownClick = () => {
+    setShowOptions(!showOptions);
+  };
+
   return (
     <>
       <Head>
@@ -214,12 +218,40 @@ const DrinkingGame = () => {
                   <div className="rounded-lg border border-gray-300 p-1">
                     <BiUserVoice size={25} onClick={() => {
                       router.push(`/transcribe/${videoId}`)
-                    }} />
+                    }} className='hover:cursor-pointer'/>
                   </div>
-                  <div className="rounded-lg border border-gray-300 p-1 ml-2">
-                    <FiSettings size={25} onClick={() => {
-                      setShowOptions(!showOption)
-                    }} />
+                  <div>
+                  <div className="flex items-center gap-4">
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <FiSettings
+                            size={35}
+                            onClick={handleDropdownClick}
+                            className="hover:cursor-pointer rounded-lg border border-gray-300 p-1 ml-2"
+                          />
+                        </DropdownTrigger>
+                        {showOptions && (
+                          <DropdownMenu color="primary" aria-label="Settings" placement='bottom-end'>
+                            <DropdownItem className="flex items-center justify-between">
+                              <span>Order words from most to least frequent</span>
+                              <Switch />
+                            </DropdownItem>
+                            <DropdownItem className="flex items-center justify-between">
+                              <span>Show Toast notifications</span>
+                              <Switch />
+                            </DropdownItem>
+                            <DropdownItem className="flex items-center justify-between">
+                              <span>Turn off glass sound</span>
+                              <Switch />
+                            </DropdownItem>
+                            <DropdownItem className="flex items-center justify-between">
+                              <span>💩?</span>
+                              <Switch />
+                            </DropdownItem>
+                          </DropdownMenu>
+                        )}
+                      </Dropdown>
+                    </div>
                   </div>
                 </div>
               </div>
