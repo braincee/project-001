@@ -23,10 +23,9 @@ const DrinkingGame = () => {
   const [dbCaptions, setDbCaptions] = useState(null);
   const [counter, setCounter] = useState(0);
   const [videoInfo, setVideoInfo] = useState(null);
-  // const [showOption, setShowOptions] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true)
   const [poo, setPoo] = useState(false);
-  // const [showDropdown, setShowDropdown] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
 
   const inputRef = useRef(null);
   const selectRef = useRef(null)
@@ -158,9 +157,9 @@ const DrinkingGame = () => {
     }
   }, [isFetched, repeatedWords]);
 
-  // const handleDropdownClick = () => {
-  //   setShowDropdown(!showDropdown);
-  // };
+  const handleDropdownClick = () => {
+    setShowOptions(!showOptions);
+  };
 
   return (
     <>
@@ -222,47 +221,36 @@ const DrinkingGame = () => {
                     }} className='hover:cursor-pointer'/>
                   </div>
                   <div>
-                    <div className='flex items-center gap-4'>
-                    <Dropdown placement='bottom-end'>
-                      <DropdownTrigger>
-                        <FiSettings size={40} className="hover:cursor-pointer rounded-lg border border-gray-300 p-1 ml-2"/>
-                      </DropdownTrigger>
-                      <DropdownMenu color='primary' aria-label='Settings'>
-                          <DropdownItem className='flex items-center justify-center'>
-                            <div>
-                             <p>Order words from most to least frequent</p>
-                            </div>
-                           <div>
-                           <Switch />
-                           </div>
-                          </DropdownItem>
-                          <DropdownItem className='flex items-center justify-center'>
-                            <div>
-                            <p>Show Toast notifications</p>
-                            </div>
-                            <div>
-                            <Switch />
-                            </div>
-                          </DropdownItem>
-                          <DropdownItem className='flex items-center justify-center'>
-                            <div>
-                            <p>Turn off glass sound</p>
-                            </div>
-                          <div>
-                          <Switch />
-                          </div>
-                          </DropdownItem>
-                          <DropdownItem className='flex items-center justify-center'>
-                          <div>
-                          <p>💩?</p>
-                          </div>
-                          <div>
-                          <Switch />
-                          </div>
-                          </DropdownItem>
-                      </DropdownMenu>
-                    </Dropdown>
-                    
+                  <div className="flex items-center gap-4">
+                      <Dropdown>
+                        <DropdownTrigger>
+                          <FiSettings
+                            size={35}
+                            onClick={handleDropdownClick}
+                            className="hover:cursor-pointer rounded-lg border border-gray-300 p-1 ml-2"
+                          />
+                        </DropdownTrigger>
+                        {showOptions && (
+                          <DropdownMenu color="primary" aria-label="Settings" placement='bottom-end'>
+                            <DropdownItem className="flex items-center justify-between">
+                              <span>Order words from most to least frequent</span>
+                              <Switch />
+                            </DropdownItem>
+                            <DropdownItem className="flex items-center justify-between">
+                              <span>Show Toast notifications</span>
+                              <Switch />
+                            </DropdownItem>
+                            <DropdownItem className="flex items-center justify-between">
+                              <span>Turn off glass sound</span>
+                              <Switch />
+                            </DropdownItem>
+                            <DropdownItem className="flex items-center justify-between">
+                              <span>💩?</span>
+                              <Switch />
+                            </DropdownItem>
+                          </DropdownMenu>
+                        )}
+                      </Dropdown>
                     </div>
                   </div>
                 </div>
