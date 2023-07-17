@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
 import { FaTwitter, FaGithub } from 'react-icons/fa';
-import { Input, Spacer, Spinner, Dropdown, DropdownMenu, DropdownItem, DropdownTrigger, Switch } from '@nextui-org/react';
+import { Input, Spacer, Spinner, Dropdown, DropdownMenu, div, DropdownTrigger, Switch } from '@nextui-org/react';
 import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
 import { scrapeCaptionsAndSave } from '@/libs/server/action';
 import YouTubePlayer from '@/components/YouTubePlayer';
@@ -173,7 +173,7 @@ const DrinkingGame = () => {
         <div className='flex flex-col mx-auto w-[96%] md:w-[60%]'>
           <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
           <div className='border border-gray-200 rounded-lg p-4'>
-            <div className='flex flex-col border items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row'>
+            <div className='flex flex-col border rounded-b-none items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row'>
               <div className="mb-1">
                 <Input
                   ref={inputRef}
@@ -218,44 +218,37 @@ const DrinkingGame = () => {
                   <div className="rounded-lg border border-gray-300 p-1">
                     <BiUserVoice size={25} onClick={() => {
                       router.push(`/transcribe/${videoId}`)
-                    }} className='hover:cursor-pointer'/>
+                    }} className='hover:cursor-pointer' />
                   </div>
-                  <div>
-                  <div className="flex items-center gap-4">
-                      <Dropdown>
-                        <DropdownTrigger>
-                          <FiSettings
-                            size={35}
-                            onClick={handleDropdownClick}
-                            className="hover:cursor-pointer rounded-lg border border-gray-300 p-1 ml-2"
-                          />
-                        </DropdownTrigger>
-                        {showOptions && (
-                          <DropdownMenu color="primary" aria-label="Settings" placement='bottom-end'>
-                            <DropdownItem className="flex items-center justify-between">
-                              <span>Order words from most to least frequent</span>
-                              <Switch />
-                            </DropdownItem>
-                            <DropdownItem className="flex items-center justify-between">
-                              <span>Show Toast notifications</span>
-                              <Switch />
-                            </DropdownItem>
-                            <DropdownItem className="flex items-center justify-between">
-                              <span>Turn off glass sound</span>
-                              <Switch />
-                            </DropdownItem>
-                            <DropdownItem className="flex items-center justify-between">
-                              <span>💩?</span>
-                              <Switch />
-                            </DropdownItem>
-                          </DropdownMenu>
-                        )}
-                      </Dropdown>
-                    </div>
+                  <div className="rounded-lg border border-gray-300 p-1 ml-2">
+                    <FiSettings size={25} onClick={() => {
+                      setShowOptions(!showOptions)
+                    }} />
                   </div>
                 </div>
               </div>
-
+            </div>
+            <div className="flex items-center gap-4 justify-between w-full border border-t-0 rounded-b-lg p-2">
+              {showOptions && (
+                <div className="w-full flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <span>Order words from most to least frequent</span>
+                    <Switch />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Show Toast notifications</span>
+                    <Switch />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Turn off glass sound</span>
+                    <Switch />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>💩?</span>
+                    <Switch />
+                  </div>
+                </div>
+              )}
             </div>
             <div
               className="border border-gray-200 w-[100%] h-[300px] mt-2 aspect-video bg-black"
