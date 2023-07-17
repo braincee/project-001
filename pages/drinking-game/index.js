@@ -173,7 +173,7 @@ const DrinkingGame = () => {
         <div className='flex flex-col mx-auto w-[96%] md:w-[60%]'>
           <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
           <div className='border border-gray-200 rounded-lg p-4'>
-            <div className='flex flex-col border rounded-b-none items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row'>
+            <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row`}>
               <div className="mb-1">
                 <Input
                   ref={inputRef}
@@ -228,8 +228,8 @@ const DrinkingGame = () => {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-4 justify-between w-full border border-t-0 rounded-b-lg p-2">
-              {showOptions && (
+            {showOptions && (
+              <div className="flex items-center gap-4 justify-between w-full border border-t-0 rounded-b-lg p-2">
                 <div className="w-full flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <span>Order words from most to least frequent</span>
@@ -248,8 +248,9 @@ const DrinkingGame = () => {
                     <Switch />
                   </div>
                 </div>
-              )}
-            </div>
+
+              </div>
+            )}
             <div
               className="border border-gray-200 w-[100%] h-[300px] mt-2 aspect-video bg-black"
               onClick={() => {
