@@ -29,7 +29,6 @@ const AnimatedCounter = ({ counter, emoji }) => {
       },
     }),
   };
-  console.log(prevValue, counter);
   return (
     <div className="flex flex-wrap">
       { counter > 0 &&

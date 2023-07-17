@@ -212,7 +212,9 @@ const DrinkingGame = () => {
                 </div>
                 <div className="flex items-center justify-center">
                   <div className="rounded-lg border border-gray-300 p-1">
-                    <BiUserVoice size={25} />
+                    <BiUserVoice size={25} onClick={() => {
+                      router.push(`/transcribe/${videoId}`)
+                    }} />
                   </div>
                   <div className="rounded-lg border border-gray-300 p-1 ml-2">
                     <FiSettings size={25} onClick={() => {
