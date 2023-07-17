@@ -2,7 +2,8 @@ import { useState } from "react";
 import { getVideoInfo } from "@/libs/server/queries";
 import supabase from "@/libs/supabase";
 import Head from "next/head";
-import { Badge, Card, Code, Divider, Image } from "@nextui-org/react";
+import { Badge, Button, Card, Code, Divider, Image } from "@nextui-org/react";
+import { useRouter } from "next/router";
 
 export const getServerSideProps = async (context) => {
   const { id } = context.query;
@@ -18,7 +19,12 @@ export const getServerSideProps = async (context) => {
 
 const TranscribePage = ({ videoId, videoInfo, captionsInfo }) => {
   const [isLoading, setIsLoading] = useState(false);
-  console.log(videoInfo, captionsInfo)
+  const router = useRouter();
+
+  const handleTranscribe = () => {
+
+  }
+
   return (
     <>
       <Head>
@@ -32,7 +38,7 @@ const TranscribePage = ({ videoId, videoInfo, captionsInfo }) => {
           <h1 className="text-center text-blue-400 my-2 italic text-xl tracking-widest">
             Transcribe {videoInfo?.videoTitle || 'this video'} w/ OpenAI's Whisper 🗣{' '}
           </h1>
-          <Card className='border border-gray-200 rounded-lg p-4 bg-[#001e3203]'>
+          <Card className='border border-gray-200 rounded-lg p-4 bg-[#001e3203] min-h[350px]'>
             {videoInfo?.thumbnail && (
               <div className="flex justify-center">
                 <Image src={videoInfo?.thumbnail} className="rounded-none" />
@@ -56,6 +62,12 @@ const TranscribePage = ({ videoId, videoInfo, captionsInfo }) => {
               </div>
             </div>
           </Card>
+          <div className="flex justify-between mt-3">
+            <Button className="bg-[#001e3206] border" onPress={() => router.push(`/drinking-game/?v=${videoId}`)}>Go Back</Button>
+            <Button className="bg-[#001e3206] border" isLoading={isLoading} onPress={captionsInfo && captionsInfo.data ? onOpen : handleTranscribe}>
+              {captionsInfo ? 'Retry Transcription 🗣' : 'Transcribe Audio 🗣'}
+            </Button>
+          </div>
         </div>
       </main>
     </>
