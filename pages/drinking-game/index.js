@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
 import { FaTwitter, FaGithub } from 'react-icons/fa';
-import { Input, Spacer, Spinner, Dropdown, DropdownMenu, div, DropdownTrigger, Switch } from '@nextui-org/react';
+import { Input, Spacer, Spinner, Switch } from '@nextui-org/react';
 import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
 import { scrapeCaptionsAndSave } from '@/libs/server/action';
 import YouTubePlayer from '@/components/YouTubePlayer';
@@ -27,6 +27,7 @@ const DrinkingGame = () => {
   const [poo, setPoo] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [isClinkSound, setIsClinkSound] = useState(true);
 
   const inputRef = useRef(null);
   const selectRef = useRef(null)
@@ -238,11 +239,17 @@ const DrinkingGame = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Show Toast notifications</span>
-                    <Switch onChange={() => setShowToast((showToast) => !showToast)} />
+                    <Switch 
+                      defaultChecked={showToast} 
+                      onChange={() => setShowToast((showToast) => !showToast)} 
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Turn off glass sound</span>
-                    <Switch />
+                    <Switch  
+                      // defaultChecked={!isClinkSound}
+                      // onChange={() => setIsClinkSound((clink) => !clink)}
+                      />
                   </div>
                   <div className="flex items-center justify-between">
                     <span>💩?</span>
@@ -275,6 +282,7 @@ const DrinkingGame = () => {
                   videoId={videoId}
                   selectRef={selectRef}
                   showToast={showToast}
+                  // isClinkSound={isClinkSound}
                 />
               )}
             </div>
