@@ -7,7 +7,7 @@ const TranscribePageModal = ({ isOpen, onClose, handleTranscribe}) => {
   }
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen}>
         <ModalContent>
           <ModalHeader>Retry transcription with different settings?</ModalHeader>
           <ModalBody>

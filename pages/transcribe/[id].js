@@ -2,9 +2,10 @@ import { useState } from "react";
 import { getVideoInfo } from "@/libs/server/queries";
 import supabase from "@/libs/supabase";
 import Head from "next/head";
-import { Badge, Button, Card, Code, Divider, Image } from "@nextui-org/react";
+import { Badge, Button, Card, Code, Divider, Image, useDisclosure } from "@nextui-org/react";
 import { useRouter } from "next/router";
 import { generateCaptionsAndSave } from "@/libs/server/action";
+import TranscribePageModal from "@/components/TranscribePageModal";
 
 export const getServerSideProps = async (context) => {
   const { id } = context.query;
@@ -21,6 +22,7 @@ export const getServerSideProps = async (context) => {
 const TranscribePage = ({ videoId, videoInfo, captionsInfo }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleTranscribe = async () => {
     if (!videoId) return;
@@ -38,6 +40,15 @@ const TranscribePage = ({ videoId, videoInfo, captionsInfo }) => {
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
+    }
+  }
+
+  const handleOpen = () => {
+    if (captionsInfo) {
+      console.log("Open");
+      onOpen();
+    } else {
+      handleTranscribe();
     }
   }
 
@@ -80,11 +91,12 @@ const TranscribePage = ({ videoId, videoInfo, captionsInfo }) => {
           </Card>
           <div className="flex justify-between mt-3">
             <Button className="bg-[#001e3206] border" onPress={() => router.push(`/drinking-game/?v=${videoId}`)}>Go Back</Button>
-            <Button className="bg-[#001e3206] border" isLoading={isLoading} onPress={captionsInfo && captionsInfo.data ? onOpen : handleTranscribe}>
+            <Button className="bg-[#001e3206] border" onPress={handleOpen}>
               {captionsInfo ? 'Retry Transcription 🗣' : 'Transcribe Audio 🗣'}
             </Button>
           </div>
         </div>
+        <TranscribePageModal onClose={onClose} isOpen={isOpen} handleTranscribe={handleTranscribe} />
       </main>
     </>
   )  
