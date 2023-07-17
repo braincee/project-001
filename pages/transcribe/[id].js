@@ -4,6 +4,7 @@ import supabase from "@/libs/supabase";
 import Head from "next/head";
 import { Badge, Button, Card, Code, Divider, Image } from "@nextui-org/react";
 import { useRouter } from "next/router";
+import { generateCaptionsAndSave } from "@/libs/server/action";
 
 export const getServerSideProps = async (context) => {
   const { id } = context.query;
@@ -21,8 +22,23 @@ const TranscribePage = ({ videoId, videoInfo, captionsInfo }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleTranscribe = () => {
+  const handleTranscribe = async () => {
+    if (!videoId) return;
 
+    try {
+      setIsLoading(true);
+      let transcribeWithLyrics;
+      if (!captionsInfo) {
+        transcribeWithLyrics = false;
+      } else {
+        transcribeWithLyrics = captionsInfo?.transcribedWithLyrics ? false : true;
+      }
+      
+      await generateCaptionsAndSave({ videoId, transcribeWithLyrics });
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
   }
 
   return (
