@@ -32,7 +32,7 @@ const TranscribePage = ({ videoId, videoInfo, captionsInfo }) => {
           <h1 className="text-center text-blue-400 my-2 italic text-xl tracking-widest">
             Transcribe {videoInfo?.videoTitle || 'this video'} w/ OpenAI's Whisper 🗣{' '}
           </h1>
-          <Card className='border border-gray-200 rounded-lg p-4'>
+          <Card className='border border-gray-200 rounded-lg p-4 bg-[#001e3203]'>
             {videoInfo?.thumbnail && (
               <div className="flex justify-center">
                 <Image src={videoInfo?.thumbnail} className="rounded-none" />
@@ -40,16 +40,16 @@ const TranscribePage = ({ videoId, videoInfo, captionsInfo }) => {
             )}
             <Divider className="my-3" />
             <div className="border border-gray-200 rounded-lg p-4 h-full flex flex-col gap-3">
-              <div className="border border-gray-200 rounded-lg p-4">
+              <div className="border border-gray-200 rounded-lg p-4 bg-[#001e320d]">
                 <h3 className="text-md">
-                  <span className="text-[#9ae6b4] font-bold rounded-[2px] bg-[#9ae6b429] p-1 text-[12px]">INFO:</span> If the first attempt at transcribing doesn't give a desirable
+                  <span className="text-[#22543d] font-bold rounded-[2px] bg-[#c6f6d5] p-1 text-[12px]">INFO:</span> If the first attempt at transcribing doesn't give a desirable
                   result, come back and <Code>Retry Transcription</Code>. We will apply different settings to increase
                   the likelihood of a good result.
                 </h3>
               </div>
-              <div className="border border-gray-200 rounded-lg p-4">
-              <h3 fontSize='md' color='text-contrast-md'>
-                <span className="text-[#e2e8f0] font-bold rounded-[2px] bg-[#e2e8f029] p-1 text-[12px]">TIP:</span> If you're having trouble transcribing a song, use a video that has a clean, concise
+              <div className="border border-gray-200 rounded-lg p-4 bg-[#001e320d]">
+              <h3 className="text-md">
+                <span className="text-[#1a202c] font-bold rounded-[2px] bg-[#edf2f7] p-1 text-[12px]">TIP:</span> If you're having trouble transcribing a song, use a video that has a clean, concise
                 title. Try to avoid verbose titles, e.g. 'Levels (Official Visualizer) (Remix)' and videos from
                 third-party accounts.
               </h3>
