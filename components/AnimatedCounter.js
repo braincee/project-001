@@ -33,8 +33,7 @@ const AnimatedCounter = ({ counter, emoji }) => {
   return (
     <div className="flex flex-wrap">
       { counter > 0 &&
-        new Array(prevValue).fill(0).map((number, index) => (
-          
+        new Array(prevValue).fill(0).map((number, index) => (        
           <p key={index}>{emoji}</p>
         ))
       }
@@ -50,7 +49,7 @@ const AnimatedCounter = ({ counter, emoji }) => {
           animate='to'
         >
           { counter > prevValue && (
-            <p className="try">{emoji}</p>
+            <p>{emoji}</p>
           )}
         </MotionBox>
       </AnimatePresence>
