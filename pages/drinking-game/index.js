@@ -26,6 +26,7 @@ const DrinkingGame = () => {
   const [isDisabled, setIsDisabled] = useState(true)
   const [poo, setPoo] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
   const inputRef = useRef(null);
   const selectRef = useRef(null)
@@ -237,7 +238,7 @@ const DrinkingGame = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Show Toast notifications</span>
-                    <Switch />
+                    <Switch onChange={() => setShowToast((showToast) => !showToast)} />
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Turn off glass sound</span>
@@ -273,6 +274,7 @@ const DrinkingGame = () => {
                   chosenWord={selectedWord}
                   videoId={videoId}
                   selectRef={selectRef}
+                  showToast={showToast}
                 />
               )}
             </div>
