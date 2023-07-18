@@ -171,8 +171,8 @@ const DrinkingGame = () => {
         <div className='flex flex-col mx-auto w-[96%] md:w-[666px] mt-5'>
           <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
           <div className='border border-gray-200 rounded-lg p-4'>
-            <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row`}>
-              <div className="w-[40%]">
+            <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg gap-3 p-2 sm:flex-row`}>
+              <div className="sm:w-[40%] w-full">
                 <Input
                   ref={inputRef}
                   onChange={handleYoutubeUrlChange}
@@ -182,7 +182,7 @@ const DrinkingGame = () => {
                   aria-labelledby="url"
                 />
               </div>
-              <div className="flex gap-1 w-[60%]">
+              <div className="flex gap-1 sm:w-[60%] w-full">
                 <div className="flex justify-center items-center w-full">
                   {isFetchingRptWrds && <Spinner />}
                   {!isFetchingRptWrds && (
