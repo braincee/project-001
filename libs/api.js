@@ -110,11 +110,25 @@ const Api = {
     return data.response;
   },
 
-  getAudioFormat: async ({ videoId }) => {
-    const audioFormat = await axios.post('/api/ytdl/audio-format', {
-      videoId
+  getAudioFormat: async ({ videoId, categoryId }) => {
+    const audioFormat = await axios.post('/api/ytdl/audioformat', {
+      videoId, categoryId
     });
     return audioFormat;
+  },
+
+  generateFile: async ({ url, audioFormat, videoId }) => {
+    const file = await axios.post('/api/ytdl/file', {
+      url, audioFormat, videoId
+    });
+    return file;
+  },
+
+  unlinkFilePath: async ({ filePath }) => {
+    const fp = await axios.get(('/api/ytdl/file'), {
+      params: {filePath}
+    });
+    return fp;
   }
 }
 

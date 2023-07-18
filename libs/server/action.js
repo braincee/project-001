@@ -1,5 +1,4 @@
 import { countRepeatedWords, openai, ytCategoryIds } from './utils';
-import ytdl from 'ytdl-core';
 import * as cheerio from 'cheerio';
 import Api from '../api';
 import axios from 'axios';
@@ -115,16 +114,14 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
       const repeatedWords = countRepeatedWords(captions);
       // if youtube captions already exist, they tend to be more accurate than openai, so there's no need to generate.
       // but song captions often only contain the word 'music' or 'instrumental' repeated many times. In this case, we want to generate captions.
-      if (repeatedWords.length > 2) {
-        return ( <Error statusCode={"404"} />);
-      }
+      // if (repeatedWords.length > 2) {
+      //   return ( <Error statusCode={"404"} />);
+      // }
     }
 
-    console.log("test");
-
-    let audioFormat = await Api.getAudioFormat({ videoId });
-
-    console.log('audioFormat ', audioFormat);
+    let audioFormat = await Api.getAudioFormat({ videoId, categoryId });
+    
+    console.log('audioFormat ', audioFormat.data.response);
     // const audioStream = ytdl(url, { format: audioFormat }).pipe(
     //   fs.createWriteStream(path.join(__dirname, `${videoId}.${audioFormat.container}`))
     // );
@@ -146,8 +143,12 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
     // }
 
     // const file = fs.createReadStream(filePath);
-    // const model = 'whisper-1';
-    // const format = 'verbose_json';
+
+    const files = await Api.generateFile({ url, audioFormat: audioFormat.data.response, videoId });
+    const file = files.data.response.file;
+    const filePath = files.data.response.filePath;
+    const model = 'whisper-1';
+    const format = 'verbose_json'
 
     const accessToken = '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';
 
@@ -221,15 +222,17 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
 
     console.log('\nprompt >>>\n', categoryId == '10' ? (lyrics.length ? lyrics : undefined) : prompt);
 
-    const resp = (await openai.createTranscription(
+    const resp = await openai.createTranscription(
       // @ts-ignore
       file,
       model,
       categoryId == '10' ? (lyrics.length ? lyrics : undefined) : prompt,
       format
-    ));
+    );
 
-    // fs.unlinkSync(filePath);
+    console.log(resp);
+
+    Api.unlinkFilePath(filePath);
 
 
     if (!resp.data.segments) return ( <Error statusCode={"404"} />);
