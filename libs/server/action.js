@@ -2,9 +2,8 @@ import { countRepeatedWords, openai, ytCategoryIds } from './utils';
 import ytdl from 'ytdl-core';
 import * as cheerio from 'cheerio';
 import Api from '../api';
-import { getSubtitles } from 'youtube-captions-scraper';
 import axios from 'axios';
-// import path from
+
 
 const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
 
@@ -104,10 +103,7 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
     let captions;
     console.log('captions>> ', captions)
     try {
-      captions = (await getSubtitles({
-        videoID: videoId,
-        lang: defaultLanguage || defaultAudioLanguage || 'en',
-      }));
+      captions = Api.fetchSubtitles({ videoId, defaultLanguage, defaultAudioLanguage });
     } catch (error) {
       console.log('error >>> ', error);
     }
@@ -158,7 +154,7 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
     // const model = 'whisper-1';
     // const format = 'verbose_json';
 
-    // const accessToken = process.env.GENIUS_API_KEY;
+    const accessToken = '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';
 
     let lyrics = '';
 

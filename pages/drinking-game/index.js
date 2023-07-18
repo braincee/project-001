@@ -172,17 +172,18 @@ const DrinkingGame = () => {
           <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
           <div className='border border-gray-200 rounded-lg p-4'>
             <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row`}>
-              <div className="mb-1">
+              <div className="w-[40%]">
                 <Input
                   ref={inputRef}
                   onChange={handleYoutubeUrlChange}
-                  className="border border-gray-300 rounded w-[330px] py-1"
+                  size="sm"
+                  className="border border-gray-300 rounded"
                   placeholder='https://www.youtube.com/watch?v=SqcY0GlETPk'
                   aria-labelledby="url"
                 />
               </div>
-              <div className="flex gap-1">
-                <div className="flex justify-center items-center">
+              <div className="flex gap-1 w-[60%]">
+                <div className="flex justify-center items-center w-full">
                   {isFetchingRptWrds && <Spinner />}
                   {!isFetchingRptWrds && (
                     <select
@@ -190,7 +191,7 @@ const DrinkingGame = () => {
                       id="selectedWord"
                       value={selectedWord}
                       onChange={handleWordSelect}
-                      className="border border-gray-300 rounded px-2 py-2 after:pe-4 text-black"
+                      className="border border-gray-300 rounded px-2 py-[13px] after:pe-4 text-black w-full"
                       placeholder="Select a highly occuring word"
                       disabled={isDisabled}
                     >
