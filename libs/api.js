@@ -129,7 +129,14 @@ const Api = {
       params: {filePath}
     });
     return fp;
-  }
+  },
+
+  getSong: async ({ title, channelTitle}) => {
+    const song = await axios.post('/api/apigenius', {
+      title, channelTitle,
+    })
+    return song;
+  },
 }
 
 export default Api;

@@ -122,27 +122,6 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
     let audioFormat = await Api.getAudioFormat({ videoId, categoryId });
     
     console.log('audioFormat ', audioFormat.data.response);
-    // const audioStream = ytdl(url, { format: audioFormat }).pipe(
-    //   fs.createWriteStream(path.join(__dirname, `${videoId}.${audioFormat.container}`))
-    // );
-    // const audioStreamPromise = new Promise((resolve, reject) => {
-    //   audioStream.on('finish', resolve);
-    //   audioStream.on('error', reject);
-    // });
-
-    // await audioStreamPromise;
-
-    // const filePath = path.join(__dirname, `${videoId}.${audioFormat.container}`);
-
-    // const stats = fs.statSync(filePath);
-    // const fileSizeInBytes = stats.size;
-    // const fileSizeInMegabytes = fileSizeInBytes / 1000000.0;
-    // console.log('fileSizeInMegabytes ', fileSizeInMegabytes);
-    // if (fileSizeInMegabytes > 25) {
-    //   throw new HttpError(413, 'File size is too large');
-    // }
-
-    // const file = fs.createReadStream(filePath);
 
     const files = await Api.generateFile({ url, audioFormat: audioFormat.data.response, videoId });
     const file = files.data.response.file;
@@ -150,18 +129,12 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
     const model = 'whisper-1';
     const format = 'verbose_json'
 
-    const accessToken = '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';
-
     let lyrics = '';
 
     if (title && categoryId == '10' && transcribeWithLyrics) {
       console.log("lyrics");
       try {
-        const song = await axios.get(
-          `https://api.genius.com/search?q=${encodeURIComponent(
-            title + ' ' + channelTitle
-          )}&access_token=${accessToken}`
-        );
+        const song = await Api.getSong({ title, channelTitle});
 
         let songUrl = song.data.response.hits[0].result.url;
         let doesArtistMatchLyrics = song.data.response.hits[0].result.artist_names.includes(channelTitle);
@@ -205,12 +178,13 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
 
           lyrics = filteredText5.join(' ');
 
-          // console.log('lyrics >>> ', lyrics);
+          console.log('lyrics >>> ', lyrics);
         }
       } catch (error) {
         console.error('error >>> ', error);
       }
     }
+    
 
     const category = categoryId ? ytCategoryIds[Number(categoryId)] : 'general';
 
@@ -221,7 +195,7 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
       }`;
 
     console.log('\nprompt >>>\n', categoryId == '10' ? (lyrics.length ? lyrics : undefined) : prompt);
-
+    console.log("test1");
     const resp = await openai.createTranscription(
       // @ts-ignore
       file,
@@ -229,8 +203,6 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
       categoryId == '10' ? (lyrics.length ? lyrics : undefined) : prompt,
       format
     );
-
-    console.log(resp);
 
     Api.unlinkFilePath(filePath);
 
