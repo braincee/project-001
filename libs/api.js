@@ -108,6 +108,13 @@ const Api = {
       videoId, defaultLanguage, defaultAudioLanguage,
     });
     return data.response;
+  },
+
+  getAudioFormat: async ({ videoId }) => {
+    const audioFormat = await axios.post('/api/ytdl/audio-format', {
+      videoId
+    });
+    return audioFormat;
   }
 }
 

@@ -3,6 +3,7 @@ import ytdl from 'ytdl-core';
 import * as cheerio from 'cheerio';
 import Api from '../api';
 import axios from 'axios';
+import Error from 'next/error';
 
 
 const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
@@ -16,7 +17,7 @@ export const scrapeCaptionsAndSave = async ({ videoId }) => {
   try {
     const info = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${videoId}`);
 
-    if (!info.data.items) throw new HttpError(404, 'Video not found');
+    if (!info.data.items) return ( <Error statusCode={"404"} />);
 
     const title = info.data.items[0]?.snippet?.title;
     const thumbnail = info.data.items[0]?.snippet?.thumbnails?.default?.url;
@@ -29,10 +30,10 @@ export const scrapeCaptionsAndSave = async ({ videoId }) => {
       ? info.data.items[0]?.snippet?.defaultAudioLanguage?.split('-')[0]
       : info.data.items[0]?.snippet?.defaultAudioLanguage;
 
-    if (!channelId) throw new HttpError(404, 'Channel not found');
+    if (!channelId) return ( <Error statusCode={"404"} />);
     const captions = await Api.fetchSubtitles({ videoId, defaultLanguage, defaultAudioLanguage });
 
-    if (!captions) throw new HttpError(404, 'Captions not found');
+    if (!captions) return ( <Error statusCode={"404"} />);
 
     captions.forEach((caption, idx) => {
       const currentStart = Number(caption.start);
@@ -70,7 +71,7 @@ export const scrapeCaptionsAndSave = async ({ videoId }) => {
 
   } catch (error) {
     console.log('error >>> ', error);
-    throw new HttpError(404, error?.message || 'Captions not found');
+    
   }
 };
 
@@ -80,14 +81,14 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
     const vidInfo = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${videoId}`);
 
     console.log('transcribeWithLyrics??? >>> ', transcribeWithLyrics);
-    if (!vidInfo.data.items) throw new HttpError(404, 'Video not found');
+    if (!vidInfo.data.items) return ( <Error statusCode={"404"} />);
 
     const description = vidInfo.data.items[0]?.snippet?.description;
     const categoryId = vidInfo.data.items[0]?.snippet?.categoryId; // https://gist.github.com/dgp/1b24bf2961521bd75d6c
     const title = vidInfo.data.items[0]?.snippet?.title;
     const thumbnail = vidInfo.data.items[0]?.snippet?.thumbnails?.default?.url;
     const channelId = vidInfo.data.items[0]?.snippet?.channelId;
-    if (!channelId) throw new HttpError(404, 'Channel not found');
+    if (!channelId) return ( <Error statusCode={"404"} />);
     let channelTitle = vidInfo.data.items[0]?.snippet?.channelTitle;
     const defaultLanguage = vidInfo.data.items[0]?.snippet?.defaultLanguage?.includes('-')
       ? vidInfo.data.items[0]?.snippet?.defaultLanguage?.split('-')[0]
@@ -101,12 +102,13 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
     }
 
     let captions;
-    console.log('captions>> ', captions)
     try {
-      captions = Api.fetchSubtitles({ videoId, defaultLanguage, defaultAudioLanguage });
+      captions = await Api.fetchSubtitles({ videoId, defaultLanguage, defaultAudioLanguage });
     } catch (error) {
       console.log('error >>> ', error);
     }
+
+    console.log('captions>> ', captions)
 
 
     if (captions) {
@@ -114,21 +116,14 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
       // if youtube captions already exist, they tend to be more accurate than openai, so there's no need to generate.
       // but song captions often only contain the word 'music' or 'instrumental' repeated many times. In this case, we want to generate captions.
       if (repeatedWords.length > 2) {
-        throw new HttpError(412, 'Captions already exist. No need to generate');
+        return ( <Error statusCode={"404"} />);
       }
     }
 
-    let info = await ytdl.getInfo(`https://www.youtube.com/watch?v=${videoId}`, {
-      requestOptions: {
-        headers: {
-          cookie: process.env.YOUTUBE_COOKIE, // https://github.com/fent/node-ytdl-core/blob/master/example/cookies.js
-        },
-      },
-    });
-    let filteredFormat = ytdl.filterFormats(info.formats, 'audioonly');
-    let audioFormat = ytdl.chooseFormat(filteredFormat, {
-      quality: categoryId === '10' ? 'highestaudio' : 'lowestaudio',
-    });
+    console.log("test");
+
+    let audioFormat = await Api.getAudioFormat({ videoId });
+
     console.log('audioFormat ', audioFormat);
     // const audioStream = ytdl(url, { format: audioFormat }).pipe(
     //   fs.createWriteStream(path.join(__dirname, `${videoId}.${audioFormat.container}`))
@@ -159,6 +154,7 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
     let lyrics = '';
 
     if (title && categoryId == '10' && transcribeWithLyrics) {
+      console.log("lyrics");
       try {
         const song = await axios.get(
           `https://api.genius.com/search?q=${encodeURIComponent(
@@ -235,7 +231,8 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
 
     // fs.unlinkSync(filePath);
 
-    if (!resp.data.segments) throw new HttpError(400, 'Error generating captions');
+
+    if (!resp.data.segments) return ( <Error statusCode={"404"} />);
 
     const timestampedCaptions = resp.data.segments.map((segment) => {
       return {

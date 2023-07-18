@@ -3,12 +3,13 @@ import Head from 'next/head';
 import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
 import { FaTwitter, FaGithub } from 'react-icons/fa';
-import { Input, Spacer, Spinner, Switch } from '@nextui-org/react';
+import { Input, Spinner, Switch } from '@nextui-org/react';
 import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
 import { scrapeCaptionsAndSave } from '@/libs/server/action';
 import YouTubePlayer from '@/components/YouTubePlayer';
 import { useRouter } from 'next/router';
 import AnimatedCounter from '@/components/AnimatedCounter';
+import { Toaster, toast } from 'react-hot-toast';
 
 const DrinkingGame = () => {
   const [videoId, setVideoId] = useState('');
@@ -47,12 +48,13 @@ const DrinkingGame = () => {
     } else if (mobileMatch) {
       setVideoId(mobileMatch[1]);
     } else {
-      // toast.error(
-      //   'Please enter a valid YouTube URL -- e.g. https://www.youtube.com/watch?v=Gs069dndIYk',
-      //   {
-      //     id: 'youtube-url-error',
-      //   }
-      // );
+      <Toaster />
+      toast.error(
+        'Please enter a valid YouTube URL -- e.g. https://www.youtube.com/watch?v=Gs069dndIYk',
+        {
+          id: 'youtube-url-error',
+        }
+      );
     }
   };
 

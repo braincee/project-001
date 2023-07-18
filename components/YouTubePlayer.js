@@ -6,8 +6,8 @@ import clinkSound from '../public/clink.mp3';
 
 
 
-const clink = new Audio(clinkSound);
-clink.volume = 0.75;
+// const clink = new Audio(clinkSound);
+// clink.volume = 0.75;
 
 const YouTubePlayer = ({
   setCounter,
@@ -53,16 +53,16 @@ const YouTubePlayer = ({
                   });
                 }
               }, timeDelay);
-              setTimeout(() => {
-                if (isClinkSound) {
-                  if (clink.paused) {
-                    clink.currentTime = 0;
-                    clink.play();
-                  } else {
-                    clink.currentTime = 0;
-                  }
-                }
-              }, timeDelay + 300);
+              // setTimeout(() => {
+              //   if (isClinkSound) {
+              //     if (clink.paused) {
+              //       clink.currentTime = 0;
+              //       clink.play();
+              //     } else {
+              //       clink.currentTime = 0;
+              //     }
+              //   }
+              // }, timeDelay + 300);
             }
           });
 
