@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
 import { FaTwitter, FaGithub } from 'react-icons/fa';
-import { Input, Spacer, Spinner, Dropdown, DropdownMenu, div, DropdownTrigger, Switch } from '@nextui-org/react';
+import { Input, Spacer, Spinner, Switch } from '@nextui-org/react';
 import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
 import { scrapeCaptionsAndSave } from '@/libs/server/action';
 import YouTubePlayer from '@/components/YouTubePlayer';
@@ -26,6 +26,8 @@ const DrinkingGame = () => {
   const [isDisabled, setIsDisabled] = useState(true)
   const [poo, setPoo] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [isClinkSound, setIsClinkSound] = useState(true);
 
   const inputRef = useRef(null);
   const selectRef = useRef(null)
@@ -157,10 +159,6 @@ const DrinkingGame = () => {
     }
   }, [isFetched, repeatedWords]);
 
-  const handleDropdownClick = () => {
-    setShowOptions(!showOptions);
-  };
-
   return (
     <>
       <Head>
@@ -170,18 +168,17 @@ const DrinkingGame = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className='flex flex-col mx-auto w-[96%] md:w-[666px]'>
+        <div className='flex flex-col mx-auto w-[96%] md:w-[666px] mt-5'>
           <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
           <div className='border border-gray-200 rounded-lg p-4'>
             <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row`}>
               <div className="mb-1">
                 <Input
                   ref={inputRef}
-                  size='sm'
                   onChange={handleYoutubeUrlChange}
-                  className="border border-gray-300 rounded w-full"
-                  placeholder='youtube.com/watch?v=iZ30YqKehSM'
-                  aria-labelledby="Youtube url"
+                  className="border border-gray-300 rounded w-[330px] py-1"
+                  placeholder='https://www.youtube.com/watch?v=SqcY0GlETPk'
+                  aria-labelledby="url"
                 />
               </div>
               <div className="flex gap-1">
@@ -193,7 +190,7 @@ const DrinkingGame = () => {
                       id="selectedWord"
                       value={selectedWord}
                       onChange={handleWordSelect}
-                      className="flex border border-gray-300 rounded px-4 py-4"
+                      className="border border-gray-300 rounded px-2 py-2 after:pe-4 text-black"
                       placeholder="Select a highly occuring word"
                       disabled={isDisabled}
                     >
@@ -233,26 +230,38 @@ const DrinkingGame = () => {
                 <div className="w-full flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <span>Order words from most to least frequent</span>
-                    <Switch />
+                    <Switch 
+                      defaultChecked={!ascOrder}
+                      onChange={() => setAscOrder((ascOrder) => !ascOrder)}
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Show Toast notifications</span>
-                    <Switch />
+                    <Switch
+                      defaultChecked={showToast} 
+                      onChange={() => setShowToast((showToast) => !showToast)} 
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Turn off glass sound</span>
-                    <Switch />
+                    <Switch  
+                      defaultChecked={!isClinkSound}
+                      onChange={() => setIsClinkSound((clink) => !clink)}
+                      />
                   </div>
                   <div className="flex items-center justify-between">
                     <span>💩?</span>
-                    <Switch />
+                    <Switch
+                    defaultChecked={poo} 
+                    onChange={() => setPoo((poo) => !poo)}
+                    />
                   </div>
                 </div>
 
               </div>
             )}
             <div
-              className="border border-gray-200 w-[100%] h-[300px] mt-2 aspect-video bg-black"
+              className="border border-gray-200 w-[100%] h-[300px] mt-2 aspect-video"
               onClick={() => {
                 if (!videoId) {
                   inputRef.current?.focus();
@@ -273,6 +282,8 @@ const DrinkingGame = () => {
                   chosenWord={selectedWord}
                   videoId={videoId}
                   selectRef={selectRef}
+                  showToast={showToast}
+                  isClinkSound={isClinkSound}
                 />
               )}
             </div>

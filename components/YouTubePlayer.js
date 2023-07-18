@@ -1,6 +1,13 @@
 import { Card } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 import YouTube from 'react-youtube';
+import { toast } from 'react-hot-toast';
+import clinkSound from '../public/clink.mp3';
+
+
+
+const clink = new Audio(clinkSound);
+clink.volume = 0.75;
 
 const YouTubePlayer = ({
   setCounter,
@@ -8,6 +15,7 @@ const YouTubePlayer = ({
   captions,
   chosenWord,
   videoId,
+  showToast,
 }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [prevCaption, setPrevCaption] = useState('');
@@ -39,6 +47,11 @@ const YouTubePlayer = ({
               const timeDelay = timePerWord * index;
               setTimeout(() => {
                 setCounter((counter) => counter + 1);
+                if (showToast) {
+                  toast.success(`They said ${chosenWord} 🍻!`, {
+                    duration: 2000,
+                  });
+                }
               }, timeDelay);
               setTimeout(() => {
                 if (isClinkSound) {
