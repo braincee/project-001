@@ -232,8 +232,8 @@ const DrinkingGame = () => {
                   <div className="flex items-center justify-between">
                     <span>Order words from most to least frequent</span>
                     <Switch 
-                      // defaultChecked={!ascOrder}
-                      // onChange={() => setAscOrder((ascOrder) => !ascOrder)}
+                      defaultChecked={!ascOrder}
+                      onChange={() => setAscOrder((ascOrder) => !ascOrder)}
                     />
                   </div>
                   <div className="flex items-center justify-between">
