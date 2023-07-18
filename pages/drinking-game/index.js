@@ -168,17 +168,16 @@ const DrinkingGame = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className='flex flex-col mx-auto w-[96%] md:w-[60%] mt-5'>
+        <div className='flex flex-col mx-auto w-[96%] md:w-[730px] mt-5'>
           <div className='border border-gray-200 rounded-lg p-4'>
             <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row`}>
               <div className="mb-1">
                 <Input
                   ref={inputRef}
-                  size='sm'
                   onChange={handleYoutubeUrlChange}
-                  className="border border-gray-300 rounded w-full"
-                  placeholder='youtube.com/watch?v=iZ30YqKehSM'
-                  aria-labelledby="Youtube url"
+                  className="border border-gray-300 rounded w-[330px] py-1"
+                  placeholder='https://www.youtube.com/watch?v=SqcY0GlETPk'
+                  aria-labelledby="url"
                 />
               </div>
               <div className="flex gap-1">
@@ -190,7 +189,7 @@ const DrinkingGame = () => {
                       id="selectedWord"
                       value={selectedWord}
                       onChange={handleWordSelect}
-                      className="border border-gray-300 rounded px-4 py-2 after:pe-4"
+                      className="border border-gray-300 rounded px-2 py-2 after:pe-4 text-black"
                       placeholder="Select a highly occuring word"
                       disabled={isDisabled}
                     >
@@ -261,7 +260,7 @@ const DrinkingGame = () => {
               </div>
             )}
             <div
-              className="border border-gray-200 w-[100%] h-[300px] mt-2 aspect-video bg-black"
+              className="border border-gray-200 w-[100%] h-[300px] mt-2 aspect-video"
               onClick={() => {
                 if (!videoId) {
                   inputRef.current?.focus();
