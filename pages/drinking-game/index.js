@@ -27,7 +27,7 @@ const DrinkingGame = () => {
   const [poo, setPoo] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  // const [isClinkSound, setIsClinkSound] = useState(true);
+  const [isClinkSound, setIsClinkSound] = useState(true);
 
   const inputRef = useRef(null);
   const selectRef = useRef(null)
@@ -168,8 +168,7 @@ const DrinkingGame = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className='flex flex-col mx-auto w-[96%] md:w-[60%]'>
-          <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
+        <div className='flex flex-col mx-auto w-[96%] md:w-[60%] mt-5'>
           <div className='border border-gray-200 rounded-lg p-4'>
             <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row`}>
               <div className="mb-1">
@@ -246,8 +245,8 @@ const DrinkingGame = () => {
                   <div className="flex items-center justify-between">
                     <span>Turn off glass sound</span>
                     <Switch  
-                      // defaultChecked={!isClinkSound}
-                      // onChange={() => setIsClinkSound((clink) => !clink)}
+                      defaultChecked={!isClinkSound}
+                      onChange={() => setIsClinkSound((clink) => !clink)}
                       />
                   </div>
                   <div className="flex items-center justify-between">
@@ -284,7 +283,7 @@ const DrinkingGame = () => {
                   videoId={videoId}
                   selectRef={selectRef}
                   showToast={showToast}
-                  // isClinkSound={isClinkSound}
+                  isClinkSound={isClinkSound}
                 />
               )}
             </div>

@@ -2,12 +2,12 @@ import { Card } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 import YouTube from 'react-youtube';
 import { toast } from 'react-hot-toast';
-// import clinkSound from "../src_client_clink.mp3"
+import clinkSound from '../public/clink.mp3';
 
 
 
-// const clink = new Audio(clinkSound);
-// clink.volume = 0.75;
+const clink = new Audio(clinkSound);
+clink.volume = 0.75;
 
 const YouTubePlayer = ({
   setCounter,
