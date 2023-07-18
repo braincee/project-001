@@ -45,7 +45,6 @@ const TranscribePage = ({ videoId, videoInfo, captionsInfo }) => {
 
   const handleOpen = () => {
     if (captionsInfo) {
-      console.log("Open");
       onOpen();
     } else {
       handleTranscribe();
@@ -94,9 +93,9 @@ const TranscribePage = ({ videoId, videoInfo, captionsInfo }) => {
             <Button className="bg-[#001e3206] border" onPress={handleOpen}>
               {captionsInfo ? 'Retry Transcription 🗣' : 'Transcribe Audio 🗣'}
             </Button>
+            <TranscribePageModal onClose={onClose} isOpen={isOpen} handleTranscribe={handleTranscribe} />
           </div>
         </div>
-        <TranscribePageModal onClose={onClose} isOpen={isOpen} handleTranscribe={handleTranscribe} />
       </main>
     </>
   )  

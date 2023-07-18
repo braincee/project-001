@@ -170,7 +170,7 @@ const DrinkingGame = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className='flex flex-col mx-auto w-[96%] md:w-[60%]'>
+        <div className='flex flex-col mx-auto w-[96%] md:w-[666px]'>
           <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
           <div className='border border-gray-200 rounded-lg p-4'>
             <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg md:gap-3 p-2 md:flex-row`}>
@@ -185,7 +185,7 @@ const DrinkingGame = () => {
                 />
               </div>
               <div className="flex gap-1">
-                <div className="min-w-[250px] flex justify-center items center">
+                <div className="flex justify-center items-center">
                   {isFetchingRptWrds && <Spinner />}
                   {!isFetchingRptWrds && (
                     <select
@@ -193,7 +193,7 @@ const DrinkingGame = () => {
                       id="selectedWord"
                       value={selectedWord}
                       onChange={handleWordSelect}
-                      className="border border-gray-300 rounded px-4 py-2 after:pe-4"
+                      className="flex border border-gray-300 rounded px-4 py-4"
                       placeholder="Select a highly occuring word"
                       disabled={isDisabled}
                     >
