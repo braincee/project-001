@@ -27,7 +27,7 @@ const DrinkingGame = () => {
   const [poo, setPoo] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showToast, setShowToast] = useState(false);
-  const [isClinkSound, setIsClinkSound] = useState(true);
+  // const [isClinkSound, setIsClinkSound] = useState(true);
 
   const inputRef = useRef(null);
   const selectRef = useRef(null)
@@ -159,10 +159,6 @@ const DrinkingGame = () => {
     }
   }, [isFetched, repeatedWords]);
 
-  const handleDropdownClick = () => {
-    setShowOptions(!showOptions);
-  };
-
   return (
     <>
       <Head>
@@ -235,11 +231,14 @@ const DrinkingGame = () => {
                 <div className="w-full flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <span>Order words from most to least frequent</span>
-                    <Switch />
+                    <Switch 
+                      // defaultChecked={!ascOrder}
+                      // onChange={() => setAscOrder((ascOrder) => !ascOrder)}
+                    />
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Show Toast notifications</span>
-                    <Switch 
+                    <Switch
                       defaultChecked={showToast} 
                       onChange={() => setShowToast((showToast) => !showToast)} 
                     />
@@ -253,7 +252,10 @@ const DrinkingGame = () => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span>💩?</span>
-                    <Switch />
+                    <Switch
+                    defaultChecked={poo} 
+                    onChange={() => setPoo((poo) => !poo)}
+                    />
                   </div>
                 </div>
 
