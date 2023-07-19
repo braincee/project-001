@@ -114,9 +114,9 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
       const repeatedWords = countRepeatedWords(captions);
       // if youtube captions already exist, they tend to be more accurate than openai, so there's no need to generate.
       // but song captions often only contain the word 'music' or 'instrumental' repeated many times. In this case, we want to generate captions.
-      // if (repeatedWords.length > 2) {
-      //   return ( <Error statusCode={"404"} />);
-      // }
+      if (repeatedWords.length > 2) {
+        return ( <Error statusCode={"404"} />);
+      }
     }
 
     let audioFormat = await Api.getAudioFormat({ videoId, categoryId });
@@ -124,8 +124,7 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
     console.log('audioFormat ', audioFormat.data.response);
 
     const files = await Api.generateFile({ url, audioFormat: audioFormat.data.response, videoId });
-    const file = files.data.response.file;
-    const filePath = files.data.response.filePath;
+    const filePath = files.data.response;
     const model = 'whisper-1';
     const format = 'verbose_json'
 
@@ -195,18 +194,12 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
       }`;
 
     console.log('\nprompt >>>\n', categoryId == '10' ? (lyrics.length ? lyrics : undefined) : prompt);
-    console.log("test1");
-    const resp = await openai.createTranscription(
-      // @ts-ignore
-      file,
-      model,
-      categoryId == '10' ? (lyrics.length ? lyrics : undefined) : prompt,
-      format
-    );
+    const resp = await Api.createTranscription({ filePath, model, categoryId, format, lyrics, prompt })
+     
 
     Api.unlinkFilePath(filePath);
-
-
+    
+    
     if (!resp.data.segments) return ( <Error statusCode={"404"} />);
 
     const timestampedCaptions = resp.data.segments.map((segment) => {

@@ -28,12 +28,7 @@ const generateFile = async ({url, audioFormat, videoId}) => {
     if (fileSizeInMegabytes > 25) {
       throw new HttpError(413, 'File size is too large');
     }
-    const file = fs.createReadStream(filePath);
-    
-    const files = {
-      file, filePath
-    }
-    return files;
+    return filePath;
 }
 
 export default async function handler(req, res) {

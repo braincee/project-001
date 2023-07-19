@@ -137,6 +137,13 @@ const Api = {
     })
     return song;
   },
+
+  createTranscription: async ({ filePath, model, categoryId, format, lyrics, prompt }) => {
+    const resp = await axios.post('/api/openai', {
+      filePath, model, categoryId, format, lyrics, prompt,
+    });
+    return resp;
+  }
 }
 
 export default Api;
