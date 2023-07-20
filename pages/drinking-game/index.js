@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
 import { FaTwitter, FaGithub } from 'react-icons/fa';
-import { Input, Spinner, Switch } from '@nextui-org/react';
+import { Input, Spinner, Switch, Tooltip } from '@nextui-org/react';
 import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
 import { scrapeCaptionsAndSave } from '@/libs/server/action';
 import YouTubePlayer from '@/components/YouTubePlayer';
@@ -170,11 +170,11 @@ const DrinkingGame = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className='flex flex-col mx-auto w-[96%] md:w-[666px] mt-5'>
+        <div className='flex flex-col md:px-20 md:mx-10 lg:px-32 xl:mx-40 px-5 mt-5'>
           <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
           <div className='border border-gray-200 rounded-lg p-4'>
-            <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg gap-3 p-2 sm:flex-row`}>
-              <div className="sm:w-[40%] w-full">
+            <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg gap-4 p-2 sm:flex-row`}>
+              <div className="w-full">
                 <Input
                   ref={inputRef}
                   onChange={handleYoutubeUrlChange}
@@ -184,7 +184,7 @@ const DrinkingGame = () => {
                   aria-labelledby="url"
                 />
               </div>
-              <div className="flex gap-1 sm:w-[60%] w-full">
+              <div className="flex gap-4 w-full">
                 <div className="flex justify-center items-center w-full">
                   {isFetchingRptWrds && <Spinner />}
                   {!isFetchingRptWrds && (
@@ -193,7 +193,7 @@ const DrinkingGame = () => {
                       id="selectedWord"
                       value={selectedWord}
                       onChange={handleWordSelect}
-                      className="border border-gray-300 rounded px-2 py-[13px] after:pe-4 text-black w-full"
+                      className="border border-gray-300 rounded px-2 py-3 text-black w-full"
                       placeholder="Select a highly occuring word"
                       disabled={isDisabled}
                     >
@@ -214,14 +214,25 @@ const DrinkingGame = () => {
                     </select>
                   )}
                 </div>
-                <div className="flex items-center justify-center">
-                  <div className="rounded-lg border border-gray-300 p-1">
-                    <BiUserVoice size={25} onClick={() => {
-                      router.push(`/transcribe/${videoId}`)
-                    }} className='hover:cursor-pointer' />
-                  </div>
+                <div className={`flex items-center justify-center gap-3 ${isDisabled ? 'pointer-events-none opacity-70' : ''}`}>
+                  <Tooltip
+                    content="If captions don&apos;t exist, you can generate them using OpenAI&apos;s Whisper API"
+                    placement='bottom'
+                    size="lg"
+                    radius='md'
+                  >
+                    <div className="rounded-lg border border-gray-300 p-1">
+                      <BiUserVoice
+                        size={35}
+                        onClick={() => {
+                          router.push(`/transcribe/${videoId}`)
+                        }}
+                        className='hover:cursor-pointer'
+                      />
+                    </div>
+                  </Tooltip>
                   <div className="rounded-lg border border-gray-300 p-1 ml-2">
-                    <FiSettings size={25} onClick={() => {
+                    <FiSettings size={35} onClick={() => {
                       setShowOptions(!showOptions)
                     }} />
                   </div>
@@ -264,7 +275,7 @@ const DrinkingGame = () => {
               </div>
             )}
             <div
-              className="border border-gray-200 w-[100%] h-[300px] mt-2 aspect-video"
+              className="border border-gray-200 w-full mt-2 aspect-video"
               onClick={() => {
                 if (!videoId) {
                   inputRef.current?.focus();
@@ -297,11 +308,6 @@ const DrinkingGame = () => {
               counter={counter}
               emoji={!poo ? '🥃' : videoInfo?.youTuberId === 'UCbRP3c757lWg9M-U7TyEkXA' ? '🥸' : '💩'}
             />
-          </div>
-          <div className="border-b border-gray-200 mt-10"></div>
-          <div className="flex justify-end items-center mt-10 gap-2">
-            <FaTwitter size={25} />
-            <FaGithub size={25} />
           </div>
         </div>
       </main>
