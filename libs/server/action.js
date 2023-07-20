@@ -5,7 +5,7 @@ import axios from 'axios';
 import Error from 'next/error';
 
 
-const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
+const ApiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 
 // const __filename = fileURLToPath(import.meta.url);
 

@@ -1,7 +1,7 @@
 import axios from "axios";
 import Api from "../api";
 import { countRepeatedWords } from "./utils";
-const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
+const ApiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 
 export const getVideoInfo =  async ({ id }) => {
   let info = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${id}`);

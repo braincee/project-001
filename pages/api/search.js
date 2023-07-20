@@ -1,5 +1,5 @@
 import axios from "axios";
-const ApiKey = 'AIzaSyC0ngoLu4ZJOOuaD2PnU6-TlSdIfk8gBFw';
+const ApiKey = process.env.GOOGLE_API_KEY;
 
 
 const fetchSearchVideos = async (query) => {

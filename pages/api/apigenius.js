@@ -1,13 +1,10 @@
 import axios from "axios";
 
-// Api Genius key 
-const accessToken = 'ZpnhhQ2K_8yweKBt24kGYcGVY-271ynZKKIIoR_TsOGLgxN9tKLglN4tT2ebb1eT';
-
 const getSong = async ({ title, channelTitle}) => {
   const song = await axios.get(
     `https://api.genius.com/search?q=${encodeURIComponent(
       title + ' ' + channelTitle
-    )}&access_token=${accessToken}`
+    )}&access_token=${process.env.GENIUS_API_KEY}`
   );
   return song;
 }

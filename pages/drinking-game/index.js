@@ -17,7 +17,6 @@ const DrinkingGame = () => {
   const [selectedWord, setSelectedWord] = useState('');
   const [isFetchingRptWrds, setIsFetchingRptWrds] = useState(false);
   const [isFetched, setIsFetched] = useState(false);
-  const [isFetchingRptWrdsAgain, setIsFetchingRptWrdsAgain] = useState(false);
   const [captions, setCaptions] = useState(null);
   const [repeatedWords, setRepeatedWords] = useState(null);
   const [areCaptionsSaved, setAreCaptionsSaved] = useState(false);
@@ -114,7 +113,7 @@ const DrinkingGame = () => {
     }
     const fetchCaptions = async () => {
       try {
-        if (!isFetchingRptWrdsAgain && videoId && !repeatedWords) {
+        if (!isFetched && videoId && !repeatedWords) {
           await scrapeCaptionsAndSave({ videoId });
           setAreCaptionsSaved(true);
         }
@@ -125,7 +124,7 @@ const DrinkingGame = () => {
       }
     }
     fetchCaptions();
-  }, [repeatedWords, videoId, isFetchingRptWrdsAgain]);
+  }, [repeatedWords, videoId, isFetched]);
 
 
   useEffect(() => {
