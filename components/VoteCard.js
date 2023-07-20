@@ -40,7 +40,7 @@ export default function VoteCard({ options, index, setPickedOption, votesLength,
         setVoteSection(`${secondVotes}% Voted`)
       }
     }
-  }, [voted, voteCount, votesLength])
+  }, [voted, voteCount, votesLength, index])
 
   return (
     <div className='border-2 border-blue-400 rounded-lg'>

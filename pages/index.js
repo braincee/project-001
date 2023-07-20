@@ -28,54 +28,6 @@ export default function Home() {
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (addStatus == "pressed") {
-      addToListFromInput();
-      setIsLoading(false);
-      setAddStatus("");
-      setIsDisabled(true);
-    }
-  }, [addStatus]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (query) {
-        searchVideos();
-      }
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [query]);
-
-  useEffect(() => {
-    if (!inputValue) {
-      setTimeout(() => {
-        setShowSearchResults(false);
-      }, 1000);
-    }
-  }, [inputValue]);
-
-  useEffect(() => {
-    if (editStatus == "pressed") {
-      if (isEditing) {
-        finishAndShare();
-        setEditStatus("");
-      } else {
-        setIsEditing(!isEditing);
-        setEditStatus("");
-      }
-    } else if (shareStatus == "pressed") {
-      setIsEditing(false);
-      setShareStatus("");
-    }
-  }, [editStatus, shareStatus]);
-
-  useEffect(() => {
-    if (router.query.list == "" || Object.keys(router.query).length == 0) {
-      setIsEditing(true);
-    }
-  }, [router.query.list]);
-
   const isValidHttpUrl = (string) => {
     try {
       const newUrl = new URL(string);
@@ -234,6 +186,54 @@ export default function Home() {
     text.innerHTML = code;
     return text.value
   }
+
+  useEffect(() => {
+    if (addStatus == "pressed") {
+      addToListFromInput();
+      setIsLoading(false);
+      setAddStatus("");
+      setIsDisabled(true);
+    }
+  }, [addStatus]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (query) {
+        searchVideos();
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  useEffect(() => {
+    if (!inputValue) {
+      setTimeout(() => {
+        setShowSearchResults(false);
+      }, 1000);
+    }
+  }, [inputValue]);
+
+  useEffect(() => {
+    if (editStatus == "pressed") {
+      if (isEditing) {
+        finishAndShare();
+        setEditStatus("");
+      } else {
+        setIsEditing(!isEditing);
+        setEditStatus("");
+      }
+    } else if (shareStatus == "pressed") {
+      setIsEditing(false);
+      setShareStatus("");
+    }
+  }, [editStatus, shareStatus, isEditing]);
+
+  useEffect(() => {
+    if (router.query?.list == "" || Object.keys(router.query).length == 0) {
+      setIsEditing(true);
+    }
+  }, [router.query ]);
 
   return (
     <>

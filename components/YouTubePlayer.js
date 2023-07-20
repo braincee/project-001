@@ -70,7 +70,7 @@ const YouTubePlayer = ({
         }
       }
     }
-  }, [currentTime]);
+  }, [currentTime, captions, chosenWord, prevCaption]);
 
   const onPlayerReady = (event) => {
     setYoutubePlayer(event.target);

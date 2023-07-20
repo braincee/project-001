@@ -97,7 +97,7 @@ const DrinkingGame = () => {
       setCaptions(dbCaptions);
       setAreCaptionsSaved(true);
     }
-  }, [repeatedWords, dbCaptions]);
+  }, [repeatedWords, dbCaptions, isFetched]);
 
   useEffect(() => {
     if (router.query?.v) {
@@ -125,7 +125,7 @@ const DrinkingGame = () => {
       }
     }
     fetchCaptions();
-  }, [repeatedWords, videoId]);
+  }, [repeatedWords, videoId, isFetchingRptWrdsAgain]);
 
 
   useEffect(() => {
@@ -140,13 +140,13 @@ const DrinkingGame = () => {
         setIsFetchingRptWrds(false);
       }
     }
-  }, [videoId]);
+  }, [videoId, repeatedWords, router]);
 
   useEffect(() => {
     if (selectedWord) {
       router.push(`/drinking-game/?v=${videoId}&w=${selectedWord}`)
     }
-  }, [selectedWord]);
+  }, [selectedWord, videoId, router]);
 
   useEffect(() => {
     if (isFetched && repeatedWords) {
@@ -159,7 +159,7 @@ const DrinkingGame = () => {
         }
       }
     }
-  }, [isFetched, repeatedWords]);
+  }, [isFetched, repeatedWords, router.query, selectedWord]);
 
   return (
     <>

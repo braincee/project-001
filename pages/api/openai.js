@@ -3,7 +3,6 @@ import fs from 'fs';
 
 const createTranscription = async ({ filePath, model, categoryId, format, lyrics, prompt }) => {
   const file = fs.createReadStream(filePath);
-  console.log(filePath, file);
   const resp = await openai.createTranscription(
     file,
     model,
