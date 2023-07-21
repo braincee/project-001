@@ -169,7 +169,7 @@ const DrinkingGame = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div className='flex flex-col md:px-20 md:mx-10 xl:px-40 xl:mx-40 px-5 mt-5'>
+        <div className='flex flex-col md:px-24 md:mx-16 xl:px-40 xl:mx-40 px-5 mt-5'>
           <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
           <div className='border border-gray-200 rounded-lg p-4'>
             <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg gap-4 p-2 sm:flex-row`}>
