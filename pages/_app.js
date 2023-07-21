@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import { NextSeo } from "next-seo";
 
 import '@/styles/globals.css';
+import Layout from "@/components/Layout";
 
 export default function App({ Component, pageProps }) {
   return (
@@ -12,8 +13,9 @@ export default function App({ Component, pageProps }) {
         title="YT Playlist Creator & Sharer"
         description="This website helps you to create a youtube playlist"
       />
-      <Header />
-      <Component {...pageProps} />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </NextUIProvider>
   )
 }
