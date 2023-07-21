@@ -1,14 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Head from 'next/head';
 import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
-import { FaTwitter, FaGithub } from 'react-icons/fa';
 import { Input, Spinner, Switch, Tooltip } from '@nextui-org/react';
 import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
 import { scrapeCaptionsAndSave } from '@/libs/server/action';
-import YouTubePlayer from '@/components/YouTubePlayer';
+import YouTubePlayer from '@/components/youTubePlayer';
 import { useRouter } from 'next/router';
-import AnimatedCounter from '@/components/AnimatedCounter';
+import AnimatedCounter from '@/components/animatedCounter';
 import { Toaster, toast } from 'react-hot-toast';
 
 const DrinkingGame = () => {
@@ -163,7 +161,6 @@ const DrinkingGame = () => {
   return (
     <>
       <div className='flex flex-col md:px-24 md:mx-16 xl:px-40 xl:mx-40 px-5'>
-        <p className="text-center px-3 my-2 italic text-blue-400 font-2xl tracking-widest">Drinking Game</p>
         <div className='border border-gray-200 rounded-lg p-4'>
           <div className={`flex flex-col border ${showOptions ? "rounded-b-none": ''} items-center border-gray-200 rounded-lg gap-4 p-2 sm:flex-row`}>
             <div className="w-full">

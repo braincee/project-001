@@ -2,24 +2,23 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import supabase from "./supabase";
 
-const Api = {
-  getSearchVideos: async (query) => {
+  export const getSearchVideos = async (query) => {
     const data = await axios.post('/api/search', {
       query
     }
     );
     return data;
-  },
+  }
 
-  getVideo: async (videoId) => {
+  export const getVideo = async (videoId) => {
     const data = await axios.post('/api/video', {
       videoId
     }
     );
     return data;
-  },
+  }
 
-  addToPollsStorage: async (file) => {
+  export const addToPollsStorage = async (file) => {
     const filename = `${uuidv4()}.${file.name.substring(file.name.lastIndexOf('.') + 1, file.name.length)}`;
     await supabase.storage
       .from("polls")
@@ -28,122 +27,119 @@ const Api = {
         upsert: false,
       });
     return filename;
-  },
+  }
 
-  getFilePublicURL: async (filename) => {
+  export const getFilePublicURL = async (filename) => {
     const { data } = await supabase.storage
       .from('polls')
       .getPublicUrl(filename);
     return data;
-  },
+  }
 
-  addNewPoll: async ({ options, pollId }) => {
+  export const addNewPoll = async ({ options, pollId }) => {
     const data = await axios.post(('/api/create'), {
       options, pollId
     })
     return data;
-  },
+  }
 
-  addNewVote: async ({ pickedOption, pollId }) => {
+  export const addNewVote = async ({ pickedOption, pollId }) => {
     const { data } = await axios.post(('/api/vote'), {
       pickedOption, pollId,
     })
     return data;
-  },
+  }
 
-  getVotes: async ({ pollId }) => {
+  export const getVotes = async ({ pollId }) => {
     const data = await axios.get(('/api/vote'), {
       params: { pollId },
     })
     return data;
-  },
+  }
 
-  getYouTubers: async () => {
+  export const getYouTubers = async () => {
     const data = await axios.get('/api/youtuber/all');
     return data;
-  },
+  }
 
-  getCaptions: async () => {
+  export const getCaptions = async () => {
     const { data } = await axios.get('/api/caption/all');
     return data;
-  },
+  }
 
-  addYoutuber: async (youtuberData) => {
+  export const addYoutuber = async (youtuberData) => {
     const { data } = await axios.post(('/api/youtuber/add'), {
       youtuberData
     })
     return data;
-  },
+  }
 
-  addCaption: async (captionData) => {
+  export const addCaption = async (captionData) => {
     const { data } = await axios.post(('/api/caption/add'), {
       captionData
     })
     return data;
-  },
+  }
 
-  getYouTuber: async (channelId) => {
+  export const getYouTuber = async (channelId) => {
     const { data } = await axios.get(('/api/youtuber/single'), {
       params: { channelId },
     })
     return data;
-  },
+  }
 
-  getCaption: async ({ id }) => {
+  export const getCaption = async ({ id }) => {
     const { data } = await axios.get(('/api/caption/single'), {
       params: { id },
     })
     return data;
-  },
+  }
 
-  updateCaption: async (captionData) => {
+  export const updateCaption = async (captionData) => {
     const { data } = await axios.post(('/api/caption/update'), {
       captionData
     })
     return data;
-  },
+  }
 
-  fetchSubtitles: async ({ videoId, defaultLanguage, defaultAudioLanguage }) => {
+  export const fetchSubtitles = async ({ videoId, defaultLanguage, defaultAudioLanguage }) => {
     const {data} = await axios.post('/api/subtitle', {
       videoId, defaultLanguage, defaultAudioLanguage,
     });
     return data.response;
-  },
+  }
 
-  getAudioFormat: async ({ videoId, categoryId }) => {
+  export const getAudioFormat = async ({ videoId, categoryId }) => {
     const audioFormat = await axios.post('/api/ytdl/audioformat', {
       videoId, categoryId
     });
     return audioFormat;
-  },
+  }
 
-  generateFile: async ({ url, audioFormat, videoId }) => {
+  export const generateFile = async ({ url, audioFormat, videoId }) => {
     const file = await axios.post('/api/ytdl/file', {
       url, audioFormat, videoId
     });
     return file;
-  },
+  }
 
-  unlinkFilePath: async ({ filePath }) => {
+  export const unlinkFilePath = async ({ filePath }) => {
     const fp = await axios.get(('/api/ytdl/file'), {
       params: {filePath}
     });
     return fp;
-  },
+  }
 
-  getSong: async ({ title, channelTitle}) => {
+  export const getSong = async ({ title, channelTitle}) => {
     const song = await axios.post('/api/apigenius', {
       title, channelTitle,
     })
     return song;
-  },
+  }
 
-  createTranscription: async ({ filePath, model, categoryId, format, lyrics, prompt }) => {
+  export const createTranscription = async ({ filePath, model, categoryId, format, lyrics, prompt }) => {
     const resp = await axios.post('/api/openai', {
       filePath, model, categoryId, format, lyrics, prompt,
     });
     return resp;
   }
-}
-
-export default Api;

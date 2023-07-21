@@ -1,16 +1,20 @@
 import { countRepeatedWords, openai, ytCategoryIds } from './utils';
 import * as cheerio from 'cheerio';
-import Api from '../api';
+import { unlinkFilePath, 
+  createTranscription, 
+  fetchSubtitles,
+  updateCaption,
+  getYouTuber, 
+  addYoutuber, 
+  addCaption, 
+  getAudioFormat, 
+  generateFile, 
+  getSong } from '../api';
 import axios from 'axios';
 import Error from 'next/error';
 
 
-const ApiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
-
-// const __filename = fileURLToPath(import.meta.url);
-
-// const __dirname = path.dirname(__filename);
-// console.log('directory-name 👉️', __dirname);
+const ApiKey = process.env.NEXT_GOOGLE_API_KEY
 
 export const scrapeCaptionsAndSave = async ({ videoId }) => {
   try {
@@ -30,7 +34,7 @@ export const scrapeCaptionsAndSave = async ({ videoId }) => {
       : info.data.items[0]?.snippet?.defaultAudioLanguage;
 
     if (!channelId) return ( <Error statusCode={"404"} />);
-    const captions = await Api.fetchSubtitles({ videoId, defaultLanguage, defaultAudioLanguage });
+    const captions = await fetchSubtitles({ videoId, defaultLanguage, defaultAudioLanguage });
 
     if (!captions) return ( <Error statusCode={"404"} />);
 
@@ -45,14 +49,14 @@ export const scrapeCaptionsAndSave = async ({ videoId }) => {
       }
     });
 
-    let youTuber = await Api.getYouTuber(channelId);
+    let youTuber = await getYouTuber(channelId);
 
     if (youTuber.length <= 0) {
       let data = {
         id: channelId,
         name: channelTitle || '',
       };
-      youTuber = await Api.addYoutuber(data);
+      youTuber = await addYoutuber(data);
     }
 
 
@@ -64,7 +68,7 @@ export const scrapeCaptionsAndSave = async ({ videoId }) => {
       captionChunks: JSON.stringify(captions),
     };
 
-    const caption = await Api.addCaption(data);
+    const caption = await addCaption(data);
 
     return caption;
 
@@ -102,7 +106,7 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
 
     let captions;
     try {
-      captions = await Api.fetchSubtitles({ videoId, defaultLanguage, defaultAudioLanguage });
+      captions = await fetchSubtitles({ videoId, defaultLanguage, defaultAudioLanguage });
     } catch (error) {
       console.log('error >>> ', error);
     }
@@ -119,11 +123,11 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
       }
     }
 
-    let audioFormat = await Api.getAudioFormat({ videoId, categoryId });
+    let audioFormat = await getAudioFormat({ videoId, categoryId });
     
     console.log('audioFormat ', audioFormat.data.response);
 
-    const files = await Api.generateFile({ url, audioFormat: audioFormat.data.response, videoId });
+    const files = await generateFile({ url, audioFormat: audioFormat.data.response, videoId });
     const filePath = files.data.response;
     const model = 'whisper-1';
     const format = 'verbose_json'
@@ -133,7 +137,7 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
     if (title && categoryId == '10' && transcribeWithLyrics) {
       console.log("lyrics");
       try {
-        const song = await Api.getSong({ title, channelTitle});
+        const song = await getSong({ title, channelTitle});
 
         let songUrl = song.data.response.hits[0].result.url;
         let doesArtistMatchLyrics = song.data.response.hits[0].result.artist_names.includes(channelTitle);
@@ -194,12 +198,10 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
       }`;
 
     console.log('\nprompt >>>\n', categoryId == '10' ? (lyrics.length ? lyrics : undefined) : prompt);
-    const resp = await Api.createTranscription({ filePath, model, categoryId, format, lyrics, prompt })
+    const resp = await createTranscription({ filePath, model, categoryId, format, lyrics, prompt })
      
+    unlinkFilePath(filePath);
 
-    Api.unlinkFilePath(filePath);
-    
-    
     if (!resp.data.segments) return ( <Error statusCode={"404"} />);
 
     const timestampedCaptions = resp.data.segments.map((segment) => {
@@ -210,14 +212,14 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
       };
     });
 
-    let youTuber = await Api.getYouTuber(channelId);
+    let youTuber = await getYouTuber(channelId);
 
     if (!youTuber) {
       let data = {
         id: channelId,
         name: channelTitle || ' ',
       };
-      youTuber = await Api.addYoutuber(data);
+      youTuber = await addYoutuber(data);
     }
 
     let data = {
@@ -229,7 +231,7 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
       transcribedWithLyrics: transcribeWithLyrics,
     }
 
-    const caption = await Api.updateCaption(data);
+    const caption = await updateCaption(data);
     return caption;
 
   } catch (error) {

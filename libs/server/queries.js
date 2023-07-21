@@ -1,7 +1,8 @@
 import axios from "axios";
-import Api from "../api";
+import { getCaption } from "../api";
 import { countRepeatedWords } from "./utils";
-const ApiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+
+const ApiKey = process.env.NEXT_GOOGLE_API_KEY;
 
 export const getVideoInfo =  async ({ id }) => {
   let info = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${id}`);
@@ -20,11 +21,11 @@ export const getVideoInfo =  async ({ id }) => {
 }
 
 export const getCaptionsInfo = async ({ id }) => {
-  return await Api.getCaption({id});
+  return await getCaption({id});
 }
 
 export const getRepeatedWords = async ({ id }) => {
-  const caption = await Api.getCaption({id});
+  const caption = await getCaption({id});
 
   const captions = JSON.parse(caption[0]?.captionChunks) || [];
 
@@ -46,7 +47,7 @@ export const getRepeatedWords = async ({ id }) => {
 }
 
 export const getCaptions = async ({ id, chosenWord }) => {
-  const caption = await Api.getCaption({ id });
+  const caption = await getCaption({ id });
 
   let captions = JSON.parse(caption[0]?.captionChunks) || [];
 
