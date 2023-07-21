@@ -1,7 +1,7 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import supabase from "./supabase";
-import { countRepeatedWords } from "./utils";
+import { countRepeatedWords, ytCategoryIds } from "./utils";
 
 export const getSearchVideos = async (query) => {
   const data = await axios.post('/api/search', {
@@ -197,7 +197,6 @@ export const scrapeCaptionsAndSave = async ({ videoId }) => {
     };
 
     const caption = await addCaption(data);
-    console.log("End");
     return caption;
   } catch (error) {
     throw error;
