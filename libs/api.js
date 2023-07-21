@@ -1,6 +1,7 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import supabase from "./supabase";
+import { countRepeatedWords } from "./utils";
 
 export const getSearchVideos = async (query) => {
   const data = await axios.post('/api/search', {
@@ -59,11 +60,6 @@ export const getVotes = async ({ pollId }) => {
 
 export const getYouTubers = async () => {
   const data = await axios.get('/api/youtuber/all');
-  return data;
-}
-
-export const getCaptions = async () => {
-  const { data } = await axios.get('/api/caption/all');
   return data;
 }
 
@@ -145,68 +141,78 @@ export const createTranscription = async ({ filePath, model, categoryId, format,
 }
 
 export const scrapeCaptionsAndSave = async ({ videoId }) => {
-  const info = await axios.get(('/api/action/scrape'), {
-    params: { videoId },
-  });
+  try {
+    const { data: {
+      response: res
+    } } = await axios.get(('/api/action/info'), {
+      params: { videoId },
+    });
+    const info = JSON.parse(res);
 
-  if (!info.data.items) return (<Error statusCode={"404"} />);
+    if (!info.data.items) return (<Error statusCode={"404"} />);
 
-  const title = info.data.items[0]?.snippet?.title;
-  const thumbnail = info.data.items[0]?.snippet?.thumbnails?.default?.url;
-  const channelId = info.data.items[0]?.snippet?.channelId;
-  const channelTitle = info.data.items[0]?.snippet?.channelTitle;
-  const defaultLanguage = info.data.items[0]?.snippet?.defaultLanguage?.includes('-')
-    ? info.data.items[0]?.snippet?.defaultLanguage?.split('-')[0]
-    : info.data.items[0]?.snippet?.defaultLanguage;
-  const defaultAudioLanguage = info.data.items[0]?.snippet?.defaultAudioLanguage?.includes('-')
-    ? info.data.items[0]?.snippet?.defaultAudioLanguage?.split('-')[0]
-    : info.data.items[0]?.snippet?.defaultAudioLanguage;
+    const title = info.data.items[0]?.snippet?.title;
+    const thumbnail = info.data.items[0]?.snippet?.thumbnails?.default?.url;
+    const channelId = info.data.items[0]?.snippet?.channelId;
+    const channelTitle = info.data.items[0]?.snippet?.channelTitle;
+    const defaultLanguage = info.data.items[0]?.snippet?.defaultLanguage?.includes('-')
+      ? info.data.items[0]?.snippet?.defaultLanguage?.split('-')[0]
+      : info.data.items[0]?.snippet?.defaultLanguage;
+    const defaultAudioLanguage = info.data.items[0]?.snippet?.defaultAudioLanguage?.includes('-')
+      ? info.data.items[0]?.snippet?.defaultAudioLanguage?.split('-')[0]
+      : info.data.items[0]?.snippet?.defaultAudioLanguage;
 
-  if (!channelId) return (<Error statusCode={"404"} />);
-  const captions = await fetchSubtitles({ videoId, defaultLanguage, defaultAudioLanguage });
+    if (!channelId) return (<Error statusCode={"404"} />);
+    const captions = await fetchSubtitles({ videoId, defaultLanguage, defaultAudioLanguage });
 
-  if (!captions) return (<Error statusCode={"404"} />);
+    if (!captions) return (<Error statusCode={"404"} />);
 
-  captions.forEach((caption, idx) => {
-    const currentStart = Number(caption.start);
-    const nextStart = Number(captions[idx + 1]?.start);
-    if (nextStart === undefined) return;
-    if (idx === 0) {
-      caption.dur = String(nextStart);
-    } else if (idx !== captions.length - 1) {
-      caption.dur = String(nextStart - currentStart);
+    captions.forEach((caption, idx) => {
+      const currentStart = Number(caption.start);
+      const nextStart = Number(captions[idx + 1]?.start);
+      if (nextStart === undefined) return;
+      if (idx === 0) {
+        caption.dur = String(nextStart);
+      } else if (idx !== captions.length - 1) {
+        caption.dur = String(nextStart - currentStart);
+      }
+    });
+
+    let youTuber = await getYouTuber(channelId);
+
+    if (youTuber.length <= 0) {
+      let data = {
+        id: channelId,
+        name: channelTitle || '',
+      };
+      youTuber = await addYoutuber(data);
     }
-  });
 
-  let youTuber = await getYouTuber(channelId);
-
-  if (youTuber.length <= 0) {
     let data = {
-      id: channelId,
-      name: channelTitle || '',
+      videoId,
+      videoTitle: title || ' ',
+      youTuberId: channelId,
+      thumbnail: thumbnail,
+      captionChunks: JSON.stringify(captions),
     };
-    youTuber = await addYoutuber(data);
+
+    const caption = await addCaption(data);
+    console.log("End");
+    return caption;
+  } catch (error) {
+    throw error;
   }
-
-  let data = {
-    videoId,
-    videoTitle: title || ' ',
-    youTuberId: channelId,
-    thumbnail: thumbnail,
-    captionChunks: JSON.stringify(captions),
-  };
-
-  const caption = await addCaption(data);
-
-  return caption;
 }
 
 export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics }) => {
   try {
     const url = `https://www.youtube.com/watch?v=${videoId}`;
-    const vidInfo = await axios.get(('/api/action/generate'), {
+    const { data: {
+      response: res
+    } } = await axios.get(('/api/action/info'), {
       params: { videoId },
     });
+    const vidInfo = JSON.parse(res);
 
     console.log('transcribeWithLyrics??? >>> ', transcribeWithLyrics);
     if (!vidInfo.data.items) return (<Error statusCode={"404"} />);
@@ -357,4 +363,84 @@ export const generateCaptionsAndSave = async ({ videoId, transcribeWithLyrics })
   } catch (error) {
     throw error;
   }
+}
+
+export const getVideoInfo = async ({ id }) => {
+  const { data: {
+    response: res
+  } } = await axios.get(('/api/action/info'), {
+    params: { videoId: id },
+  });
+  let info = JSON.parse(res);
+
+  if (!info.data.items) throw new HttpError(404, 'Video not found');
+
+  const title = info.data.items[0]?.snippet?.title;
+  const thumbnail = info.data.items[0]?.snippet?.thumbnails?.default?.url;
+  const youTuberId = info.data.items[0]?.snippet?.channelId;
+
+  return {
+    thumbnail: thumbnail,
+    videoTitle: title,
+    youTuberId: youTuberId || '',
+  };
+}
+
+export const getCaptionsInfo = async ({ id }) => {
+  return await getCaption({ id });
+}
+
+export const getRepeatedWords = async ({ id }) => {
+  const caption = await getCaption({ id });
+
+  const captions = JSON.parse(caption[0]?.captionChunks) || [];
+
+  const cleanedCaptions = captions.map((caption) => {
+    const text = caption.text.split(/\s+/).map((word) => {
+      return word.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')
+        .replace(/(\r\n|\n|\r)/gm, ' ')
+        .trim()
+        .toLowerCase()
+    }).join(' ');
+
+    return {
+      ...caption,
+      text: text
+    };
+  })
+
+  return countRepeatedWords(cleanedCaptions);
+}
+
+export const getCaptions = async ({ id, chosenWord }) => {
+  const caption = await getCaption({ id });
+
+  let captions = JSON.parse(caption[0]?.captionChunks) || [];
+
+  const cleanedCaptions = captions.map((caption) => {
+    // split the text into an array of words and remove any punctuation
+    const text = caption.text
+      .split(/\s+/)
+      .map((word) => {
+        return word
+          .replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')
+          .replace(/(\r\n|\n|\r)/gm, ' ')
+          .trim()
+          .toLowerCase();
+      })
+      .join(' ');
+
+    return {
+      ...caption,
+      text: text,
+    };
+  });
+
+  const filteredCaptions = cleanedCaptions.filter((caption) => {
+    const regex = new RegExp('\\b' + chosenWord.toLowerCase() + '\\b', 'gi');
+    const wordCount = (caption.text.match(regex) || []).length;
+    return wordCount > 0;
+  });
+
+  return filteredCaptions;
 }

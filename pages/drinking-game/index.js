@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BiUserVoice } from 'react-icons/bi';
 import { FiSettings } from 'react-icons/fi';
 import { Input, Spinner, Switch, Tooltip } from '@nextui-org/react';
-import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/server/queries';
-import { scrapeCaptionsAndSave } from '@/libs/server/action';
-import YouTubePlayer from '@/components/youTubePlayer';
+import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/api';
+import { scrapeCaptionsAndSave } from '@/libs/api';
 import { useRouter } from 'next/router';
-import AnimatedCounter from '@/components/animatedCounter';
 import { Toaster, toast } from 'react-hot-toast';
+import YouTubePlayer from '@/components/YouTubePlayer';
+import AnimatedCounter from '@/components/AnimatedCounter';
 
 const DrinkingGame = () => {
   const [videoId, setVideoId] = useState('');

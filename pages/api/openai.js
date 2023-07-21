@@ -1,5 +1,13 @@
-import { openai } from "@/libs/server/utils";
+import { openai } from "@/libs/utils";
 import fs from 'fs';
+import { Configuration, OpenAIApi } from 'openai';
+
+const configuration = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const openai = new OpenAIApi(configuration);
+
 
 const createTranscription = async ({ filePath, model, categoryId, format, lyrics, prompt }) => {
   const file = fs.createReadStream(filePath);
