@@ -1,17 +1,46 @@
 import { useState } from "react";
-import { getVideoInfo } from "@/libs/server/queries";
 import supabase from "@/libs/supabase";
-import Head from "next/head";
 import { Badge, Button, Card, Code, Divider, Image, useDisclosure } from "@nextui-org/react";
 import { useRouter } from "next/router";
-import { generateCaptionsAndSave } from "@/libs/server/action";
+import { generateCaptionsAndSave } from "@/libs/api";
 import TranscribePageModal from "@/components/TranscribePageModal";
+import axios from "axios";
+
+const ApiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
+
+function stringify(obj) {
+  let cache = [];
+  let str = JSON.stringify(obj, function(key, value) {
+    if (typeof value === "object" && value !== null) {
+      if (cache.indexOf(value) !== -1) {
+        // Circular reference found, discard key
+        return;
+      }
+      // Store value in our collection
+      cache.push(value);
+    }
+    return value;
+  });
+  cache = null; // reset the cache
+  return str;
+}
 
 export const getServerSideProps = async (context) => {
   const { id } = context.query;
 
-  const videoInfo = await getVideoInfo({ id });
-  const {data} = await supabase
+  let info = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${id}`);
+  info = JSON.parse(stringify(info));
+
+  const title = info.data.items[0]?.snippet?.title;
+  const thumbnail = info.data.items[0]?.snippet?.thumbnails?.default?.url;
+  const youTuberId = info.data.items[0]?.snippet?.channelId;
+
+  const videoInfo = {
+    thumbnail: thumbnail,
+    videoTitle: title,
+    youTuberId: youTuberId || '',
+  }
+  const { data } = await supabase
     .from('caption')
     .select()
     .eq('videoId', id );
