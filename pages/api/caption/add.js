@@ -1,11 +1,9 @@
-import supabase from "../../../lib/supabase";
+import supabase from "@/libs/supabase";
 
 export default async function handler(req, res) {
-    if (req.method === "POST") {
-        const { videoId, videoTitle, thumbnail, youTuberId, captionChunks, transcribedWithLyrics } = req.body;
-        const { data, error } = await supabase
-            .from('Caption')
-            .insert({ videoId, videoTitle, thumbnail, youTuberId, captionChunks, transcribedWithLyrics })
-        res.status(201).json(data ?? error);
-    }
+  const { videoId, videoTitle, thumbnail, youTuberId, captionChunks, transcribedWithLyrics } = req.body.captionData;
+  const { data, error } = await supabase
+    .from('caption')
+    .insert({ videoId, videoTitle, thumbnail, youTuberId, captionChunks, transcribedWithLyrics })
+  res.status(201).json(data ?? error);
 }
