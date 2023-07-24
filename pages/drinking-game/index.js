@@ -214,7 +214,9 @@ const DrinkingGame = () => {
                     <BiUserVoice
                       size={35}
                       onClick={() => {
-                        router.push(`/transcribe/${videoId}`)
+                        router.push({ 
+                          pathname: `/transcribe/${videoId}`
+                        })
                       }}
                       className='hover:cursor-pointer'
                     />

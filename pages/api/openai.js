@@ -1,4 +1,3 @@
-import { openai } from "@/libs/utils";
 import fs from 'fs';
 import { Configuration, OpenAIApi } from 'openai';
 

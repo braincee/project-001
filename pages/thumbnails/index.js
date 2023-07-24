@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { Button, Input, Spacer, Spinner, Switch } from '@nextui-org/react';
-import Head from 'next/head';
 import HomepageCard from '@/components/HompageCard';
 import RelatedCard from '@/components/RelatedCard';
 import numbro from 'numbro';
