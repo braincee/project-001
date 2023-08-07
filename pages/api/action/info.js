@@ -3,7 +3,6 @@ import axios from "axios";
 const ApiKey = process.env.GOOGLE_API_KEY;
 
 const getInfo = async ({ videoId }) => {
-  console.log(ApiKey);
   const info = await axios.get(`https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${videoId}`);
   return info;
 }
