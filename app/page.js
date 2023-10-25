@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
 import { Input, Button, Spacer, CircularProgress } from '@nextui-org/react'
 import { FaShareAlt } from 'react-icons/fa'
