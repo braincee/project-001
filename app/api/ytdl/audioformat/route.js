@@ -11,7 +11,7 @@ const getAudioFormat = async ({ videoId, categoryId }) => {
 }
 
 export async function POST(req) {
-  const { videoId, categoryId } = req.json()
+  const { videoId, categoryId } = await req.json()
   const response = await getAudioFormat({ videoId, categoryId })
 
   return Response.json({ response })

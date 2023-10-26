@@ -27,7 +27,7 @@ function stringify(obj) {
 }
 
 export async function POST(req) {
-  const { title, channelTitle } = req.json()
+  const { title, channelTitle } = await req.json()
   const response = await getSong({ title, channelTitle })
 
   return Response.json({ response: stringify(response) })

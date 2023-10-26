@@ -17,7 +17,7 @@ const fetchSubtitles = async ({
 }
 
 export async function POST(req) {
-  const { videoId, defaultLanguage, defaultAudioLanguage } = req.json()
+  const { videoId, defaultLanguage, defaultAudioLanguage } = await req.json()
   const response = await fetchSubtitles({
     videoId,
     defaultLanguage,

@@ -12,7 +12,7 @@ export async function POST(req) {
       captionChunks,
       transcribedWithLyrics,
     },
-  } = req.json()
+  } = await req.json()
   const response = await db
     .update(caption)
     .set({

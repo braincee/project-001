@@ -41,7 +41,7 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const { url, audioFormat, videoId } = req.json()
+  const { url, audioFormat, videoId } = await req.json()
   const response = await generateFile({ url, audioFormat, videoId })
 
   return Response.json({ response })

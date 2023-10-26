@@ -14,7 +14,7 @@ const getVideo = async (videoId) => {
 }
 
 export async function POST(req) {
-  const { videoId } = req.json()
+  const { videoId } = await req.json()
   const { data, err } = await getVideo(videoId)
 
   return Response.json({ response: data, err: err })

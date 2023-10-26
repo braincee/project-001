@@ -14,7 +14,7 @@ const fetchSearchVideos = async (query) => {
 }
 
 export async function POST(req) {
-  const { query } = req.json()
+  const { query } = await req.json()
   const { data, err } = await fetchSearchVideos(query)
 
   return Response.json({ response: data, err: err })

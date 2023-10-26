@@ -27,7 +27,8 @@ const createTranscription = async ({
 }
 
 export async function POST(req) {
-  const { filePath, model, categoryId, format, lyrics, prompt } = req.json()
+  const { filePath, model, categoryId, format, lyrics, prompt } =
+    await req.json()
   const response = await createTranscription({
     filePath,
     model,

@@ -11,7 +11,7 @@ export async function POST(req) {
       captionChunks,
       transcribedWithLyrics,
     },
-  } = req.json()
+  } = await req.json()
 
   const date = new Date()
   const response = await db.insert(caption).values({

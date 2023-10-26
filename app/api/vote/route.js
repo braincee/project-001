@@ -13,7 +13,7 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const { pickedOption, pollId } = req.json()
+  const { pickedOption, pollId } = await req.json()
   const date = new Date()
 
   const response = await db.insert(votes).values({
