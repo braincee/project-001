@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Input, Spacer, Spinner, Switch } from '@nextui-org/react'
-import HomepageCard from '@/components/HompageCard'
-import RelatedCard from '@/components/RelatedCard'
+import HomepageCard from '../../components/HompageCard'
+import RelatedCard from '../../components/RelatedCard'
 import numbro from 'numbro'
-import Api from '@/libs/api'
 import { v4 as uuidv4 } from 'uuid'
+import { addNewPoll, addToPollsStorage, getFilePublicURL } from '../../libs/api'
 
 export default function ThumbnailsPage() {
   const [titleValue, setTitleValue] = useState('')
@@ -49,11 +49,11 @@ export default function ThumbnailsPage() {
     const options = []
     const pollId = uuidv4()
     for (let i = 0; i < files.length; i++) {
-      const pollName = await Api.addToPollsStorage(files[i])
-      const url = await Api.getFilePublicURL(pollName)
+      const pollName = await addToPollsStorage(files[i])
+      const url = await getFilePublicURL(pollName)
       options.push({ id: uuidv4(), image_url: url.publicUrl })
     }
-    await Api.addNewPoll({ options, pollId })
+    await addNewPoll({ options, pollId })
     setLoading(false)
     router.push({
       pathname: `/vote/${pollId}`,
@@ -113,7 +113,6 @@ export default function ThumbnailsPage() {
             </div>
             <div>
               <Button
-                isLoading
                 color='primary'
                 variant='bordered'
                 onPress={handlePollCreation}

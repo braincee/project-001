@@ -3,14 +3,14 @@
 import React, { useEffect, useState } from 'react'
 import { Input, Button, Spacer, CircularProgress } from '@nextui-org/react'
 import { FaShareAlt } from 'react-icons/fa'
-import { useRouter } from 'next/router'
+import { useParams, useRouter } from 'next/navigation'
 import SearchCard from '../components/SearchCard'
 import SkeletonBuilder from '../components/SkeletonBuilder'
 import VideoCard from '../components/VideoCard'
 import TableBuilder from '../components/TableBuilder'
 import TableBuilder2 from '../components/TableBuilder2'
 import copy from 'copy-to-clipboard'
-import Api from '../libs/api'
+import { getSearchVideos, getVideo } from '../libs/api'
 
 export default function Home() {
   const [inputValue, setInputValue] = useState('')
@@ -28,6 +28,9 @@ export default function Home() {
   const [number, setNumber] = useState(0)
 
   const router = useRouter()
+  const params = useParams()
+
+  console.log(params)
 
   const isValidHttpUrl = (string) => {
     try {
@@ -113,7 +116,7 @@ export default function Home() {
       let videoId = inputValue.split('v=')[1]
       const {
         data: { response },
-      } = await Api.getVideo(videoId)
+      } = await getVideo(videoId)
       const { title, description, channelTitle, publishedAt } =
         response.items[0].snippet
       setUrlData([
@@ -184,7 +187,7 @@ export default function Home() {
       setIsLoading(true)
       const {
         data: { response },
-      } = await Api.getSearchVideos(query)
+      } = await getSearchVideos(query)
       const videos = response.items.map((item) => {
         return {
           id: item.id.videoId,
@@ -257,117 +260,115 @@ export default function Home() {
   }, [editStatus, shareStatus, isEditing])
 
   useEffect(() => {
-    if (router.query?.list == '' || Object.keys(router.query).length == 0) {
+    if (params?.list == '' || Object.keys(params).length == 0) {
       setIsEditing(true)
     }
-  }, [router.query])
+  }, [params])
 
   return (
-    <>
-      <main className='mt-4 mb-[50px] flex flex-col gap-5'>
-        <h1 className='text-center px-3 md:px-0 text-3xl'>
-          YT Playlist Creator and Sharer
-        </h1>
-        {isEditing && (
-          <div className='flex flex-col md:flex-row justify-center items-center mt-8 gap-4'>
-            <Input
-              type='text'
-              onChange={handleChange}
-              className='w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400'
-              placeholder='Add YouTube Url'
-              aria-labelledby='none'
-              value={inputValue}
-              endContent={
-                isLoading && <CircularProgress aria-label='Loading...' />
-              }
-            />
+    <main className='mt-4 mb-[50px] flex flex-col gap-5'>
+      <h1 className='text-center px-3 md:px-0 text-3xl'>
+        YT Playlist Creator and Sharer
+      </h1>
+      {isEditing && (
+        <div className='flex flex-col md:flex-row justify-center items-center mt-8 gap-4'>
+          <Input
+            type='text'
+            onChange={handleChange}
+            className='w-full md:w-3/5 text-2xl px-4 md:px-0 placeholder-slate-400'
+            placeholder='Add YouTube Url'
+            aria-labelledby='none'
+            value={inputValue}
+            endContent={
+              isLoading && <CircularProgress aria-label='Loading...' />
+            }
+          />
+          <Button
+            color='primary'
+            className='text-white'
+            size='xl'
+            onPress={handlePress}
+            isDisabled={isDisabled}
+          >
+            Add
+          </Button>
+          {!isvalid ? (
+            <span className='text-danger text-xl md:text-2xl px-6 mt-3'>
+              Invalid URL!
+            </span>
+          ) : (
+            ''
+          )}
+        </div>
+      )}
+
+      {!isLoading && showSearchResults && isEditing && (
+        <div className='flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4'>
+          {searchData.length > 0 &&
+            searchData.map((video, index) => (
+              <>
+                <SearchCard
+                  video={video}
+                  key={index}
+                  addToList={addToListFromSearch}
+                  truncate={truncate}
+                />
+                <Spacer x={6} />
+              </>
+            ))}
+        </div>
+      )}
+
+      {isLoading && isEditing && <SkeletonBuilder cards={5} />}
+
+      {!isLoading && urlData.length > 0 && (
+        <section className='px-10'>
+          <div className='flex justify-end px-10 md:px-7 gap-5'>
+            <Button
+              color='success'
+              className='text-dark px-7'
+              size='lg'
+              onPress={handleShare}
+              endIcon={<FaShareAlt />}
+            >
+              Share
+            </Button>
             <Button
               color='primary'
-              className='text-white'
-              size='xl'
-              onPress={handlePress}
-              isDisabled={isDisabled}
+              className='text-dark px-10'
+              size='lg'
+              onPress={handleMode}
             >
-              Add
+              {isEditing ? 'Done' : 'Edit'}
             </Button>
-            {!isvalid ? (
-              <span className='text-danger text-xl md:text-2xl px-6 mt-3'>
-                Invalid URL!
-              </span>
-            ) : (
-              ''
-            )}
           </div>
-        )}
-
-        {!isLoading && showSearchResults && isEditing && (
-          <div className='flex md:flex-wrap md:flex-row flex-col mt-8 justify-center px-10 md:px-5 gap-4'>
-            {searchData.length > 0 &&
-              searchData.map((video, index) => (
-                <>
-                  <SearchCard
-                    video={video}
-                    key={index}
-                    addToList={addToListFromSearch}
-                    truncate={truncate}
-                  />
-                  <Spacer x={6} />
-                </>
-              ))}
-          </div>
-        )}
-
-        {isLoading && isEditing && <SkeletonBuilder cards={5} />}
-
-        {!isLoading && urlData.length > 0 && (
-          <section className='px-10'>
-            <div className='flex justify-end px-10 md:px-7 gap-5'>
-              <Button
-                color='success'
-                className='text-dark px-7'
-                size='lg'
-                onPress={handleShare}
-                endIcon={<FaShareAlt />}
-              >
-                Share
-              </Button>
-              <Button
-                color='primary'
-                className='text-dark px-10'
-                size='lg'
-                onPress={handleMode}
-              >
-                {isEditing ? 'Done' : 'Edit'}
-              </Button>
-            </div>
-            {isEditing ? (
-              <TableBuilder
-                urlData={urlData}
+          {isEditing ? (
+            <TableBuilder
+              urlData={urlData}
+              decodeHTML={decodeHTML}
+              deleteFromList={deleteFromList}
+              isEditing={isEditing}
+            />
+          ) : (
+            <TableBuilder2
+              urlData={urlData}
+              decodeHTML={decodeHTML}
+              deleteFromList={deleteFromList}
+            />
+          )}
+          <div className='flex flex-col gap-3 p-2 my-8 md:hidden'>
+            {urlData.map((item) => (
+              <VideoCard
+                key={item.number}
+                item={item}
                 decodeHTML={decodeHTML}
                 deleteFromList={deleteFromList}
                 isEditing={isEditing}
               />
-            ) : (
-              <TableBuilder2
-                urlData={urlData}
-                decodeHTML={decodeHTML}
-                deleteFromList={deleteFromList}
-              />
-            )}
-            <div className='flex flex-col gap-3 p-2 my-8 md:hidden'>
-              {urlData.map((item) => (
-                <VideoCard
-                  key={item.number}
-                  item={item}
-                  decodeHTML={decodeHTML}
-                  deleteFromList={deleteFromList}
-                  isEditing={isEditing}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-      </main>
-    </>
+            ))}
+          </div>
+        </section>
+      )}
+    </main>
   )
 }
