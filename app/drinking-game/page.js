@@ -4,12 +4,16 @@ import React, { useEffect, useRef, useState } from 'react'
 import { BiUserVoice } from 'react-icons/bi'
 import { FiSettings } from 'react-icons/fi'
 import { Input, Spinner, Switch, Tooltip } from '@nextui-org/react'
-import { getCaptions, getRepeatedWords, getVideoInfo } from '@/libs/api'
-import { scrapeCaptionsAndSave } from '@/libs/api'
-import { useRouter } from 'next/router'
+import {
+  getCaptions,
+  getRepeatedWords,
+  getVideoInfo,
+  scrapeCaptionsAndSave,
+} from '../../libs/api'
+import { useParams, useRouter } from 'next/navigation'
 import { Toaster, toast } from 'react-hot-toast'
-import YouTubePlayer from '@/components/YouTubePlayer'
-import AnimatedCounter from '@/components/AnimatedCounter'
+import YouTubePlayer from '../../components/YouTubePlayer'
+import AnimatedCounter from '../../components/AnimatedCounter'
 
 const DrinkingGame = () => {
   const [videoId, setVideoId] = useState('')
@@ -33,6 +37,7 @@ const DrinkingGame = () => {
   const selectRef = useRef(null)
 
   const router = useRouter()
+  const params = useParams()
 
   const handleYoutubeUrlChange = (e) => {
     const str = e.target.value
@@ -96,13 +101,13 @@ const DrinkingGame = () => {
   }, [repeatedWords, dbCaptions, isFetched])
 
   useEffect(() => {
-    if (router.query?.v) {
-      const videoId = router.query?.v
+    if (params?.v) {
+      const videoId = params?.v
       if (videoId) {
         setVideoId(videoId)
       }
     }
-  }, [router.query])
+  }, [params])
 
   useEffect(() => {
     if (repeatedWords) {
@@ -124,7 +129,7 @@ const DrinkingGame = () => {
   }, [repeatedWords, videoId, isFetched])
 
   useEffect(() => {
-    if (videoId && router.query?.v !== videoId) {
+    if (videoId && params?.v !== videoId) {
       router.push(`/drinking-game?v=${videoId}`)
       setCounter(0)
       setCaptions(null)
@@ -145,7 +150,7 @@ const DrinkingGame = () => {
 
   useEffect(() => {
     if (isFetched && repeatedWords) {
-      const wordParam = router.query?.w
+      const wordParam = params?.w
       if (wordParam && !selectedWord) {
         const wordExists = repeatedWords.find(
           ([word, number]) => word === wordParam
@@ -156,7 +161,7 @@ const DrinkingGame = () => {
         }
       }
     }
-  }, [isFetched, repeatedWords, router.query, selectedWord])
+  }, [isFetched, repeatedWords, params, selectedWord])
 
   return (
     <>

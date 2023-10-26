@@ -1,17 +1,19 @@
-import supabase from '@/libs/supabase'
+import { useParams } from 'next/navigation'
+import supabase from '../../../libs/supabase'
 import Vote from './Vote'
+import { db } from '../../../libs/drizzle/db'
 
 async function getAllVotes(id) {
-  const allVotes = await supabase.from('votes').select().eq('poll', id)
-
-  return allVotes
+  const allVotes = await db.query.votes.findMany({
+    where: (vote, { eq }) => eq(vote.poll, id),
+  })
+  return { data: allVotes }
 }
 
 async function getOptions(id) {
   const poll = await supabase.from('polls').select().eq('id', id)
   let options
-
-  if (poll.data) {
+  if (poll.data.length > 0) {
     options = JSON.parse(poll.data[0].options)
   } else {
     options = {}
@@ -46,11 +48,11 @@ async function getInitialVoteCount({ allVotes, options }) {
   return initialVoteCount
 }
 
-const VotePage = async ({ id, options, allVotes, initialVoteCount }) => {
-  const { id } = useParams()
+const VotePage = async ({ params }) => {
+  const { id } = params
   const allVotes = await getAllVotes(id)
   const options = await getOptions(id)
-  const initialVoteCount = await getInitialVoteCount()
+  const initialVoteCount = await getInitialVoteCount({ allVotes, options })
   return (
     <section>
       <Vote

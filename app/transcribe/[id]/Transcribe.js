@@ -10,25 +10,8 @@ import {
   useDisclosure,
 } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
-import { generateCaptionsAndSave } from '@/libs/api'
-import TranscribePageModal from '@/components/TranscribePageModal'
-
-function stringify(obj) {
-  let cache = []
-  let str = JSON.stringify(obj, function (key, value) {
-    if (typeof value === 'object' && value !== null) {
-      if (cache.indexOf(value) !== -1) {
-        // Circular reference found, discard key
-        return
-      }
-      // Store value in our collection
-      cache.push(value)
-    }
-    return value
-  })
-  cache = null // reset the cache
-  return str
-}
+import { generateCaptionsAndSave } from '../../../libs/api'
+import TranscribePageModal from '../../../components/TranscribePageModal'
 
 const Transcribe = ({ videoId, videoInfo, captionsInfo }) => {
   const [isLoading, setIsLoading] = useState(false)

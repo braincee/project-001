@@ -1,9 +1,9 @@
 'use client'
 
 import { Spacer, Button, Spinner } from '@nextui-org/react'
-import VoteCard from '@/components/VoteCard'
+import VoteCard from '../../../components/VoteCard'
 import { useState } from 'react'
-import Api from '@/libs/api'
+import { addNewVote } from '../../../libs/api'
 
 export default function Vote({ id, options, allVotes, initialVoteCount }) {
   const { data } = allVotes
@@ -18,7 +18,7 @@ export default function Vote({ id, options, allVotes, initialVoteCount }) {
   const handleVoteCreation = async () => {
     if (pickedOption) {
       setLoading(true)
-      await Api.addNewVote({ pickedOption, pollId: id })
+      await addNewVote({ pickedOption, pollId: id })
       setVotesLength(data.length + 1)
       setVoted(true)
       setVoteText('VOTED')

@@ -12,8 +12,10 @@ export default function ThemeRegistry(props) {
           title='YT Playlist Creator & Sharer'
           description='This website helps you to create a youtube playlist'
         />
-        <Header />
-        {children}
+        <section className='flex flex-col gap-5'>
+          <Header />
+          {children}
+        </section>
       </NextUIProvider>
     </section>
   )

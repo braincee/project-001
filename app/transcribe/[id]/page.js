@@ -1,8 +1,25 @@
-import supabase from '@/libs/supabase'
 import axios from 'axios'
 import Transcribe from './Transcribe'
+import supabase from '../../../libs/supabase'
 
 const ApiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY
+
+function stringify(obj) {
+  let cache = []
+  let str = JSON.stringify(obj, function (key, value) {
+    if (typeof value === 'object' && value !== null) {
+      if (cache.indexOf(value) !== -1) {
+        // Circular reference found, discard key
+        return
+      }
+      // Store value in our collection
+      cache.push(value)
+    }
+    return value
+  })
+  cache = null // reset the cache
+  return str
+}
 
 async function getVideoInfo(id) {
   let info = await axios.get(
@@ -28,8 +45,8 @@ async function getCaptionsInfo(id) {
   return data[0]
 }
 
-const TranscribePage = async () => {
-  const { id } = useParams()
+const TranscribePage = async ({ params }) => {
+  const { id } = params
   const videoInfo = await getVideoInfo(id)
   const captionsInfo = await getCaptionsInfo(id)
   return (
