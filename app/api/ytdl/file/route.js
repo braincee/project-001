@@ -33,7 +33,8 @@ const generateFile = async ({ url, audioFormat, videoId }) => {
 }
 
 export async function GET(req) {
-  const { filePath } = req.json()
+  const { searchParams } = new URL(req.url)
+  const filePath = searchParams.get('filePath')
   fs.unlinkSync(filePath)
 
   return Response.json({ response: 'Success' })

@@ -1,7 +1,8 @@
 import supabase from '@/libs/supabase'
+import { db } from '../../../../libs/drizzle/db'
 
 export async function GET() {
-  const { data, error } = await supabase.from('youtuber').select()
+  const response = await db.query.youtuber.findMany()
 
-  return Response.json(data ?? error)
+  return Response.json(response)
 }

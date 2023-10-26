@@ -1,10 +1,14 @@
-import supabase from '@/libs/supabase'
+import { db } from '../../../libs/drizzle/db'
+import { polls } from '../../../libs/drizzle/schema'
 
 export async function POST(req) {
   const { options, pollId } = req.json()
-  const { data, error } = await supabase
-    .from('polls')
-    .insert({ id: pollId, options: JSON.stringify(options) })
+  const date = new Date()
+  const response = await db.insert(polls).values({
+    id: pollId,
+    options: JSON.stringify(options),
+    createdAt: date,
+  })
 
-  return Response.json(data ?? error)
+  return Response.json(response)
 }

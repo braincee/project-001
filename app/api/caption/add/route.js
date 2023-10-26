@@ -1,4 +1,5 @@
-import supabase from '@/libs/supabase'
+import { db } from '../../../../libs/drizzle/db'
+import { caption } from '../../../../libs/drizzle/schema'
 
 export async function POST(req) {
   const {
@@ -11,14 +12,17 @@ export async function POST(req) {
       transcribedWithLyrics,
     },
   } = req.json()
-  const { data, error } = await supabase.from('caption').insert({
+
+  const date = new Date()
+  const response = await db.insert(caption).values({
     videoId,
     videoTitle,
     thumbnail,
     youTuberId,
     captionChunks,
     transcribedWithLyrics,
+    createdAt: date,
   })
 
-  return Response.json(data ?? error)
+  return Response.json(response)
 }

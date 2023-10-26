@@ -1,11 +1,11 @@
-import supabase from '@/libs/supabase'
+import { db } from '../../../../libs/drizzle/db'
 
 export async function GET(req) {
-  const { id } = req.json()
-  const { data, error } = await supabase
-    .from('caption')
-    .select()
-    .eq('videoId', id)
+  const { searchParams } = new URL(req.url)
+  const id = searchParams.get('id')
+  const response = await db.query.caption.findMany({
+    where: (caption, { eq }) => eq(caption.videoId, id),
+  })
 
-  return Response.json(data ?? error)
+  return Response.json(response)
 }

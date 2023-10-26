@@ -4,7 +4,7 @@ import { json, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 export const caption = pgTable('caption', {
   videoId: text('videoId').primaryKey().unique().notNull(),
   thumbnail: text('thumbnail').notNull(),
-  youtuberId: text('youtuberId').notNull(),
+  youTuberId: text('youTuberId').notNull(),
   transcribedWithLyrics: text('transcribedWithLyrics'),
   captionChunks: text('captionChunks').notNull(),
   videoTitle: text('videoTitle').notNull(),
@@ -14,7 +14,7 @@ export const caption = pgTable('caption', {
 export const polls = pgTable('polls', {
   id: uuid('id').primaryKey().notNull(),
   options: json('options'),
-  enabled: text('enabled').notNull(),
+  enabled: text('enabled').default(true),
   createdAt: timestamp('created_at', { mode: 'date' }).default(sql`now()`),
 })
 

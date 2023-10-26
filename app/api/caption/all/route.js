@@ -1,7 +1,7 @@
-import supabase from '@/libs/supabase'
+import { db } from '../../../../libs/drizzle/db'
 
 export async function GET() {
-  const { data, error } = await supabase.from('caption').select()
+  const response = await db.query.caption.findMany()
 
-  return Response.json(data ?? error)
+  return Response.json(response)
 }
