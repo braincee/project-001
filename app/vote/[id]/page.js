@@ -14,11 +14,11 @@ async function getOptions(id) {
   const poll = await supabase.from('polls').select().eq('id', id)
   let options
   if (poll.data.length > 0) {
-    options = JSON.parse(poll.data[0].options)
+    options = poll.data[0].options
   } else {
     options = {}
   }
-  return options
+  return JSON.parse(options)
 }
 
 async function getInitialVoteCount({ allVotes, options }) {
@@ -57,7 +57,7 @@ const VotePage = async ({ params }) => {
     <section>
       <Vote
         id={id}
-        options={options}
+        options={JSON.parse(options)}
         allVotes={allVotes}
         initialVoteCount={initialVoteCount}
       />

@@ -55,9 +55,7 @@ export default function ThumbnailsPage() {
     }
     await addNewPoll({ options, pollId })
     setLoading(false)
-    router.push({
-      pathname: `/vote/${pollId}`,
-    })
+    router.push(`/vote/${pollId}`)
   }
 
   useEffect(() => {

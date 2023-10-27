@@ -30,8 +30,6 @@ export default function Home() {
   const router = useRouter()
   const params = useParams()
 
-  console.log(params)
-
   const isValidHttpUrl = (string) => {
     try {
       const newUrl = new URL(string)
@@ -162,18 +160,26 @@ export default function Home() {
 
     copy(shareUrl)
 
+    const createQueryString = (name, value) => {
+      const params = new URLSearchParams()
+      console.log(name)
+      params.set(name, value)
+
+      return params.toString()
+    }
+
     router.push(
-      {
-        pathname: '/',
-        query: {
-          list: lists,
-          title: stringTitle,
-          description: stringDescription,
-          channelTitle: stringChannelTitle,
-          publishedAt: stringPublishedAt,
-        },
-      },
-      `/?list=${lists}`
+      '/' +
+        '?' +
+        createQueryString('list', lists) +
+        '&' +
+        createQueryString('title', stringTitle) +
+        '&' +
+        createQueryString('description', stringDescription) +
+        '&' +
+        createQueryString('channelTitle', stringChannelTitle) +
+        '&' +
+        createQueryString('publishedAt', stringPublishedAt)
     )
   }
 

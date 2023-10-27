@@ -14,6 +14,7 @@ export default function Vote({ id, options, allVotes, initialVoteCount }) {
   const [voteText, setVoteText] = useState('VOTE')
   const [disabled, setDisabled] = useState(false)
   const [loading, setLoading] = useState(false)
+  console.log(options)
 
   const handleVoteCreation = async () => {
     if (pickedOption) {
