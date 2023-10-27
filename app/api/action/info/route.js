@@ -27,7 +27,8 @@ function stringify(obj) {
 }
 
 export async function GET(req) {
-  const { videoId } = await req.json()
+  const { searchParams } = new URL(req.url)
+  const videoId = searchParams.get('videoId')
   const response = await getInfo({ videoId })
   return Response.json({ response: stringify(response) })
 }

@@ -39,7 +39,7 @@
     "react-youtube": "^10.1.0",
     "supabase": "^1.74.2",
     "uuid": "^9.0.0",
-    "youtube-captions-scraper": "^2.0.0",
+    "youtube-captions-scraper": "^2.0.1",
     "youtubei": "^1.1.2",
     "ytdl-core": "^4.11.4"
   },

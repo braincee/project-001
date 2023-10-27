@@ -39,6 +39,8 @@ const DrinkingGame = () => {
   const router = useRouter()
   const params = useParams()
 
+  console.log(areCaptionsSaved)
+
   const handleYoutubeUrlChange = (e) => {
     const str = e.target.value
     // regex for youtube urls with v=VIDEO_ID
@@ -227,9 +229,7 @@ const DrinkingGame = () => {
                     <BiUserVoice
                       size={35}
                       onClick={() => {
-                        router.push({
-                          pathname: `/transcribe/${videoId}`,
-                        })
+                        router.push(`/transcribe/${videoId}`)
                       }}
                       className='hover:cursor-pointer'
                     />

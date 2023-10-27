@@ -224,7 +224,8 @@ export const scrapeCaptionsAndSave = async ({ videoId }) => {
     }
 
     const caption = await addCaption(data)
-    return caption
+
+    // return caption
   } catch (error) {
     throw error
   }
@@ -243,7 +244,6 @@ export const generateCaptionsAndSave = async ({
     })
     const vidInfo = JSON.parse(res)
 
-    console.log('transcribeWithLyrics??? >>> ', transcribeWithLyrics)
     if (!vidInfo.data.items) return <Error statusCode={'404'} />
     const description = vidInfo.data.items[0]?.snippet?.description
     const categoryId = vidInfo.data.items[0]?.snippet?.categoryId // https://gist.github.com/dgp/1b24bf2961521bd75d6c
@@ -288,8 +288,6 @@ export const generateCaptionsAndSave = async ({
 
     let audioFormat = await getAudioFormat({ videoId, categoryId })
 
-    console.log('audioFormat ', audioFormat.data.response)
-
     const files = await generateFile({
       url,
       audioFormat: audioFormat.data.response,
@@ -302,15 +300,13 @@ export const generateCaptionsAndSave = async ({
     let lyrics = ''
 
     if (title && categoryId == '10' && transcribeWithLyrics) {
-      console.log('lyrics')
       try {
         const song = await getSong({ title, channelTitle })
 
         let songUrl = song.data.response.hits[0].result.url
         let doesArtistMatchLyrics =
           song.data.response.hits[0].result.artist_names.includes(channelTitle)
-        console.log('doesArtistMatchLyrics >>> ', doesArtistMatchLyrics)
-        console.log('songUrl >>> ', songUrl)
+
         if (songUrl && doesArtistMatchLyrics) {
           const lyricsResponse = await axios({
             method: 'GET',
@@ -354,8 +350,6 @@ export const generateCaptionsAndSave = async ({
           const filteredText5 = filteredText4.filter((chunk) => chunk !== '')
 
           lyrics = filteredText5.join(' ')
-
-          console.log('lyrics >>> ', lyrics)
         }
       } catch (error) {
         console.error('error >>> ', error)
@@ -451,27 +445,29 @@ export const getCaptionsInfo = async ({ id }) => {
 export const getRepeatedWords = async ({ id }) => {
   const caption = await getCaption({ id })
 
-  const captions = JSON.parse(caption[0]?.captionChunks) || []
+  if (caption.length > 0) {
+    const captions = JSON.parse(caption[0]?.captionChunks) || []
 
-  const cleanedCaptions = captions.map((caption) => {
-    const text = caption.text
-      .split(/\s+/)
-      .map((word) => {
-        return word
-          .replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')
-          .replace(/(\r\n|\n|\r)/gm, ' ')
-          .trim()
-          .toLowerCase()
-      })
-      .join(' ')
+    const cleanedCaptions = captions.map((caption) => {
+      const text = caption.text
+        .split(/\s+/)
+        .map((word) => {
+          return word
+            .replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')
+            .replace(/(\r\n|\n|\r)/gm, ' ')
+            .trim()
+            .toLowerCase()
+        })
+        .join(' ')
 
-    return {
-      ...caption,
-      text: text,
-    }
-  })
+      return {
+        ...caption,
+        text: text,
+      }
+    })
 
-  return countRepeatedWords(cleanedCaptions)
+    return countRepeatedWords(cleanedCaptions)
+  }
 }
 
 export const getCaptions = async ({ id, chosenWord }) => {

@@ -1,4 +1,3 @@
-import { useParams } from 'next/navigation'
 import supabase from '../../../libs/supabase'
 import Vote from './Vote'
 import { db } from '../../../libs/drizzle/db'
