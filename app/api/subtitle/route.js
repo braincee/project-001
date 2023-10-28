@@ -10,7 +10,6 @@ const fetchSubtitles = async ({
       videoID: videoId,
       lang: defaultLanguage || 'en',
     })
-    console.log('My res', response)
     return response
   } catch (err) {
     console.error(err)

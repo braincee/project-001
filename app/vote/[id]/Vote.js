@@ -47,18 +47,19 @@ export default function Vote({ id, options, allVotes, initialVoteCount }) {
       </h1>
       <section className='mt-8 w-full'>
         <div className='flex md:flex-row flex-col justify-center px-10 md:px-0 gap-10 md:gap-16'>
-          {options.map((imageUrl, index) => (
-            <VoteCard
-              key={index}
-              imageUrl={imageUrl}
-              options={options}
-              index={index}
-              votesLength={votesLength}
-              setPickedOption={setPickedOption}
-              voteCount={voteCount}
-              voted={voted}
-            />
-          ))}
+          {options.length > 0 &&
+            options.map((imageUrl, index) => (
+              <VoteCard
+                key={index}
+                imageUrl={imageUrl}
+                options={options}
+                index={index}
+                votesLength={votesLength}
+                setPickedOption={setPickedOption}
+                voteCount={voteCount}
+                voted={voted}
+              />
+            ))}
         </div>
         <Spacer y={10} />
         <div className='flex justify-center'>
