@@ -5,10 +5,10 @@ dotenv.config({
 })
 
 export default {
-  schema: './libs/drizzle/schema.js',
-  out: './libs/drizzle/schema-out.js',
+  schema: './db/schema.ts',
+  out: './db/schema-out.ts',
   dbCredentials: {
-    connectionString: process.env.NEXT_POSTGRESQL_URI,
+    connectionString: process.env.POSTGRESQL_URI,
   },
   driver: 'pg',
 }

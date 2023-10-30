@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
-import { db } from '../../../libs/drizzle/db'
-import { votes } from '../../../libs/drizzle/schema'
+import { db } from '../../../db/drizzle'
+import { votes } from '../../../db/schema'
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url)

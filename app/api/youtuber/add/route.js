@@ -1,5 +1,5 @@
-import { db } from '../../../../libs/drizzle/db'
-import { youtuber } from '../../../../libs/drizzle/schema'
+import { db } from '../../../../db/drizzle'
+import { youtuber } from '../../../../db/schema'
 
 export async function POST(req) {
   const {

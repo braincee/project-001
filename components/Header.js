@@ -3,7 +3,7 @@ import React from 'react'
 import { Navbar, NavbarContent, NavbarItem } from '@nextui-org/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import useDarkMode from './useDarkMode'
+import useDarkMode from '@/useDarkMode'
 
 const Header = () => {
   const router = useRouter()

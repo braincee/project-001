@@ -1,5 +1,5 @@
 import Vote from './Vote'
-import { db } from '../../../libs/drizzle/db'
+import { db } from '../../../db/drizzle'
 
 async function getAllVotes(id) {
   const allVotes = await db.query.votes.findMany({

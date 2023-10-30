@@ -1,28 +1,26 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const config = {
   reactStrictMode: true,
+  experimental: {
+    serverActions: true,
+  },
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    config.externals.push({
+      'utf-8-validate': 'commonjs utf-8-validate',
+      bufferutil: 'commonjs bufferutil',
+    })
+    return config
+  },
+
+  /**
+   * If you are using `appDir` then you must comment the below `i18n` config out.
+   *
+   * @see https://github.com/vercel/next.js/issues/41980
+   */
+  // i18n: {
+  //   locales: ['en'],
+  //   defaultLocale: 'en',
+  // },
 }
 
-module.exports = nextConfig
-
-module.exports = {
-  webpack: (config, { isServer }) => {
-    // Add your custom webpack configuration here
-    config.module.rules.push({
-      test: /\.mp3$/,
-      use: [
-        {
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'assets/audio/', // Adjust the output path as needed
-            publicPath: '/_next/static/audio/', // Adjust the public path as needed
-          },
-        },
-      ],
-    });
-
-    // Important: return the modified config
-    return config;
-  },
-};
+export default config

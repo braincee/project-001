@@ -1,5 +1,5 @@
-import { db } from '../../../libs/drizzle/db'
-import { polls } from '../../../libs/drizzle/schema'
+import { db } from '../../../db/drizzle'
+import { polls } from '../../../db/schema'
 
 export async function POST(req) {
   const { options, pollId } = await req.json()

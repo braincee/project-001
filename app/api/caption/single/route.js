@@ -1,4 +1,4 @@
-import { db } from '../../../../libs/drizzle/db'
+import { db } from '../../../../db/drizzle'
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url)

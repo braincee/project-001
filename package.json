@@ -11,7 +11,6 @@
     "db:generate": "drizzle-kit generate:pg --config=drizzle.config.js"
   },
   "dependencies": {
-    "@next/font": "13.4.2",
     "@nextui-org/react": "0.0.0-dev-v2-20230505232443",
     "@supabase/supabase-js": "^2.26.0",
     "axios": "^1.4.0",
@@ -44,6 +43,7 @@
     "ytdl-core": "^4.11.4"
   },
   "devDependencies": {
+    "@types/react": "18.2.33",
     "autoprefixer": "^10.4.14",
     "drizzle-kit": "^0.19.13",
     "file-loader": "^6.2.0",
