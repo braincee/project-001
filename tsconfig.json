@@ -34,7 +34,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "libs/api.js", "components/ThumbnailsCard.js"  ],
   "exclude": [
     "node_modules"
   ]

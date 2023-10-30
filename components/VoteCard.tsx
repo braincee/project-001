@@ -1,16 +1,23 @@
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
-export default function VoteCard({
-  options,
-  index,
-  setPickedOption,
-  votesLength,
-  voteCount,
-  voted,
-}) {
-  const [voteSection, setVoteSection] = useState()
+interface VoteCardProps {
+  options: any[]
+  index: number
+  setPickedOption: (value: any) => void
+  votesLength: number
+  voteCount: {
+    first: number
+    second: number
+  }
+  voted: boolean
+}
 
-  const handleVoteChange = (e) => {
+export default function VoteCard(props: VoteCardProps) {
+  const { options, index, setPickedOption, votesLength, voteCount, voted } =
+    props
+  const [voteSection, setVoteSection] = useState<ReactNode>()
+
+  const handleVoteChange = (e: any) => {
     setPickedOption(e.target.value)
   }
 

@@ -1,20 +1,19 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { FormEvent, useEffect, useState } from 'react'
 import { Input, Button, Spacer, CircularProgress } from '@nextui-org/react'
 import { FaShareAlt } from 'react-icons/fa'
 import { useParams, useRouter } from 'next/navigation'
-import SearchCard from '../components/SearchCard'
-import SkeletonBuilder from '../components/SkeletonBuilder'
-import VideoCard from '../components/VideoCard'
-import TableBuilder from '../components/TableBuilder'
-import TableBuilder2 from '../components/TableBuilder2'
 import copy from 'copy-to-clipboard'
-import { getSearchVideos, getVideo } from '../libs/api'
+import SearchCard from '@/components/SearchCard'
+import { getSearchVideos, getVideo } from '@/libs/api'
+import SkeletonBuilder from '@/components/SkeletonBuilder'
+import TableBuilder from '@/components/TableBuilder'
+import VideoCard from '@/components/VideoCard'
 
 export default function Home() {
   const [inputValue, setInputValue] = useState('')
-  const [urlData, setUrlData] = useState([])
+  const [urlData, setUrlData] = useState<any[]>([])
   const [query, setQuery] = useState('')
   const [isvalid, setIsvalid] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
@@ -30,9 +29,9 @@ export default function Home() {
   const router = useRouter()
   const params = useParams()
 
-  const isValidHttpUrl = (string) => {
+  const isValidHttpUrl = (value: string) => {
     try {
-      const newUrl = new URL(string)
+      const newUrl = new URL(value)
       return (
         newUrl.protocol === 'https:' &&
         (newUrl.host === 'www.youtube.com' || newUrl.host === 'youtube.com')
@@ -42,18 +41,19 @@ export default function Home() {
     }
   }
 
-  const handleChange = (e) => {
-    setInputValue(e.target.value)
+  const handleChange = (e: FormEvent) => {
+    const target = e.target as HTMLInputElement
+    setInputValue(target.value)
     try {
-      new URL(e.target.value)
-      if (isValidHttpUrl(e.target.value)) {
+      new URL(target.value)
+      if (isValidHttpUrl(target.value)) {
         setIsDisabled(false)
       } else {
         setIsDisabled(true)
-        setQuery(e.target.value)
+        setQuery(target.value)
       }
     } catch {
-      setQuery(e.target.value)
+      setQuery(target.value)
     }
   }
 
@@ -62,13 +62,13 @@ export default function Home() {
   }
 
   const addToListFromSearch = (
-    videoId,
-    title,
-    description,
-    channelTitle,
-    publishedAt
+    videoId: string,
+    title: string,
+    description: string,
+    channelTitle: string,
+    publishedAt: string
   ) => {
-    setUrlData((prevUrlData) => {
+    setUrlData((prevUrlData: any[]) => {
       const newItem = {
         number: number + 1,
         id: videoId,
@@ -82,7 +82,7 @@ export default function Home() {
     setNumber((prevNumber) => prevNumber + 1)
   }
 
-  const deleteFromList = (index) => {
+  const deleteFromList = (index: number) => {
     setUrlData((items) => {
       const newItems = items.filter((item) => item.number != index)
       setNumber(newItems.length)
@@ -99,8 +99,8 @@ export default function Home() {
     })
   }
 
-  const truncate = (string, length) => {
-    return string.length > length ? `${string.substr(0, length)}...` : string
+  const truncate = (item: string, length: number) => {
+    return item.length > length ? `${item.substr(0, length)}...` : item
   }
 
   const addToListFromInput = async () => {
@@ -133,10 +133,8 @@ export default function Home() {
     setInputValue('')
   }
 
-  const handleShare = (e) => {
-    if (e) {
-      setShareStatus('pressed')
-    }
+  const handleShare = () => {
+    setShareStatus('pressed')
     let lists = ''
     urlData.forEach((url, index) => {
       if (index + 1 === urlData.length) {
@@ -160,9 +158,8 @@ export default function Home() {
 
     copy(shareUrl)
 
-    const createQueryString = (name, value) => {
+    const createQueryString = (name: string, value: string) => {
       const params = new URLSearchParams()
-      console.log(name)
       params.set(name, value)
 
       return params.toString()
@@ -194,7 +191,7 @@ export default function Home() {
       const {
         data: { response },
       } = await getSearchVideos(query)
-      const videos = response.items.map((item) => {
+      const videos = response.items.map((item: any) => {
         return {
           id: item.id.videoId,
           title: item.snippet.title,
@@ -217,7 +214,7 @@ export default function Home() {
     handleShare()
   }
 
-  const decodeHTML = (code) => {
+  const decodeHTML = (code: string) => {
     let text = document.createElement('textarea')
     text.innerHTML = code
     return text.value
@@ -251,15 +248,16 @@ export default function Home() {
   }, [inputValue])
 
   useEffect(() => {
-    if (editStatus == 'pressed') {
+    if (editStatus === 'pressed') {
       if (isEditing) {
-        finishAndShare()
+        setIsEditing(!isEditing)
         setEditStatus('')
       } else {
         setIsEditing(!isEditing)
         setEditStatus('')
       }
     } else if (shareStatus == 'pressed') {
+      finishAndShare()
       setIsEditing(false)
       setShareStatus('')
     }
@@ -353,13 +351,13 @@ export default function Home() {
               urlData={urlData}
               decodeHTML={decodeHTML}
               deleteFromList={deleteFromList}
-              isEditing={isEditing}
+              action={true}
             />
           ) : (
-            <TableBuilder2
+            <TableBuilder
               urlData={urlData}
               decodeHTML={decodeHTML}
-              deleteFromList={deleteFromList}
+              action={false}
             />
           )}
           <div className='flex flex-col gap-3 p-2 my-8 md:hidden'>

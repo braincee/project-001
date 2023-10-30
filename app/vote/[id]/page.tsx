@@ -1,15 +1,15 @@
-import Vote from './Vote'
-import { db } from '../../../db/drizzle'
+import Vote from '@/components/Vote'
+import { db } from '@/db/drizzle'
 
-async function getAllVotes(id) {
+async function getAllVotes(id: string) {
   const allVotes = await db.query.votes.findMany({
     where: (vote, { eq }) => eq(vote.poll, id),
   })
   return { data: allVotes }
 }
 
-async function getOptions(id) {
-  const poll = await db.query.polls.findMany({
+async function getOptions(id: string) {
+  const poll: any[] = await db.query.polls.findMany({
     where: (poll, { eq }) => eq(poll.id, id),
   })
 
@@ -23,7 +23,13 @@ async function getOptions(id) {
   return options
 }
 
-async function getInitialVoteCount({ allVotes, options }) {
+async function getInitialVoteCount({
+  allVotes,
+  options,
+}: {
+  allVotes: { data: any[] }
+  options: any[]
+}) {
   let initialVoteCount = {
     first: 0,
     second: 0,
@@ -50,7 +56,7 @@ async function getInitialVoteCount({ allVotes, options }) {
   return initialVoteCount
 }
 
-const VotePage = async ({ params }) => {
+const VotePage = async ({ params }: { params: { id: string } }) => {
   const { id } = params
   const allVotes = await getAllVotes(id)
   const options = await getOptions(id)

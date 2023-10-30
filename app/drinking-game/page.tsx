@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { FormEvent, useEffect, useRef, useState } from 'react'
 import { BiUserVoice } from 'react-icons/bi'
 import { FiSettings } from 'react-icons/fi'
 import { Input, Spinner, Switch, Tooltip } from '@nextui-org/react'
@@ -9,40 +9,41 @@ import {
   getRepeatedWords,
   getVideoInfo,
   scrapeCaptionsAndSave,
-} from '../../libs/api'
+} from '@/libs/api'
 import { useParams, useRouter } from 'next/navigation'
 import { Toaster, toast } from 'react-hot-toast'
-import YouTubePlayer from '../../components/YouTubePlayer'
-import AnimatedCounter from '../../components/AnimatedCounter'
+import YouTubePlayer from '@/components/YouTubePlayer'
+import AnimatedCounter from '@/components/AnimatedCounter'
 
 const DrinkingGame = () => {
-  const [videoId, setVideoId] = useState('')
-  const [ascOrder, setAscOrder] = useState(false)
-  const [selectedWord, setSelectedWord] = useState('')
-  const [isFetchingRptWrds, setIsFetchingRptWrds] = useState(false)
-  const [isFetched, setIsFetched] = useState(false)
-  const [captions, setCaptions] = useState(null)
-  const [repeatedWords, setRepeatedWords] = useState(null)
-  const [areCaptionsSaved, setAreCaptionsSaved] = useState(false)
-  const [dbCaptions, setDbCaptions] = useState(null)
+  const [videoId, setVideoId] = useState<string>('')
+  const [ascOrder, setAscOrder] = useState<boolean>(false)
+  const [selectedWord, setSelectedWord] = useState<string>('')
+  const [isFetchingRptWrds, setIsFetchingRptWrds] = useState<boolean>(false)
+  const [isFetched, setIsFetched] = useState<boolean>(false)
+  const [captions, setCaptions] = useState<any[]>([])
+  const [repeatedWords, setRepeatedWords] = useState<any[]>([])
+  const [areCaptionsSaved, setAreCaptionsSaved] = useState<boolean>(false)
+  const [dbCaptions, setDbCaptions] = useState<any[]>([null])
   const [counter, setCounter] = useState(0)
-  const [videoInfo, setVideoInfo] = useState(null)
+  const [videoInfo, setVideoInfo] = useState<any>(null)
   const [isDisabled, setIsDisabled] = useState(true)
-  const [poo, setPoo] = useState(false)
-  const [showOptions, setShowOptions] = useState(false)
-  const [showToast, setShowToast] = useState(false)
-  const [isClinkSound, setIsClinkSound] = useState(true)
+  const [poo, setPoo] = useState<boolean>(false)
+  const [showOptions, setShowOptions] = useState<boolean>(false)
+  const [showToast, setShowToast] = useState<boolean>(false)
+  const [isClinkSound, setIsClinkSound] = useState<boolean>(true)
 
-  const inputRef = useRef(null)
-  const selectRef = useRef(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const selectRef = useRef<HTMLSelectElement>(null)
 
   const router = useRouter()
   const params = useParams()
 
   console.log(areCaptionsSaved)
 
-  const handleYoutubeUrlChange = (e) => {
-    const str = e.target.value
+  const handleYoutubeUrlChange = (e: FormEvent) => {
+    const target = e.target as HTMLInputElement
+    const str = target.value
     // regex for youtube urls with v=VIDEO_ID
     const regex = /(?:\?v=)([a-zA-Z0-9_-]{11})/
     const match = str.match(regex)
@@ -64,16 +65,19 @@ const DrinkingGame = () => {
     }
   }
 
-  const handleWordSelect = (e) => {
-    setSelectedWord(e.target.value)
+  const handleWordSelect = (e: FormEvent) => {
+    const target = e.target as HTMLInputElement
+    setSelectedWord(target.value)
   }
 
   useEffect(() => {
     if (videoId && areCaptionsSaved) {
       getRepeatedWords({ id: videoId }).then((res) => {
-        setRepeatedWords(res)
-        setIsDisabled(false)
-        setIsFetched(true)
+        if (res) {
+          setRepeatedWords(res)
+          setIsDisabled(false)
+          setIsFetched(true)
+        }
       })
     }
   }, [videoId, areCaptionsSaved])
@@ -90,7 +94,9 @@ const DrinkingGame = () => {
   useEffect(() => {
     if (videoId && areCaptionsSaved) {
       getVideoInfo({ id: videoId }).then((res) => {
-        setVideoInfo(res)
+        if (res) {
+          setVideoInfo(res)
+        }
       })
     }
   }, [videoId, areCaptionsSaved])
@@ -103,8 +109,8 @@ const DrinkingGame = () => {
   }, [repeatedWords, dbCaptions, isFetched])
 
   useEffect(() => {
-    if (params?.v) {
-      const videoId = params?.v
+    if (params.v) {
+      const videoId = params.v as string
       if (videoId) {
         setVideoId(videoId)
       }
@@ -134,7 +140,7 @@ const DrinkingGame = () => {
     if (videoId && params?.v !== videoId) {
       router.push(`/drinking-game?v=${videoId}`)
       setCounter(0)
-      setCaptions(null)
+      setCaptions([])
       setSelectedWord('')
       if (!repeatedWords) {
         setIsFetchingRptWrds(true)
@@ -152,7 +158,7 @@ const DrinkingGame = () => {
 
   useEffect(() => {
     if (isFetched && repeatedWords) {
-      const wordParam = params?.w
+      const wordParam = params?.w as string
       if (wordParam && !selectedWord) {
         const wordExists = repeatedWords.find(
           ([word, number]) => word === wordParam
@@ -222,7 +228,6 @@ const DrinkingGame = () => {
                 <Tooltip
                   content="If captions don't exist, you can generate them using OpenAI's Whisper API"
                   placement='bottom'
-                  size='lg'
                   radius='md'
                 >
                   <div className='rounded-lg border border-gray-300 p-1'>
@@ -301,7 +306,6 @@ const DrinkingGame = () => {
                 captions={captions}
                 chosenWord={selectedWord}
                 videoId={videoId}
-                selectRef={selectRef}
                 showToast={showToast}
                 isClinkSound={isClinkSound}
               />
@@ -309,7 +313,7 @@ const DrinkingGame = () => {
           </div>
         </div>
         <div className='mt-4 text-2xl flex'>
-          <p>{counter > 0 ? counter : ''}</p>
+          {/* <p>{counter > 0 ? counter : ''}</p> */}
           <AnimatedCounter
             counter={counter}
             emoji={

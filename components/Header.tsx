@@ -1,25 +1,30 @@
 'use client'
 import React from 'react'
-import { Navbar, NavbarContent, NavbarItem } from '@nextui-org/react'
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+} from '@nextui-org/react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import useDarkMode from '@/useDarkMode'
+import { usePathname } from 'next/navigation'
+import useDarkMode from '@/libs/useDarkMode'
 
 const Header = () => {
-  const router = useRouter()
-  const [colorTheme, setTheme] = useDarkMode()
+  const pathname = usePathname()
+  const { colorTheme, setTheme } = useDarkMode()
 
   return (
-    <Navbar active={router.pathname} brand='YT Playlist Creator & Sharer'>
-      <NavbarContent variant='highlight'>
-        <NavbarItem
-          className='h-full'
-          isActive={router.pathname == '/' && true}
-        >
+    <Navbar>
+      <NavbarBrand>
+        <p>YT Playlist Creator & Sharer</p>
+      </NavbarBrand>
+      <NavbarContent>
+        <NavbarItem className='h-full' isActive={pathname == '/' && true}>
           <Link
             href='/'
             className={`h-full flex items-center text-primary ${
-              router.pathname == '/' && 'border-b-3 border-primary'
+              pathname == '/' && 'border-b-3 border-primary'
             }`}
           >
             Home
@@ -27,13 +32,12 @@ const Header = () => {
         </NavbarItem>
         <NavbarItem
           className='h-full'
-          isActive={router.pathname == '/thumbnails' && true}
-          href='/thumbnails'
+          isActive={pathname == '/thumbnails' && true}
         >
           <Link
             href='/thumbnails'
             className={`h-full flex items-center text-primary ${
-              router.pathname == '/thumbnails' && 'border-b-3 border-primary'
+              pathname == '/thumbnails' && 'border-b-3 border-primary'
             }`}
           >
             Thumbnails
@@ -41,13 +45,12 @@ const Header = () => {
         </NavbarItem>
         <NavbarItem
           className='h-full'
-          isActive={router.pathname == '/drinking-game' && true}
-          href='/drinking-game'
+          isActive={pathname == '/drinking-game' && true}
         >
           <Link
             href='/drinking-game'
             className={`h-full flex items-center text-primary ${
-              router.pathname == '/drinking-game' && 'border-b-3 border-primary'
+              pathname == '/drinking-game' && 'border-b-3 border-primary'
             }`}
           >
             Drinking Game

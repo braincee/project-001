@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Input, Spacer, Spinner, Switch } from '@nextui-org/react'
-import HomepageCard from '../../components/HompageCard'
-import RelatedCard from '../../components/RelatedCard'
 import numbro from 'numbro'
 import { v4 as uuidv4 } from 'uuid'
-import { addNewPoll, addToPollsStorage, getFilePublicURL } from '../../libs/api'
+import { addNewPoll, addToPollsStorage, getFilePublicURL } from '@/libs/api'
+import HomepageCard from '@/components/HompageCard'
+import RelatedCard from '@/components/RelatedCard'
 
 export default function ThumbnailsPage() {
   const [titleValue, setTitleValue] = useState('')
@@ -22,12 +22,14 @@ export default function ThumbnailsPage() {
   const [files, setFiles] = useState([])
   const router = useRouter()
 
-  const handleTitleChange = (e) => {
-    setTitleValue(e.target.value)
+  const handleTitleChange = (e: FormEvent) => {
+    const target = e.target as HTMLInputElement
+    setTitleValue(target.value)
   }
 
-  const handleNameChange = (e) => {
-    setChannelName(e.target.value)
+  const handleNameChange = (e: FormEvent) => {
+    const target = e.target as HTMLInputElement
+    setChannelName(target.value)
   }
 
   const handleViewedToggle = () => {
@@ -94,7 +96,7 @@ export default function ThumbnailsPage() {
             <div className='flex justify-between w-full md:w-3/5 px-4 md:px-0'>
               <p>Viewed</p>
               <Switch
-                checked={isViewedEnabled}
+                isSelected={isViewedEnabled}
                 onChange={handleViewedToggle}
                 color='primary'
                 size='xl'
@@ -103,7 +105,7 @@ export default function ThumbnailsPage() {
             <div className='flex justify-between w-full md:w-3/5 px-4 md:px-0'>
               <p>Toggle new badge</p>
               <Switch
-                checked={isNewBadgeEnabled}
+                isSelected={isNewBadgeEnabled}
                 onChange={handleNewBadgeToggle}
                 color='primary'
                 size='xl'
@@ -142,7 +144,6 @@ export default function ThumbnailsPage() {
                   spaceSeparated: false,
                   average: true,
                 })}
-                setViews={setViews}
                 setFiles={setFiles}
                 files={files}
               />

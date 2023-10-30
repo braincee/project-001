@@ -10,11 +10,29 @@ import {
   useDisclosure,
 } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
-import { generateCaptionsAndSave } from '../../../libs/api'
-import TranscribePageModal from '../../../components/TranscribePageModal'
+import { generateCaptionsAndSave } from '../libs/api'
+import TranscribePageModal from './TranscribePageModal'
 
-const Transcribe = ({ videoId, videoInfo, captionsInfo }) => {
-  const [isLoading, setIsLoading] = useState(false)
+interface TranscribeProps {
+  videoId: string
+  videoInfo: {
+    videoTitle: string
+    thumbnail: string
+  }
+  captionsInfo: {
+    transcribedWithLyrics: string | null
+    videoId: string
+    thumbnail: string
+    youTuberId: string
+    captionChunks: string
+    videoTitle: string
+    createdAt: Date | null
+  }
+}
+
+const Transcribe = (props: TranscribeProps) => {
+  const { videoId, videoInfo, captionsInfo } = props
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const router = useRouter()
   const { isOpen, onOpen, onClose } = useDisclosure()
 

@@ -1,11 +1,11 @@
 import axios from 'axios'
-import Transcribe from './Transcribe'
-import supabase from '../../../libs/supabase'
+import { db } from '@/db/drizzle'
+import Transcribe from '@/components/Transcribe'
 
 const ApiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY
 
-function stringify(obj) {
-  let cache = []
+function stringify(obj: any) {
+  let cache: any[] = []
   let str = JSON.stringify(obj, function (key, value) {
     if (typeof value === 'object' && value !== null) {
       if (cache.indexOf(value) !== -1) {
@@ -17,11 +17,11 @@ function stringify(obj) {
     }
     return value
   })
-  cache = null // reset the cache
+  cache = [] // reset the cache
   return str
 }
 
-async function getVideoInfo(id) {
+async function getVideoInfo(id: string) {
   let info = await axios.get(
     `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${id}`
   )
@@ -40,12 +40,14 @@ async function getVideoInfo(id) {
   return videoInfo
 }
 
-async function getCaptionsInfo(id) {
-  const { data } = await supabase.from('caption').select().eq('videoId', id)
-  return data[0]
+async function getCaptionsInfo(id: string) {
+  const caption = await db.query.caption.findMany({
+    where: (caption, { eq }) => eq(caption.videoId, id),
+  })
+  return caption && caption[0]
 }
 
-const TranscribePage = async ({ params }) => {
+const TranscribePage = async ({ params }: { params: { id: string } }) => {
   const { id } = params
   const videoInfo = await getVideoInfo(id)
   const captionsInfo = await getCaptionsInfo(id)

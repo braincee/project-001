@@ -1,11 +1,24 @@
 'use client'
 
 import { Spacer, Button, Spinner } from '@nextui-org/react'
-import VoteCard from '../../../components/VoteCard'
+import VoteCard from './VoteCard'
 import { useState } from 'react'
-import { addNewVote } from '../../../libs/api'
+import { addNewVote } from '../libs/api'
 
-export default function Vote({ id, options, allVotes, initialVoteCount }) {
+interface VoteProps {
+  id: string
+  options: any[]
+  allVotes: {
+    data: any[]
+  }
+  initialVoteCount: {
+    first: number
+    second: number
+  }
+}
+
+export default function Vote(props: VoteProps) {
+  const { id, options, allVotes, initialVoteCount } = props
   const { data } = allVotes
   const [votesLength, setVotesLength] = useState(data.length)
   const [voteCount, setVoteCount] = useState(initialVoteCount)
@@ -48,10 +61,9 @@ export default function Vote({ id, options, allVotes, initialVoteCount }) {
       <section className='mt-8 w-full'>
         <div className='flex md:flex-row flex-col justify-center px-10 md:px-0 gap-10 md:gap-16'>
           {options.length > 0 &&
-            options.map((imageUrl, index) => (
+            options.map((_, index) => (
               <VoteCard
                 key={index}
-                imageUrl={imageUrl}
                 options={options}
                 index={index}
                 votesLength={votesLength}

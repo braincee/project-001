@@ -1,4 +1,5 @@
-import ThemeRegistry from './ThemeRegistry'
+import { ReactNode } from 'react'
+import ThemeRegistry from '@/components/ThemeRegistry'
 import './globals.css'
 
 export const metadata = {
@@ -6,7 +7,7 @@ export const metadata = {
   description: 'This website helps you to create a youtube playlist',
 }
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang='en'>
       <body>

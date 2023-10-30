@@ -1,9 +1,15 @@
 'use client'
+
+import { ReactNode } from 'react'
+import Header from '@/components/Header'
 import { NextUIProvider } from '@nextui-org/react'
 import { NextSeo } from 'next-seo'
-import Header from '../components/Header'
 
-export default function ThemeRegistry(props) {
+interface ThemeRegistryProps {
+  children: ReactNode
+}
+
+export default function ThemeRegistry(props: ThemeRegistryProps) {
   const { children } = props
   return (
     <section className='h-screen'>
