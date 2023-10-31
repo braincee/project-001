@@ -35,6 +35,23 @@ interface createTranscriptionProps {
   prompt: string
 }
 
+function stringify(obj: any) {
+  let cache: any[] = []
+  let str = JSON.stringify(obj, function (key, value) {
+    if (typeof value === 'object' && value !== null) {
+      if (cache.indexOf(value) !== -1) {
+        // Circular reference found, discard key
+        return
+      }
+      // Store value in our collection
+      cache.push(value)
+    }
+    return value
+  })
+  cache = [] // reset the cache
+  return str
+}
+
 export const getSearchVideos = async (query: string) => {
   const fetchSearchVideos = async () => {
     try {
@@ -346,34 +363,26 @@ export const scrapeCaptionsAndSave = async ({
   videoId: string
 }) => {
   try {
-    const getInfo = async () => {
-      const info = await axios.get(
-        `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${videoId}`
-      )
-      return info
-    }
-
-    const res = await getInfo()
-    let info
-    if (res?.data) {
-      info = res.data
-    }
-
-    if (!info.items) return Error('Info Data not available')
-
-    const title = info.items[0]?.snippet?.title
-    const thumbnail = info.items[0]?.snippet?.thumbnails?.default?.url
-    const channelId = info.items[0]?.snippet?.channelId
-    const channelTitle = info.items[0]?.snippet?.channelTitle
-    const defaultLanguage = info.items[0]?.snippet?.defaultLanguage?.includes(
-      '-'
+    let info = await axios.get(
+      `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${videoId}`
     )
-      ? info.items[0]?.snippet?.defaultLanguage?.split('-')[0]
-      : info.items[0]?.snippet?.defaultLanguage
+
+    info = JSON.parse(stringify(info))
+
+    if (!info.data.items) return Error('Info Data not available')
+
+    const title = info.data.items[0]?.snippet?.title
+    const thumbnail = info.data.items[0]?.snippet?.thumbnails?.default?.url
+    const channelId = info.data.items[0]?.snippet?.channelId
+    const channelTitle = info.data.items[0]?.snippet?.channelTitle
+    const defaultLanguage =
+      info.data.items[0]?.snippet?.defaultLanguage?.includes('-')
+        ? info.data.items[0]?.snippet?.defaultLanguage?.split('-')[0]
+        : info.data.items[0]?.snippet?.defaultLanguage
     const defaultAudioLanguage =
-      info.items[0]?.snippet?.defaultAudioLanguage?.includes('-')
-        ? info.items[0]?.snippet?.defaultAudioLanguage?.split('-')[0]
-        : info.items[0]?.snippet?.defaultAudioLanguage
+      info.data.items[0]?.snippet?.defaultAudioLanguage?.includes('-')
+        ? info.data.items[0]?.snippet?.defaultAudioLanguage?.split('-')[0]
+        : info.data.items[0]?.snippet?.defaultAudioLanguage
 
     if (!channelId) return Error('Channel ID not available')
     const captions = await fetchSubtitles({
@@ -413,9 +422,13 @@ export const scrapeCaptionsAndSave = async ({
       captionChunks: JSON.stringify(captions),
     }
 
-    const caption = await addCaption(data)
+    const myCaption = await getCaption({ id: videoId })
+    if (myCaption.length > 0) {
+      return myCaption
+    }
 
-    // return caption
+    const caption = await addCaption(data)
+    return caption
   } catch (error) {
     throw error
   }
@@ -430,34 +443,27 @@ export const generateCaptionsAndSave = async ({
 }) => {
   try {
     const url = `https://www.youtube.com/watch?v=${videoId}`
-    const getInfo = async () => {
-      const info = await axios.get(
-        `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${videoId}`
-      )
-      return info
-    }
-    const res = await getInfo()
-    let vidInfo
-    if (res?.data) {
-      vidInfo = res.data
-    }
+    let vidInfo = await axios.get(
+      `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${videoId}`
+    )
+    vidInfo = JSON.parse(stringify(vidInfo))
 
-    if (!vidInfo.items) return Error('Video Info Data not available')
-    const description = vidInfo.items[0]?.snippet?.description
-    const categoryId = vidInfo.items[0]?.snippet?.categoryId // https://gist.github.com/dgp/1b24bf2961521bd75d6c
-    const title = vidInfo.items[0]?.snippet?.title
-    const thumbnail = vidInfo.items[0]?.snippet?.thumbnails?.default?.url
-    const channelId = vidInfo.items[0]?.snippet?.channelId
+    if (!vidInfo.data.items) return Error('Video Info Data not available')
+    const description = vidInfo.data.items[0]?.snippet?.description
+    const categoryId = vidInfo.data.items[0]?.snippet?.categoryId // https://gist.github.com/dgp/1b24bf2961521bd75d6c
+    const title = vidInfo.data.items[0]?.snippet?.title
+    const thumbnail = vidInfo.data.items[0]?.snippet?.thumbnails?.default?.url
+    const channelId = vidInfo.data.items[0]?.snippet?.channelId
     if (!channelId) return Error('Channel ID not available')
-    let channelTitle = vidInfo.items[0]?.snippet?.channelTitle
+    let channelTitle = vidInfo.data.items[0]?.snippet?.channelTitle
     const defaultLanguage =
-      vidInfo.items[0]?.snippet?.defaultLanguage?.includes('-')
-        ? vidInfo.items[0]?.snippet?.defaultLanguage?.split('-')[0]
-        : vidInfo.items[0]?.snippet?.defaultLanguage
+      vidInfo.data.items[0]?.snippet?.defaultLanguage?.includes('-')
+        ? vidInfo.data.items[0]?.snippet?.defaultLanguage?.split('-')[0]
+        : vidInfo.data.items[0]?.snippet?.defaultLanguage
     const defaultAudioLanguage =
-      vidInfo.items[0]?.snippet?.defaultAudioLanguage?.includes('-')
-        ? vidInfo.items[0]?.snippet?.defaultAudioLanguage?.split('-')[0]
-        : vidInfo.items[0]?.snippet?.defaultAudioLanguage
+      vidInfo.data.items[0]?.snippet?.defaultAudioLanguage?.includes('-')
+        ? vidInfo.data.items[0]?.snippet?.defaultAudioLanguage?.split('-')[0]
+        : vidInfo.data.items[0]?.snippet?.defaultAudioLanguage
 
     if (channelTitle?.includes(' - Topic')) {
       channelTitle = channelTitle.replace(' - Topic', '')
@@ -475,14 +481,14 @@ export const generateCaptionsAndSave = async ({
     }
     console.log('captions>> ', captions)
 
-    if (captions) {
-      const repeatedWords = countRepeatedWords(captions)
-      // if youtube captions already exist, they tend to be more accurate than openai, so there's no need to generate.
-      // but song captions often only contain the word 'music' or 'instrumental' repeated many times. In this case, we want to generate captions.
-      if (repeatedWords.length > 2) {
-        throw new Error('Captions already exist. No need to generate')
-      }
-    }
+    // if (captions) {
+    //   const repeatedWords = countRepeatedWords(captions)
+    //   // if youtube captions already exist, they tend to be more accurate than openai, so there's no need to generate.
+    //   // but song captions often only contain the word 'music' or 'instrumental' repeated many times. In this case, we want to generate captions.
+    //   if (repeatedWords.length > 2) {
+    //     return
+    //   }
+    // }
 
     let audioFormat = await getAudioFormat({ videoId, categoryId })
 
@@ -568,19 +574,18 @@ export const generateCaptionsAndSave = async ({
       '\nprompt >>>\n',
       categoryId == '10' ? (lyrics.length ? lyrics : undefined) : prompt
     )
-    const resp = await createTranscription({
-      filePath,
-      model,
-      categoryId,
-      format,
-      lyrics,
-      prompt,
-    })
+    // let resp = await createTranscription({
+    //   filePath,
+    //   model,
+    //   categoryId,
+    //   format,
+    //   lyrics,
+    //   prompt,
+    // })
+
+    // resp = JSON.parse(stringify(resp))
 
     fs.unlinkSync(filePath)
-
-    // if (!resp.data)
-    //   return Error('Data Segments not available' )
 
     // const timestampedCaptions = resp.data.segments.map((segment: any) => {
     //   return {
@@ -617,24 +622,16 @@ export const generateCaptionsAndSave = async ({
 }
 
 export const getVideoInfo = async ({ id }: { id: string }) => {
-  const getInfo = async () => {
-    const info = await axios.get(
-      `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${id}`
-    )
-    return info
-  }
+  let info = await axios.get(
+    `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${id}`
+  )
+  info = JSON.parse(stringify(info))
 
-  const res = await getInfo()
-  let info
-  if (res?.data) {
-    info = res.data
-  }
+  if (!info.data.items) return Error('Info Data not available')
 
-  if (!info.items) return Error('Info Data not available')
-
-  const title = info.items[0]?.snippet?.title
-  const thumbnail = info.items[0]?.snippet?.thumbnails?.default?.url
-  const youTuberId = info.items[0]?.snippet?.channelId
+  const title = info.data.items[0]?.snippet?.title
+  const thumbnail = info.data.items[0]?.snippet?.thumbnails?.default?.url
+  const youTuberId = info.data.items[0]?.snippet?.channelId
 
   return {
     thumbnail: thumbnail,

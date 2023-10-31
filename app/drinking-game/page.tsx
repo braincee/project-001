@@ -39,8 +39,6 @@ const DrinkingGame = () => {
   const router = useRouter()
   const params = useParams()
 
-  console.log(areCaptionsSaved)
-
   const handleYoutubeUrlChange = (e: FormEvent) => {
     const target = e.target as HTMLInputElement
     const str = target.value
@@ -91,6 +89,8 @@ const DrinkingGame = () => {
     }
   }, [videoId, selectedWord])
 
+  console.log('VideoInfo', videoInfo, 'AreCapt', areCaptionsSaved)
+
   useEffect(() => {
     if (videoId && areCaptionsSaved) {
       getVideoInfo({ id: videoId }).then((res) => {
@@ -123,7 +123,8 @@ const DrinkingGame = () => {
     }
     const fetchCaptions = async () => {
       try {
-        if (!isFetched && videoId && !repeatedWords) {
+        if (!isFetched && videoId && repeatedWords.length === 0) {
+          console.log('Reached')
           await scrapeCaptionsAndSave({ videoId })
           setAreCaptionsSaved(true)
         }
@@ -313,7 +314,7 @@ const DrinkingGame = () => {
           </div>
         </div>
         <div className='mt-4 text-2xl flex'>
-          {/* <p>{counter > 0 ? counter : ''}</p> */}
+          <p>{counter > 0 ? counter : ''}</p>
           <AnimatedCounter
             counter={counter}
             emoji={
