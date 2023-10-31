@@ -89,8 +89,6 @@ const DrinkingGame = () => {
     }
   }, [videoId, selectedWord])
 
-  console.log('VideoInfo', videoInfo, 'AreCapt', areCaptionsSaved)
-
   useEffect(() => {
     if (videoId && areCaptionsSaved) {
       getVideoInfo({ id: videoId }).then((res) => {
@@ -102,7 +100,7 @@ const DrinkingGame = () => {
   }, [videoId, areCaptionsSaved])
 
   useEffect(() => {
-    if (isFetched && repeatedWords && dbCaptions) {
+    if (isFetched && repeatedWords.length > 0 && dbCaptions.length > 0) {
       setCaptions(dbCaptions)
       setAreCaptionsSaved(true)
     }
@@ -118,13 +116,12 @@ const DrinkingGame = () => {
   }, [params])
 
   useEffect(() => {
-    if (repeatedWords) {
+    if (repeatedWords.length > 0) {
       setIsFetchingRptWrds(false)
     }
     const fetchCaptions = async () => {
       try {
         if (!isFetched && videoId && repeatedWords.length === 0) {
-          console.log('Reached')
           await scrapeCaptionsAndSave({ videoId })
           setAreCaptionsSaved(true)
         }
@@ -140,10 +137,9 @@ const DrinkingGame = () => {
   useEffect(() => {
     if (videoId && params?.v !== videoId) {
       router.push(`/drinking-game?v=${videoId}`)
-      setCounter(0)
       setCaptions([])
       setSelectedWord('')
-      if (!repeatedWords) {
+      if (repeatedWords.length <= 0) {
         setIsFetchingRptWrds(true)
       } else {
         setIsFetchingRptWrds(false)
@@ -158,7 +154,7 @@ const DrinkingGame = () => {
   }, [selectedWord, videoId, router])
 
   useEffect(() => {
-    if (isFetched && repeatedWords) {
+    if (isFetched && repeatedWords.length > 0) {
       const wordParam = params?.w as string
       if (wordParam && !selectedWord) {
         const wordExists = repeatedWords.find(
@@ -205,7 +201,7 @@ const DrinkingGame = () => {
                     disabled={isDisabled}
                   >
                     <option value=''>Select a highly occuring word</option>
-                    {repeatedWords && !ascOrder
+                    {repeatedWords.length > 0 && !ascOrder
                       ? repeatedWords?.map(([word, number]) => (
                           <option key={word} value={word}>
                             {word}
@@ -296,12 +292,12 @@ const DrinkingGame = () => {
               }
             }}
           >
-            {videoId && !repeatedWords && (
+            {videoId && repeatedWords.length <= 0 && (
               <div className='h-full flex justify-center items-center'>
                 <Spinner />
               </div>
             )}
-            {videoId && repeatedWords && (
+            {videoId && repeatedWords.length > 0 && (
               <YouTubePlayer
                 setCounter={setCounter}
                 captions={captions}
