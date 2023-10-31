@@ -9,7 +9,7 @@ import {
   getRepeatedWords,
   getVideoInfo,
   scrapeCaptionsAndSave,
-} from '@/libs/api'
+} from '@/server/api'
 import { useParams, useRouter } from 'next/navigation'
 import { Toaster, toast } from 'react-hot-toast'
 import YouTubePlayer from '@/components/YouTubePlayer'

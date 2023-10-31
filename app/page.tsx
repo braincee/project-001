@@ -6,7 +6,7 @@ import { FaShareAlt } from 'react-icons/fa'
 import { useParams, useRouter } from 'next/navigation'
 import copy from 'copy-to-clipboard'
 import SearchCard from '@/components/SearchCard'
-import { getSearchVideos, getVideo } from '@/libs/api'
+import { getSearchVideos, getVideo } from '@/server/api'
 import SkeletonBuilder from '@/components/SkeletonBuilder'
 import TableBuilder from '@/components/TableBuilder'
 import VideoCard from '@/components/VideoCard'
@@ -112,9 +112,7 @@ export default function Home() {
     }
     if (inputValue && isvalid) {
       let videoId = inputValue.split('v=')[1]
-      const {
-        data: { response },
-      } = await getVideo(videoId)
+      const response = await getVideo(videoId)
       const { title, description, channelTitle, publishedAt } =
         response.items[0].snippet
       setUrlData([
@@ -188,9 +186,7 @@ export default function Home() {
     if (!query) return
     try {
       setIsLoading(true)
-      const {
-        data: { response },
-      } = await getSearchVideos(query)
+      const response = await getSearchVideos(query)
       const videos = response.items.map((item: any) => {
         return {
           id: item.id.videoId,

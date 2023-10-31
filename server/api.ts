@@ -5,6 +5,26 @@ import { v4 as uuidv4 } from 'uuid'
 import supabase from '@/libs/supabase'
 import { countRepeatedWords, ytCategoryIds } from '@/libs/utils'
 import * as cheerio from 'cheerio'
+import { env } from '@/env.mjs'
+import { db } from '@/db/drizzle'
+import { caption, polls, votes, youtuber } from '@/db/schema'
+import ytdl from 'ytdl-core'
+import { eq } from 'drizzle-orm'
+//@ts-ignore
+import { getSubtitles } from 'youtube-captions-scraper'
+import fs from 'fs'
+import { fileURLToPath } from 'url'
+import path from 'path'
+import { Configuration, OpenAIApi } from 'openai'
+
+const configuration = new Configuration({
+  apiKey: env.OPENAI_API_KEY,
+})
+
+const openai = new OpenAIApi(configuration)
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const ApiKey = env.GOOGLE_API_KEY
 
 interface createTranscriptionProps {
   filePath: string
@@ -16,17 +36,38 @@ interface createTranscriptionProps {
 }
 
 export const getSearchVideos = async (query: string) => {
-  const data = await axios.post('/api/search', {
-    query,
-  })
-  return data
+  const fetchSearchVideos = async () => {
+    try {
+      const response = await axios.get(
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=${ApiKey}`
+      )
+      return response
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const response = await fetchSearchVideos()
+  if (response?.data) {
+    return response.data
+  }
 }
 
 export const getVideo = async (videoId: string) => {
-  const data = await axios.post('/api/video', {
-    videoId,
-  })
-  return data
+  const myVideo = async () => {
+    try {
+      const response = await axios.get(
+        `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet&key=${ApiKey}`
+      )
+      return response
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  const response = await myVideo()
+  if (response?.data) {
+    return response.data
+  }
 }
 
 export const addToPollsStorage = async (file: File) => {
@@ -53,11 +94,13 @@ export const addNewPoll = async ({
   options: any[]
   pollId: string
 }) => {
-  const data = await axios.post('/api/create', {
-    options,
-    pollId,
+  const date = new Date()
+  const response = await db.insert(polls).values({
+    id: pollId,
+    options: JSON.stringify(options),
+    createdAt: date,
   })
-  return data
+  return response
 }
 
 export const addNewVote = async ({
@@ -67,73 +110,112 @@ export const addNewVote = async ({
   pickedOption: string
   pollId: string
 }) => {
-  const { data } = await axios.post('/api/vote', {
-    pickedOption,
-    pollId,
+  const date = new Date()
+
+  const response = await db.insert(votes).values({
+    id: uuidv4(),
+    picked_option: pickedOption,
+    poll: pollId,
+    createdAt: date,
   })
-  return data
+  return response
 }
 
 export const getVotes = async ({ pollId }: { pollId: string }) => {
-  const data = await axios.get('/api/vote', {
-    params: { pollId },
+  const response = await db.query.votes.findMany({
+    where: (vote, { eq }) => eq(vote.poll, pollId),
   })
-  return data
+  return response
 }
 
 export const getYouTubers = async () => {
-  const data = await axios.get('/api/youtuber/all')
-  return data
+  const response = await db.query.youtuber.findMany()
+  return response
 }
 
 export const addYoutuber = async (youtuberData: {
   id: string
   name: string
 }) => {
-  const { data } = await axios.post('/api/youtuber/add', {
-    youtuberData,
-  })
-  return data
+  const { name, id } = youtuberData
+  const date = new Date()
+  const response = await db
+    .insert(youtuber)
+    .values({ name, id, createdAt: date })
+  return response
 }
 
 export const addCaption = async (captionData: {
   videoId: string
-  videoTitle: string | null
+  videoTitle: string
   youTuberId: string
   thumbnail: string
   captionChunks: string
+  transcribedWithLyrics?: string
 }) => {
-  const { data } = await axios.post('/api/caption/add', {
-    captionData,
+  const {
+    videoId,
+    videoTitle,
+    thumbnail,
+    youTuberId,
+    captionChunks,
+    transcribedWithLyrics,
+  } = captionData
+  const date = new Date()
+  const response = await db.insert(caption).values({
+    videoId,
+    videoTitle,
+    thumbnail,
+    youTuberId,
+    captionChunks,
+    transcribedWithLyrics,
+    createdAt: date,
   })
-  return data
+  return response
 }
 
 export const getYouTuber = async (channelId: string) => {
-  const { data } = await axios.get('/api/youtuber/single', {
-    params: { channelId },
+  const response = await db.query.youtuber.findMany({
+    where: (youtuber, { eq }) => eq(youtuber.id, channelId),
   })
-  return data
+
+  return response
 }
 
 export const getCaption = async ({ id }: { id: string }) => {
-  const { data } = await axios.get('/api/caption/single', {
-    params: { id },
+  const response = await db.query.caption.findMany({
+    where: (caption, { eq }) => eq(caption.videoId, id),
   })
-  return data
+  return response
 }
 
 export const updateCaption = async (captionData: {
   videoId: string
-  videoTitle: string | null
+  videoTitle: string
   youTuberId: string
   thumbnail: string
   captionChunks: string
+  transcribedWithLyrics?: string
 }) => {
-  const { data } = await axios.post('/api/caption/update', {
-    captionData,
-  })
-  return data
+  const {
+    videoId,
+    videoTitle,
+    thumbnail,
+    youTuberId,
+    captionChunks,
+    transcribedWithLyrics,
+  } = captionData
+  const response = await db
+    .update(caption)
+    .set({
+      videoTitle,
+      thumbnail,
+      youTuberId,
+      captionChunks,
+      transcribedWithLyrics,
+    })
+    .where(eq(caption.videoId, videoId))
+  return response
 }
 
 export const fetchSubtitles = async ({
@@ -143,14 +225,21 @@ export const fetchSubtitles = async ({
 }: {
   videoId: string
   defaultLanguage: string
-  defaultAudioLanguage: string
+  defaultAudioLanguage?: string
 }) => {
-  const { data } = await axios.post('/api/subtitle', {
-    videoId,
-    defaultLanguage,
-    defaultAudioLanguage,
-  })
-  return data.response
+  const fetchSubtitles = async () => {
+    try {
+      const response = await getSubtitles({
+        videoID: videoId,
+        lang: defaultLanguage || 'en',
+      })
+      return response
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  const response = await fetchSubtitles()
+  return response
 }
 
 export const getAudioFormat = async ({
@@ -160,10 +249,16 @@ export const getAudioFormat = async ({
   videoId: string
   categoryId: string
 }) => {
-  const audioFormat = await axios.post('/api/ytdl/audioformat', {
-    videoId,
-    categoryId,
-  })
+  const myAudioFormat = async () => {
+    let info = await ytdl.getInfo(videoId)
+    let filteredFormat = ytdl.filterFormats(info.formats, 'audioonly')
+    let audioFormat = ytdl.chooseFormat(filteredFormat, {
+      quality: categoryId === '10' ? 'highestaudio' : 'lowestaudio',
+    })
+    return audioFormat
+  }
+
+  const audioFormat = await myAudioFormat()
   return audioFormat
 }
 
@@ -176,19 +271,33 @@ export const generateFile = async ({
   audioFormat: any
   videoId: string
 }) => {
-  const file = await axios.post('/api/ytdl/file', {
-    url,
-    audioFormat,
-    videoId,
-  })
-  return file
-}
+  const myFile = async () => {
+    const audioStream = ytdl(url, { format: audioFormat }).pipe(
+      fs.createWriteStream(
+        path.join(__dirname, `${videoId}.${audioFormat.container}`)
+      )
+    )
+    const audioStreamPromise = new Promise((resolve, reject) => {
+      audioStream.on('finish', resolve)
+      audioStream.on('error', reject)
+    })
+    await audioStreamPromise
 
-export const unlinkFilePath = async ({ filePath }: { filePath: string }) => {
-  const fp = await axios.get('/api/ytdl/file', {
-    params: { filePath },
-  })
-  return fp
+    const filePath = path.join(__dirname, `${videoId}.${audioFormat.container}`)
+
+    const stats = fs.statSync(filePath)
+    const fileSizeInBytes = stats.size
+    const fileSizeInMegabytes = fileSizeInBytes / 1000000.0
+    console.log('fileSizeInMegabytes ', fileSizeInMegabytes)
+    if (fileSizeInMegabytes > 25) {
+      throw new Error('File size is too large')
+    }
+    return filePath
+  }
+  const filePath = await myFile()
+  if (filePath) {
+    return filePath
+  }
 }
 
 export const getSong = async ({
@@ -198,24 +307,37 @@ export const getSong = async ({
   title: string
   channelTitle: string
 }) => {
-  const song = await axios.post('/api/apigenius', {
-    title,
-    channelTitle,
-  })
-  return song
+  const mySong = async () => {
+    const song = await axios.get(
+      `https://api.genius.com/search?q=${encodeURIComponent(
+        title + ' ' + channelTitle
+      )}&access_token=${env.GENIUS_API_KEY}`
+    )
+    return song
+  }
+  const response = await mySong()
+  if (response?.data) {
+    return response.data
+  }
 }
 
 export const createTranscription = async (props: createTranscriptionProps) => {
   const { filePath, model, categoryId, format, lyrics, prompt } = props
-  const resp = await axios.post('/api/openai', {
-    filePath,
-    model,
-    categoryId,
-    format,
-    lyrics,
-    prompt,
-  })
-  return resp
+
+  const myTranscription = async () => {
+    const file = fs.createReadStream(filePath)
+    const resp = await openai.createTranscription(
+      // @ts-ignore
+      file,
+      model,
+      categoryId == '10' ? (lyrics.length > 0 ? lyrics : undefined) : prompt,
+      format
+    )
+    return resp
+  }
+
+  const response = await myTranscription()
+  return response
 }
 
 export const scrapeCaptionsAndSave = async ({
@@ -224,38 +346,43 @@ export const scrapeCaptionsAndSave = async ({
   videoId: string
 }) => {
   try {
-    const {
-      data: { response: res },
-    } = await axios.get('/api/action/info', {
-      params: { videoId },
-    })
-    const info = JSON.parse(res)
+    const getInfo = async () => {
+      const info = await axios.get(
+        `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${videoId}`
+      )
+      return info
+    }
 
-    if (!info.data.items)
-      return Response.json({ message: 'Info Data not available' })
+    const res = await getInfo()
+    let info
+    if (res?.data) {
+      info = res.data
+    }
 
-    const title = info.data.items[0]?.snippet?.title
-    const thumbnail = info.data.items[0]?.snippet?.thumbnails?.default?.url
-    const channelId = info.data.items[0]?.snippet?.channelId
-    const channelTitle = info.data.items[0]?.snippet?.channelTitle
-    const defaultLanguage =
-      info.data.items[0]?.snippet?.defaultLanguage?.includes('-')
-        ? info.data.items[0]?.snippet?.defaultLanguage?.split('-')[0]
-        : info.data.items[0]?.snippet?.defaultLanguage
+    if (!info.items) return Error('Info Data not available')
+
+    const title = info.items[0]?.snippet?.title
+    const thumbnail = info.items[0]?.snippet?.thumbnails?.default?.url
+    const channelId = info.items[0]?.snippet?.channelId
+    const channelTitle = info.items[0]?.snippet?.channelTitle
+    const defaultLanguage = info.items[0]?.snippet?.defaultLanguage?.includes(
+      '-'
+    )
+      ? info.items[0]?.snippet?.defaultLanguage?.split('-')[0]
+      : info.items[0]?.snippet?.defaultLanguage
     const defaultAudioLanguage =
-      info.data.items[0]?.snippet?.defaultAudioLanguage?.includes('-')
-        ? info.data.items[0]?.snippet?.defaultAudioLanguage?.split('-')[0]
-        : info.data.items[0]?.snippet?.defaultAudioLanguage
+      info.items[0]?.snippet?.defaultAudioLanguage?.includes('-')
+        ? info.items[0]?.snippet?.defaultAudioLanguage?.split('-')[0]
+        : info.items[0]?.snippet?.defaultAudioLanguage
 
-    if (!channelId)
-      return Response.json({ message: 'Channel ID not available' })
+    if (!channelId) return Error('Channel ID not available')
     const captions = await fetchSubtitles({
       videoId,
       defaultLanguage,
       defaultAudioLanguage,
     })
 
-    if (!captions) return Response.json({ message: 'Captions not available' })
+    if (!captions) return Error('Captions not available')
 
     captions.forEach((caption: any, idx: number) => {
       const currentStart = Number(caption.start)
@@ -303,31 +430,34 @@ export const generateCaptionsAndSave = async ({
 }) => {
   try {
     const url = `https://www.youtube.com/watch?v=${videoId}`
-    const {
-      data: { response: res },
-    } = await axios.get('/api/action/info', {
-      params: { videoId },
-    })
-    const vidInfo = JSON.parse(res)
+    const getInfo = async () => {
+      const info = await axios.get(
+        `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${videoId}`
+      )
+      return info
+    }
+    const res = await getInfo()
+    let vidInfo
+    if (res?.data) {
+      vidInfo = res.data
+    }
 
-    if (!vidInfo.data.items)
-      return Response.json({ message: 'Video Info Data not available' })
-    const description = vidInfo.data.items[0]?.snippet?.description
-    const categoryId = vidInfo.data.items[0]?.snippet?.categoryId // https://gist.github.com/dgp/1b24bf2961521bd75d6c
-    const title = vidInfo.data.items[0]?.snippet?.title
-    const thumbnail = vidInfo.data.items[0]?.snippet?.thumbnails?.default?.url
-    const channelId = vidInfo.data.items[0]?.snippet?.channelId
-    if (!channelId)
-      return Response.json({ message: 'Channel ID not available' })
-    let channelTitle = vidInfo.data.items[0]?.snippet?.channelTitle
+    if (!vidInfo.items) return Error('Video Info Data not available')
+    const description = vidInfo.items[0]?.snippet?.description
+    const categoryId = vidInfo.items[0]?.snippet?.categoryId // https://gist.github.com/dgp/1b24bf2961521bd75d6c
+    const title = vidInfo.items[0]?.snippet?.title
+    const thumbnail = vidInfo.items[0]?.snippet?.thumbnails?.default?.url
+    const channelId = vidInfo.items[0]?.snippet?.channelId
+    if (!channelId) return Error('Channel ID not available')
+    let channelTitle = vidInfo.items[0]?.snippet?.channelTitle
     const defaultLanguage =
-      vidInfo.data.items[0]?.snippet?.defaultLanguage?.includes('-')
-        ? vidInfo.data.items[0]?.snippet?.defaultLanguage?.split('-')[0]
-        : vidInfo.data.items[0]?.snippet?.defaultLanguage
+      vidInfo.items[0]?.snippet?.defaultLanguage?.includes('-')
+        ? vidInfo.items[0]?.snippet?.defaultLanguage?.split('-')[0]
+        : vidInfo.items[0]?.snippet?.defaultLanguage
     const defaultAudioLanguage =
-      vidInfo.data.items[0]?.snippet?.defaultAudioLanguage?.includes('-')
-        ? vidInfo.data.items[0]?.snippet?.defaultAudioLanguage?.split('-')[0]
-        : vidInfo.data.items[0]?.snippet?.defaultAudioLanguage
+      vidInfo.items[0]?.snippet?.defaultAudioLanguage?.includes('-')
+        ? vidInfo.items[0]?.snippet?.defaultAudioLanguage?.split('-')[0]
+        : vidInfo.items[0]?.snippet?.defaultAudioLanguage
 
     if (channelTitle?.includes(' - Topic')) {
       channelTitle = channelTitle.replace(' - Topic', '')
@@ -350,7 +480,7 @@ export const generateCaptionsAndSave = async ({
       // if youtube captions already exist, they tend to be more accurate than openai, so there's no need to generate.
       // but song captions often only contain the word 'music' or 'instrumental' repeated many times. In this case, we want to generate captions.
       if (repeatedWords.length > 2) {
-        return Response.json({ message: 'Repeated words too many' })
+        throw new Error('Captions already exist. No need to generate')
       }
     }
 
@@ -358,10 +488,10 @@ export const generateCaptionsAndSave = async ({
 
     const files = await generateFile({
       url,
-      audioFormat: audioFormat.data.response,
+      audioFormat: audioFormat,
       videoId,
     })
-    const filePath = files.data.response
+    const filePath = files as string
     const model = 'whisper-1'
     const format = 'verbose_json'
 
@@ -371,7 +501,7 @@ export const generateCaptionsAndSave = async ({
       try {
         const song = await getSong({ title, channelTitle })
 
-        let songUrl = song.data.response.hits[0].result.url
+        let songUrl = song.hits[0].result.url
         let doesArtistMatchLyrics =
           song.data.response.hits[0].result.artist_names.includes(channelTitle)
 
@@ -447,59 +577,64 @@ export const generateCaptionsAndSave = async ({
       prompt,
     })
 
-    unlinkFilePath(filePath)
+    fs.unlinkSync(filePath)
 
-    if (!resp.data.segments)
-      return Response.json({ message: 'Data Segments not available' })
+    // if (!resp.data)
+    //   return Error('Data Segments not available' )
 
-    const timestampedCaptions = resp.data.segments.map((segment: any) => {
-      return {
-        start: String(segment.start),
-        dur: String(segment.end - segment.start),
-        text: segment.text,
-      }
-    })
+    // const timestampedCaptions = resp.data.segments.map((segment: any) => {
+    //   return {
+    //     start: String(segment.start),
+    //     dur: String(segment.end - segment.start),
+    //     text: segment.text,
+    //   }
+    // })
 
-    let youTuber = await getYouTuber(channelId)
+    // let youTuber = await getYouTuber(channelId)
 
-    if (!youTuber) {
-      let data = {
-        id: channelId,
-        name: channelTitle || ' ',
-      }
-      youTuber = await addYoutuber(data)
-    }
+    // if (!youTuber) {
+    //   let data = {
+    //     id: channelId,
+    //     name: channelTitle || ' ',
+    //   }
+    //   youTuber = await addYoutuber(data)
+    // }
 
-    let data = {
-      videoId,
-      videoTitle: title || ' ',
-      youTuberId: channelId,
-      thumbnail: thumbnail,
-      captionChunks: JSON.stringify(timestampedCaptions),
-      transcribedWithLyrics: transcribeWithLyrics,
-    }
+    // let data = {
+    //   videoId,
+    //   videoTitle: title || ' ',
+    //   youTuberId: channelId,
+    //   thumbnail: thumbnail,
+    //   captionChunks: JSON.stringify(timestampedCaptions),
+    //   transcribedWithLyrics: transcribeWithLyrics.toString(),
+    // }
 
-    const caption = await updateCaption(data)
-    return caption
+    // const caption = await updateCaption(data)
+    // return caption
   } catch (error) {
     throw error
   }
 }
 
 export const getVideoInfo = async ({ id }: { id: string }) => {
-  const {
-    data: { response: res },
-  } = await axios.get('/api/action/info', {
-    params: { videoId: id },
-  })
-  let info = JSON.parse(res)
+  const getInfo = async () => {
+    const info = await axios.get(
+      `https://www.googleapis.com/youtube/v3/videos?part=snippet&key=${ApiKey}&id=${id}`
+    )
+    return info
+  }
 
-  if (!info.data.items)
-    return Response.json({ message: 'Info Data not available' })
+  const res = await getInfo()
+  let info
+  if (res?.data) {
+    info = res.data
+  }
 
-  const title = info.data.items[0]?.snippet?.title
-  const thumbnail = info.data.items[0]?.snippet?.thumbnails?.default?.url
-  const youTuberId = info.data.items[0]?.snippet?.channelId
+  if (!info.items) return Error('Info Data not available')
+
+  const title = info.items[0]?.snippet?.title
+  const thumbnail = info.items[0]?.snippet?.thumbnails?.default?.url
+  const youTuberId = info.items[0]?.snippet?.channelId
 
   return {
     thumbnail: thumbnail,

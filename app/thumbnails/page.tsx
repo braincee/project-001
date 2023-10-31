@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button, Input, Spacer, Spinner, Switch } from '@nextui-org/react'
 import numbro from 'numbro'
 import { v4 as uuidv4 } from 'uuid'
-import { addNewPoll, addToPollsStorage, getFilePublicURL } from '@/libs/api'
+import { addNewPoll, addToPollsStorage, getFilePublicURL } from '@/server/api'
 import HomepageCard from '@/components/HompageCard'
 import RelatedCard from '@/components/RelatedCard'
 

@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { db } from '@/db/drizzle'
 import Transcribe from '@/components/Transcribe'
+import { env } from '@/env.mjs'
 
-const ApiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY
+const ApiKey = env.NEXT_PUBLIC_GOOGLE_API_KEY
 
 function stringify(obj: any) {
   let cache: any[] = []

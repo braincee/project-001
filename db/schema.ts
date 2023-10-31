@@ -1,5 +1,12 @@
 import { relations, sql } from 'drizzle-orm'
-import { json, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import {
+  boolean,
+  json,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+} from 'drizzle-orm/pg-core'
 
 export const caption = pgTable('caption', {
   videoId: text('videoId').primaryKey().unique().notNull(),
@@ -14,7 +21,7 @@ export const caption = pgTable('caption', {
 export const polls = pgTable('polls', {
   id: uuid('id').primaryKey().notNull(),
   options: json('options'),
-  enabled: text('enabled').default(true),
+  enabled: boolean('enabled').default(true),
   createdAt: timestamp('created_at', { mode: 'date' }).default(sql`now()`),
 })
 

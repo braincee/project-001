@@ -50,18 +50,21 @@ const Transcribe = (props: TranscribeProps) => {
           : true
       }
 
-      await generateCaptionsAndSave({ videoId, transcribeWithLyrics })
+      console.log(
+        await generateCaptionsAndSave({ videoId, transcribeWithLyrics })
+      )
       setIsLoading(false)
     } catch (error) {
       setIsLoading(false)
     }
   }
 
-  const handleOpen = () => {
+  const handleOpen = async () => {
     if (captionsInfo) {
       onOpen()
+      await handleTranscribe()
     } else {
-      handleTranscribe()
+      await handleTranscribe()
     }
   }
 

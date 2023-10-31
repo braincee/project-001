@@ -13,6 +13,7 @@
   "dependencies": {
     "@nextui-org/react": "0.0.0-dev-v2-20230505232443",
     "@supabase/supabase-js": "^2.26.0",
+    "@t3-oss/env-nextjs": "^0.7.1",
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
     "copy-to-clipboard": "^3.3.3",
@@ -40,7 +41,8 @@
     "uuid": "^9.0.0",
     "youtube-captions-scraper": "^2.0.1",
     "youtubei": "^1.1.2",
-    "ytdl-core": "^4.11.4"
+    "ytdl-core": "^4.11.4",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20.8.9",
