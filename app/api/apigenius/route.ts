@@ -1,6 +1,12 @@
 import axios from 'axios'
 
-const getSong = async ({ title, channelTitle }) => {
+const getSong = async ({
+  title,
+  channelTitle,
+}: {
+  title: string
+  channelTitle: string
+}) => {
   const song = await axios.get(
     `https://api.genius.com/search?q=${encodeURIComponent(
       title + ' ' + channelTitle
@@ -9,8 +15,8 @@ const getSong = async ({ title, channelTitle }) => {
   return song
 }
 
-function stringify(obj) {
-  let cache = []
+function stringify(obj: any) {
+  let cache: any[] = []
   let str = JSON.stringify(obj, function (key, value) {
     if (typeof value === 'object' && value !== null) {
       if (cache.indexOf(value) !== -1) {
@@ -22,11 +28,11 @@ function stringify(obj) {
     }
     return value
   })
-  cache = null // reset the cache
+  cache = [] // reset the cache
   return str
 }
 
-export async function POST(req) {
+export async function POST(req: Request) {
   const { title, channelTitle } = await req.json()
   const response = await getSong({ title, channelTitle })
 

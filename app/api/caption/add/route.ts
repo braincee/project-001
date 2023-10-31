@@ -1,7 +1,7 @@
-import { db } from '../../../../db/drizzle'
-import { caption } from '../../../../db/schema'
+import { db } from '@/db/drizzle'
+import { caption } from '@/db/schema'
 
-export async function POST(req) {
+export async function POST(req: Request) {
   const {
     captionData: {
       videoId,

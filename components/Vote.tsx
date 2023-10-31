@@ -3,7 +3,7 @@
 import { Spacer, Button, Spinner } from '@nextui-org/react'
 import VoteCard from './VoteCard'
 import { useState } from 'react'
-import { addNewVote } from '../libs/api'
+import { addNewVote } from '@/server/api'
 
 interface VoteProps {
   id: string

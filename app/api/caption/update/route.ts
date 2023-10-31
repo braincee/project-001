@@ -1,8 +1,8 @@
-import { db } from '../../../../libs/drizzle/db'
-import { caption } from '../../../../libs/drizzle/schema'
-import { eq } from 'cheerio/lib/api/traversing'
+import { db } from '@/db/drizzle'
+import { caption } from '@/db/schema'
+import { eq } from 'drizzle-orm'
 
-export async function POST(req) {
+export async function POST(req: Request) {
   const {
     captionData: {
       videoId,

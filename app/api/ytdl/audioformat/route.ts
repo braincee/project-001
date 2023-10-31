@@ -1,6 +1,12 @@
 import ytdl from 'ytdl-core'
 
-const getAudioFormat = async ({ videoId, categoryId }) => {
+const getAudioFormat = async ({
+  videoId,
+  categoryId,
+}: {
+  videoId: string
+  categoryId: string
+}) => {
   console.log('audio')
   let info = await ytdl.getInfo(videoId)
   let filteredFormat = ytdl.filterFormats(info.formats, 'audioonly')
@@ -10,7 +16,7 @@ const getAudioFormat = async ({ videoId, categoryId }) => {
   return audioFormat
 }
 
-export async function POST(req) {
+export async function POST(req: Request) {
   const { videoId, categoryId } = await req.json()
   const response = await getAudioFormat({ videoId, categoryId })
 

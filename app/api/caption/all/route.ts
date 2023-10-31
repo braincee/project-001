@@ -1,4 +1,4 @@
-import { db } from '../../../../libs/drizzle/db'
+import { db } from '@/db/drizzle'
 
 export async function GET() {
   const response = await db.query.caption.findMany()

@@ -1,7 +1,7 @@
-import { db } from '../../../db/drizzle'
-import { polls } from '../../../db/schema'
+import { db } from '@/db/drizzle'
+import { polls } from '@/db/schema'
 
-export async function POST(req) {
+export async function POST(req: Request) {
   const { options, pollId } = await req.json()
   const date = new Date()
   const response = await db.insert(polls).values({

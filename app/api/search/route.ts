@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const ApiKey = process.env.GOOGLE_API_KEY
 
-const fetchSearchVideos = async (query) => {
+const fetchSearchVideos = async (query: string) => {
   try {
     const response = await axios.get(
       `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${query}&key=${ApiKey}`
@@ -13,9 +13,9 @@ const fetchSearchVideos = async (query) => {
   }
 }
 
-export async function POST(req) {
+export async function POST(req: Request) {
   const { query } = await req.json()
-  const { data, err } = await fetchSearchVideos(query)
+  const response = await fetchSearchVideos(query)
 
-  return Response.json({ response: data, err: err })
+  return Response.json(response)
 }

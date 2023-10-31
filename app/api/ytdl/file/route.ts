@@ -8,7 +8,15 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 console.log('directory-name 👉️', __dirname)
 
-const generateFile = async ({ url, audioFormat, videoId }) => {
+const generateFile = async ({
+  url,
+  audioFormat,
+  videoId,
+}: {
+  url: string
+  audioFormat: ytdl.videoFormat
+  videoId: string
+}) => {
   const audioStream = ytdl(url, { format: audioFormat }).pipe(
     fs.createWriteStream(
       path.join(__dirname, `${videoId}.${audioFormat.container}`)
@@ -27,20 +35,20 @@ const generateFile = async ({ url, audioFormat, videoId }) => {
   const fileSizeInMegabytes = fileSizeInBytes / 1000000.0
   console.log('fileSizeInMegabytes ', fileSizeInMegabytes)
   if (fileSizeInMegabytes > 25) {
-    throw new HttpError(413, 'File size is too large')
+    throw new Error('File size is too large')
   }
   return filePath
 }
 
-export async function GET(req) {
+export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
-  const filePath = searchParams.get('filePath')
+  const filePath = searchParams.get('filePath') as string
   fs.unlinkSync(filePath)
 
   return Response.json({ response: 'Success' })
 }
 
-export async function POST(req) {
+export async function POST(req: Request) {
   const { url, audioFormat, videoId } = await req.json()
   const response = await generateFile({ url, audioFormat, videoId })
 

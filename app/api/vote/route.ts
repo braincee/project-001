@@ -1,10 +1,10 @@
+import { db } from '@/db/drizzle'
+import { votes } from '@/db/schema'
 import { v4 as uuidv4 } from 'uuid'
-import { db } from '../../../db/drizzle'
-import { votes } from '../../../db/schema'
 
-export async function GET(req) {
+export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
-  const pollId = searchParams.get('pollId')
+  const pollId = searchParams.get('pollId') as string
   const response = await db.query.votes.findMany({
     where: (vote, { eq }) => eq(vote.poll, pollId),
   })
@@ -12,7 +12,7 @@ export async function GET(req) {
   return Response.json(response)
 }
 
-export async function POST(req) {
+export async function POST(req: Request) {
   const { pickedOption, pollId } = await req.json()
   const date = new Date()
 

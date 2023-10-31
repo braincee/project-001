@@ -10,7 +10,7 @@ import {
   useDisclosure,
 } from '@nextui-org/react'
 import { useRouter } from 'next/navigation'
-import { generateCaptionsAndSave } from '../libs/api'
+import { generateCaptionsAndSave } from '@/server/api'
 import TranscribePageModal from './TranscribePageModal'
 
 interface TranscribeProps {

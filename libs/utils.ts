@@ -1,10 +1,10 @@
-import { Configuration, OpenAIApi } from 'openai';
+import { Configuration, OpenAIApi } from 'openai'
 
 const configuration = new Configuration({
   apiKey: process.env.NEXT_OPENAI_API_KEY,
-});
+})
 
-export const openai = new OpenAIApi(configuration);
+export const openai = new OpenAIApi(configuration)
 
 const fillers = new Set([
   'the',
@@ -178,49 +178,49 @@ const fillers = new Set([
   "why'll",
   "why'd",
   "how's",
-]);
+])
 
-const getEntireCaptionStr = (captions) => {
-  let entireCaptionStr = '';
+const getEntireCaptionStr = (captions: any[]) => {
+  let entireCaptionStr = ''
   for (let i = 0; i < captions.length; i++) {
-    const caption = captions[i];
-    const cleanText = caption.text.trim().toLowerCase() + ' ';
-    entireCaptionStr += cleanText;
+    const caption = captions[i]
+    const cleanText = caption.text.trim().toLowerCase() + ' '
+    entireCaptionStr += cleanText
   }
 
-  return entireCaptionStr;
-};
+  return entireCaptionStr
+}
 
-export const countRepeatedWords = (captionChunks) => {
-  const captions = getEntireCaptionStr(captionChunks);
+export const countRepeatedWords = (captionChunks: any[]) => {
+  const captions = getEntireCaptionStr(captionChunks)
 
-  const words = captions.split(/\s+/);
+  const words = captions.split(/\s+/)
 
   //remove all punctuation from beginning or end of words
   // const words = captionsWithStuff.map((word) => {
   //   return word.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
   // });
 
-  const wordCounts = new Map();
+  const wordCounts = new Map()
 
   for (let i = 0; i < words.length; i++) {
-    const word = words[i];
-    const count = wordCounts.get(word) || 0;
-    wordCounts.set(word, count + 1);
+    const word = words[i]
+    const count = wordCounts.get(word) || 0
+    wordCounts.set(word, count + 1)
   }
 
   // remove words that are used less than 5 times
   wordCounts.forEach((count, word) => {
     if (count < 5) {
-      wordCounts.delete(word);
+      wordCounts.delete(word)
     }
-  });
-  const sortedWordCounts = Array.from(wordCounts).sort((a, b) => b[1] - a[1]);
+  })
+  const sortedWordCounts = Array.from(wordCounts).sort((a, b) => b[1] - a[1])
 
-  return sortedWordCounts.filter(([word, count]) => !fillers.has(word));
-};
+  return sortedWordCounts.filter(([word, count]) => !fillers.has(word))
+}
 
-export const ytCategoryIds = {
+export const ytCategoryIds: any = {
   1: 'Film & Animation',
   2: 'Autos & Vehicles',
   10: 'Music',
@@ -253,4 +253,4 @@ export const ytCategoryIds = {
   42: 'Shorts',
   43: 'Shows',
   44: 'Trailers',
-};
+}
