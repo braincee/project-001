@@ -1,0 +1,20 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1698328188533,
+      "tag": "0000_magical_doctor_spectrum",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1698335420423,
+      "tag": "0001_jazzy_saracen",
+      "breakpoints": true
+    }
+  ]
+}
