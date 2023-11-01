@@ -51,7 +51,9 @@ export default function ThumbnailsPage() {
     const options = []
     const pollId = uuidv4()
     for (let i = 0; i < files.length; i++) {
-      const pollName = await addToPollsStorage(files[i])
+      const myFile = new FormData()
+      myFile.append('file', files[i])
+      const pollName = await addToPollsStorage(myFile)
       const url = await getFilePublicURL(pollName)
       options.push({ id: uuidv4(), image_url: url.publicUrl })
     }

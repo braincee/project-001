@@ -87,7 +87,8 @@ export const getVideo = async (videoId: string) => {
   }
 }
 
-export const addToPollsStorage = async (file: File) => {
+export const addToPollsStorage = async (myFile: any) => {
+  const file = myFile.get('file')
   const filename = `${uuidv4()}.${file.name.substring(
     file.name.lastIndexOf('.') + 1,
     file.name.length
